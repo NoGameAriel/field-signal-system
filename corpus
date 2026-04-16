@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Master Corpus Index — Ariel Willingham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --ink: #0f0e0c;
+  --paper: #f5f2ec;
+  --warm-mid: #8c7b6b;
+  --rule: #d4cfc7;
+  --surface: #eeeae2;
+  --accent: #2c4a3e;
+  --accent-light: #4a7c6f;
+  --amber: #8c6a1a;
+  --amber-light: #c49030;
+  --red: #7a3b2e;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Instrument Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  border-bottom: 1px solid var(--rule);
+  padding: 3rem 0 2rem;
+  position: relative;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 50%, transparent 100%);
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.doc-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+h1 em { font-style: italic; color: var(--accent); }
+
+.header-meta {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--warm-mid);
+  margin-top: 0.75rem;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+/* RELATIONSHIP STATEMENT */
+.relationship-block {
+  margin: 3rem 0;
+  padding: 1.75rem 2rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+}
+
+.relationship-block p {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.relationship-block p + p {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  font-family: var(--sans);
+  font-style: normal;
+  color: var(--warm-mid);
+}
+
+/* STATS ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin: 2rem 0 3rem;
+}
+
+.stat-cell {
+  background: var(--paper);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+
+.stat-num {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+}
+
+/* SECTION */
+.corpus-section {
+  margin: 3rem 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 1.5rem;
+}
+
+.section-tier {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  color: var(--warm-mid);
+  flex-shrink: 0;
+}
+
+.section-head h2 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.section-desc {
+  font-size: 0.82rem;
+  color: var(--warm-mid);
+  margin-bottom: 1.25rem;
+  font-style: italic;
+}
+
+/* TABLE */
+.corpus-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.corpus-table th {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-mid);
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.corpus-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  color: #3a3530;
+  line-height: 1.45;
+}
+
+.corpus-table tr:hover td {
+  background: var(--surface);
+}
+
+.title-cell {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.tag-theory { border-color: var(--accent); color: var(--accent); }
+.tag-analysis { border-color: var(--amber); color: var(--amber); }
+.tag-design { border-color: #5a4a8a; color: #5a4a8a; }
+.tag-tool { border-color: var(--red); color: var(--red); }
+.tag-live { border-color: var(--accent-light); color: var(--accent-light); background: rgba(74,124,111,0.08); }
+.tag-ready { border-color: var(--amber); color: var(--amber); background: rgba(140,106,26,0.08); }
+.tag-planned { border-color: var(--warm-mid); color: var(--warm-mid); }
+.tag-written { border-color: #3a3530; color: #3a3530; }
+
+/* PLATFORM SECTION */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.platform-card {
+  border: 1px solid var(--rule);
+  padding: 1.25rem;
+  background: white;
+}
+
+.platform-name {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+
+.platform-url {
+  font-size: 0.78rem;
+  color: var(--warm-mid);
+  margin-bottom: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+}
+
+.platform-status {
+  font-size: 0.8rem;
+  color: #3a3530;
+  line-height: 1.5;
+}
+
+/* PRIORITIES */
+.priority-list {
+  list-style: none;
+  margin-top: 1.25rem;
+}
+
+.priority-list li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.85rem;
+  color: #3a3530;
+}
+
+.priority-list li:first-child { border-top: 1px solid var(--rule); }
+
+.p-num {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  padding-top: 2px;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+/* NOTES */
+.sorting-note {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 1.5rem;
+  margin-top: 3rem;
+  font-size: 0.82rem;
+  color: var(--warm-mid);
+  line-height: 1.65;
+}
+
+.sorting-note strong {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+footer {
+  border-top: 1px solid var(--rule);
+  padding: 1.5rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+footer span {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--warm-mid);
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="doc-label">Living Document · Master Corpus Index · April 2026</div>
+    <h1>Full Body of <em>Work</em></h1>
+    <div class="header-meta">Ariel Willingham · Condition Preservation Theory · Field & Signal</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="relationship-block">
+    <p>Field & Signal is a domain-specific implementation of Condition Preservation Theory, demonstrating how CPT constraints manifest in institutional coherence systems and can be operationalized into diagnostic and design instruments.</p>
+    <p>CPT is post-extractive system design as a discipline. F&S is its first operational proof. The full corpus — ~60 written works across three years — constitutes the body of evidence that the discipline is real.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-cell">
+      <div class="stat-num">~60</div>
+      <div class="stat-label">Written works</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Years of build</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">9</div>
+      <div class="stat-label">Files live on GitHub</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">17+</div>
+      <div class="stat-label">Named instruments</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Publication platforms</div>
+    </div>
+  </div>
+
+  <!-- TIER 1: THEORY -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">TIER 1</span>
+      <h2>Theory Layer</h2>
+    </div>
+    <p class="section-desc">Pieces that build the discipline directly. Core CPT/F&S intellectual project. These constitute the theoretical body of Condition Preservation Theory across multiple domains.</p>
+    <table class="corpus-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Register</th>
+          <th>CPT Connection</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="title-cell">Why Systems Extract</td><td><span class="tag tag-theory">Theory</span></td><td>Direct CPT foundation</td></tr>
+        <tr><td class="title-cell">Democracy as a Complex Adaptive Organism</td><td><span class="tag tag-theory">Theory</span></td><td>CPT applied to governance</td></tr>
+        <tr><td class="title-cell">The Civic Immune System</td><td><span class="tag tag-theory">Theory</span></td><td>System health / early warning (Axiom 8)</td></tr>
+        <tr><td class="title-cell">Post-Extraction Economics</td><td><span class="tag tag-theory">Theory</span></td><td>Economic layer of CPT</td></tr>
+        <tr><td class="title-cell">Attunement as Society's Missing Technology</td><td><span class="tag tag-theory">Theory</span></td><td>Signal integrity / sensing (Axiom 3)</td></tr>
+        <tr><td class="title-cell">Data Integrity + Field Integrity</td><td><span class="tag tag-theory">Theory</span></td><td>Connects CPT Axiom 3 to F&S</td></tr>
+        <tr><td class="title-cell">A Living System</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">Coherence Outposts Control</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">The Missing System of Civilization</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">Civilization Requires New Architecture</td><td><span class="tag tag-theory">Theory</span></td><td>CPT as precondition filter</td></tr>
+        <tr><td class="title-cell">How to Build Collective Agency</td><td><span class="tag tag-theory">Theory</span> <span class="tag tag-design">Design</span></td><td>—</td></tr>
+        <tr><td class="title-cell">How to Build a Regenerative Civilization</td><td><span class="tag tag-theory">Theory</span> <span class="tag tag-design">Design</span></td><td>—</td></tr>
+        <tr><td class="title-cell">The Positive Narrative Loop</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">Rethinking Human Evolution</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">The Regenerative History of Human Consciousness</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">Regenerating Mankind</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">Distortion + The Understanding of Value</td><td><span class="tag tag-theory">Theory</span></td><td>CPT Axiom 7</td></tr>
+        <tr><td class="title-cell">What Comes After Distortion — Coherence</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">5 Moves of Power</td><td><span class="tag tag-theory">Theory</span></td><td>Power revisability (Axiom 5)</td></tr>
+        <tr><td class="title-cell">The Costume of Liberty</td><td><span class="tag tag-theory">Theory</span></td><td>—</td></tr>
+        <tr><td class="title-cell">The Opposite of Usury</td><td><span class="tag tag-theory">Theory</span> <span class="tag tag-analysis">Economic</span></td><td>Extraction logic</td></tr>
+        <tr><td class="title-cell">The Triad Economy + Our Structural Exit</td><td><span class="tag tag-theory">Theory</span> <span class="tag tag-design">Design</span></td><td>Post-extractive economic design</td></tr>
+        <tr><td class="title-cell">Mutual Aid as the New Economy</td><td><span class="tag tag-theory">Theory</span> <span class="tag tag-design">Design</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TIER 2: ANALYSIS -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">TIER 2</span>
+      <h2>Diagnostic / Analysis Layer</h2>
+    </div>
+    <p class="section-desc">CPT applied — the framework reading specific real-world systems. These pieces demonstrate the theory without being the theory.</p>
+    <table class="corpus-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Domain</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="title-cell">Cartography of Collapse</td><td>Multi-domain</td><td>—</td></tr>
+        <tr><td class="title-cell">Systemic Collapse</td><td>Multi-domain</td><td>—</td></tr>
+        <tr><td class="title-cell">The Authoritarian Playbook</td><td>Governance</td><td>Power / Axiom 5</td></tr>
+        <tr><td class="title-cell">The Polarization Engine</td><td>Culture</td><td>Signal distortion / Axiom 3</td></tr>
+        <tr><td class="title-cell">Why America Produces Shooters</td><td>Culture / Civic</td><td>Participation degradation / Axiom 6</td></tr>
+        <tr><td class="title-cell">The Incel Culture + The Shadow of Belonging</td><td>Culture</td><td>—</td></tr>
+        <tr><td class="title-cell">Cultural Repair in the Age of Escalation</td><td>Culture</td><td>—</td></tr>
+        <tr><td class="title-cell">Before Algorithms: What's Lost + Can Be Repaired</td><td>Technology</td><td>—</td></tr>
+        <tr><td class="title-cell">The Physics of Public Mourning</td><td>Culture / Civic</td><td>—</td></tr>
+        <tr><td class="title-cell">Post-Cult Architecture</td><td>Culture</td><td>—</td></tr>
+        <tr><td class="title-cell">Peter Thiel + The Dangers of Narrative Manipulation</td><td>Power / Media</td><td>Axiom 3 + Axiom 5</td></tr>
+        <tr><td class="title-cell">The Generational Breakdown of America</td><td>Culture / Civic</td><td>—</td></tr>
+        <tr><td class="title-cell">The War on Weakness</td><td>Culture</td><td>—</td></tr>
+        <tr><td class="title-cell">Trump + The Constitution</td><td>Governance</td><td>—</td></tr>
+        <tr><td class="title-cell">Unmasking Cultural Fallacies</td><td>Culture</td><td>—</td></tr>
+        <tr><td class="title-cell">Restaurants as Societal Prototypes</td><td>Organizational</td><td>F&S applied to small systems</td></tr>
+        <tr><td class="title-cell">Video Games + Regenerative Society</td><td>Culture / Design</td><td>—</td></tr>
+        <tr><td class="title-cell">The Individual's Guide to Decentralizing Systems of Power</td><td>Civic</td><td>—</td></tr>
+        <tr><td class="title-cell">Gold: Integrity Metal</td><td>Economic</td><td>—</td></tr>
+        <tr><td class="title-cell">Re-engineering a Co-opted Gamble</td><td>—</td><td>—</td></tr>
+        <tr><td class="title-cell">Lineage Invocation</td><td>—</td><td>—</td></tr>
+        <tr><td class="title-cell">New Age Vibes + Voice</td><td>Culture</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TIER 3: DESIGN -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">TIER 3</span>
+      <h2>Design / Output Layer</h2>
+    </div>
+    <p class="section-desc">What post-extractive system design produces. Constructive outputs — civic architecture, policy, leadership, institutional repair.</p>
+    <table class="corpus-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Domain</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="title-cell">Bridges of Peace: Designing Belonging Beyond Division</td><td>Civic Design</td><td>—</td></tr>
+        <tr><td class="title-cell">A Proposal for Reshaping U.S. Policy</td><td>Policy</td><td>—</td></tr>
+        <tr><td class="title-cell">How the Loop Transition Map Brings Regeneration in Society</td><td>Civic / Institutional</td><td>Connects F&S tool to broader application</td></tr>
+        <tr><td class="title-cell">The Seven Principles That Can Rebuild Trust</td><td>Civic / Institutional</td><td>—</td></tr>
+        <tr><td class="title-cell">The Blueprint for Strength and Leadership</td><td>Leadership</td><td>—</td></tr>
+        <tr><td class="title-cell">Rebuilding Leadership + Trust from the Ground Up</td><td>Leadership</td><td>—</td></tr>
+        <tr><td class="title-cell">From Lost to Led: Hard Times Creating Strong Men</td><td>Leadership</td><td>—</td></tr>
+        <tr><td class="title-cell">Field Development 101</td><td>Practitioner</td><td>F&S practitioner entry layer</td></tr>
+        <tr><td class="title-cell">How a Revolution Speaks</td><td>Civic</td><td>—</td></tr>
+        <tr><td class="title-cell">Hard Conversations Checklist</td><td>Practitioner</td><td>—</td></tr>
+        <tr><td class="title-cell">Conference Scoring System</td><td>Institutional</td><td>—</td></tr>
+        <tr><td class="title-cell">Out of the Coop 11-Part Series</td><td>Series</td><td>Written — 11 parts</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TIER 4: INSTRUMENTS -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">TIER 4</span>
+      <h2>Instruments & Tools</h2>
+    </div>
+    <p class="section-desc">Operational layer. Diagnostic and design instruments. The instruments are what make CPT and F&S a discipline rather than a philosophy.</p>
+
+```
+<table class="corpus-table">
+  <thead>
+    <tr><th>Instrument</th><th>Status</th><th>Location</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="title-cell">CPT Foundation Document</td><td><span class="tag tag-ready">Ready to upload</span></td><td>cpt-foundation.html</td></tr>
+    <tr><td class="title-cell">CPT Gate Instrument v0.1</td><td><span class="tag tag-ready">Ready to upload</span></td><td>cpt-gate-instrument.html</td></tr>
+    <tr><td class="title-cell">F&S Index</td><td><span class="tag tag-live">Live</span></td><td>fs-index.html</td></tr>
+    <tr><td class="title-cell">F&S Complete Framework</td><td><span class="tag tag-live">Live</span></td><td>fs-complete.html</td></tr>
+    <tr><td class="title-cell">Field Reading</td><td><span class="tag tag-live">Live</span></td><td>fs-field-reading.html</td></tr>
+    <tr><td class="title-cell">Loop Transition Map</td><td><span class="tag tag-live">Live</span></td><td>fs-loop-transition-map.html</td></tr>
+    <tr><td class="title-cell">Cross-Scale Check</td><td><span class="tag tag-live">Live</span></td><td>fs-cross-scale-check.html</td></tr>
+    <tr><td class="title-cell">Layer 3 Spec</td><td><span class="tag tag-live">Live</span></td><td>fs-layer3-spec.html</td></tr>
+    <tr><td class="title-cell">Core Variable Glossary</td><td><span class="tag tag-live">Live</span></td><td>fs-vocabulary.html</td></tr>
+    <tr><td class="title-cell">Civic Evolution</td><td><span class="tag tag-live">Live</span></td><td>fs-civic-evolution.html</td></tr>
+    <tr><td class="title-cell">Handoff Protocol</td><td><span class="tag tag-live">Live</span></td><td>fs-handoff-protocol.html</td></tr>
+    <tr><td class="title-cell">Practitioner Orientation</td><td><span class="tag tag-planned">Planned</span></td><td>fs-practitioner-orientation.html</td></tr>
+    <tr><td class="title-cell">Architecture Overview</td><td><span class="tag tag-planned">Planned</span></td><td>fs-architecture-overview.html</td></tr>
+    <tr><td class="title-cell">Interpretation Layer</td><td><span class="tag tag-planned">Planned</span></td><td>fs-interpretation-layer.html</td></tr>
+    <tr><td class="title-cell">Signal Translation Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Trade Awareness Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Field Misalignment Diagnostic Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Field Design Analysis Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">System Sorting Analysis Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Coherence Scoring System</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Loop Logic Atlas</td><td><span class="tag tag-live">Live</span></td><td>GitHub + Google Docs</td></tr>
+    <tr><td class="title-cell">Structural Capacity Model</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Adaptive Capacity Framework</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Collapse & Coherence Equations</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Capacity Mapping Tool</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Field Repair Protocol</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Public Entry Architecture</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Institutional Calibration Map</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Translation Plan Index</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">Field Nexus Development Notes</td><td><span class="tag tag-written">Written</span></td><td>Google Docs</td></tr>
+    <tr><td class="title-cell">False Resonance Audit</td><td><span class="tag tag-planned">In development</span></td><td>—</td></tr>
+    <tr><td class="title-cell">CPT Drift Rubric (gradient layer)</td><td><span class="tag tag-planned">Planned</span></td><td>Phase 3</td></tr>
+    <tr><td class="title-cell">Personal Triage / Stabilization Protocol</td><td><span class="tag tag-planned">Planned</span></td><td>—</td></tr>
+    <tr><td class="title-cell">Repair vs Rebuild Instrument</td><td><span class="tag tag-planned">Planned</span></td><td>—</td></tr>
+    <tr><td class="title-cell">Field Debrief</td><td><span class="tag tag-planned">Planned</span></td><td>—</td></tr>
+  </tbody>
+</table>
+```
+
+  </div>
+
+  <!-- PUBLICATION ECOSYSTEM -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">ECOSYSTEM</span>
+      <h2>Publication Platforms</h2>
+    </div>
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div class="platform-name">GitHub Pages</div>
+        <div class="platform-url">nogameariel.github.io</div>
+        <div class="platform-status">Live. 9 F&S instrument files. CPT documents ready to upload. Primary public-facing home for tools.</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">Substack</div>
+        <div class="platform-url">arielwillingham.substack.com</div>
+        <div class="platform-status">Public. Full published pieces. Contains Tier 1–3 corpus writing. Needs mapping to framework tiers.</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">Google Docs</div>
+        <div class="platform-url">Private library</div>
+        <div class="platform-status">Full document library. Linked instruments from F&S PDF live here. Needs inventory and migration plan.</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">Notes</div>
+        <div class="platform-url">Local / private</div>
+        <div class="platform-status">Fragments, titles, in-progress work. Source of the handwritten lists. Needs capture pass.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMMEDIATE PRIORITIES -->
+
+  <div class="corpus-section">
+    <div class="section-head">
+      <span class="section-tier">NOW</span>
+      <h2>Immediate Priorities</h2>
+    </div>
+    <ul class="priority-list">
+      <li><span class="p-num">01</span>Upload cpt-foundation.html and cpt-gate-instrument.html to GitHub</li>
+      <li><span class="p-num">02</span>Update GitHub index to reflect CPT as upstream discipline of F&S</li>
+      <li><span class="p-num">03</span>Build fs-practitioner-orientation, fs-architecture-overview, fs-interpretation-layer</li>
+      <li><span class="p-num">04</span>Inventory Google Docs — verify all linked instruments from F&S PDF exist and are current</li>
+      <li><span class="p-num">05</span>Map Substack pieces to Tier 1/2/3 — build a reading path</li>
+      <li><span class="p-num">06</span>Build CPT Drift Rubric (gradient layer — Phase 3 formalization)</li>
+      <li><span class="p-num">07</span>Capture personal triage, stabilization protocol, repair vs rebuild, field debrief</li>
+      <li><span class="p-num">08</span>Complete tier sorting for all 60 titles — assign locations</li>
+    </ul>
+  </div>
+
+  <div class="sorting-note">
+    <strong>Sorting Notes — April 2026</strong>
+    This index is a first-pass architecture, not a final map. Several titles need location verification, tier confirmation, and connection to specific CPT axioms. The tier assignments above reflect structural reading of the titles — some may shift on closer review. This document should be updated after each work session. The work exists. The task now is architecture.
+  </div>
+
+</main>
+
+<footer>
+  <span>Master Corpus Index · Living Document · April 2026</span>
+  <span>Condition Preservation Theory · Field & Signal</span>
+</footer>
+
+</body>
+</html>
