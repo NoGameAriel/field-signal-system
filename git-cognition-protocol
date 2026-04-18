@@ -1,0 +1,186 @@
+# Git Cognition Protocol
+
+*How to use Git without fighting it.*
+
+-----
+
+## The Core Translation
+
+Git is a memory system. It does one thing: it remembers every state the repository has ever been in, and lets you move between them.
+
+That’s it. Everything else is detail.
+
+If you understand Git as memory, the commands stop being arbitrary and start being obvious.
+
+-----
+
+## The Mental Model
+
+Think of your repo as a living document that exists in time.
+
+- **The working directory** is what you can see right now — the current state of all your files.
+- **A commit** is a snapshot — a complete record of every file at a specific moment.
+- **The commit history** is the full timeline of every snapshot you’ve ever taken.
+
+You are always working in the present. Git stores the past. You decide when to take a snapshot.
+
+-----
+
+## The Four Moves You Actually Need
+
+### 1. Check what’s changed
+
+```bash
+git status
+```
+
+Shows you what files have been modified since your last snapshot. Run this before anything else. It orients you.
+
+### 2. Stage what you want to save
+
+```bash
+git add .
+```
+
+The `.` means “everything that changed.” If you only want specific files:
+
+```bash
+git add filename.md
+```
+
+Staging is you telling Git: *I want to include this in my next snapshot.*
+
+### 3. Take the snapshot
+
+```bash
+git commit -m "what you did in plain language"
+```
+
+The message is for future you. Write it like a note to yourself.
+Examples:
+
+- `"Added CPT gate instrument"`
+- `"Moved fs-vocabulary into 01_stabilized_signals"`
+- `"Fixed broken link in index"`
+
+### 4. Send it to GitHub
+
+```bash
+git push
+```
+
+This syncs your local snapshots to GitHub. Until you push, your commits only exist on your computer.
+
+-----
+
+## The Full Sequence (Every Time)
+
+```bash
+git status          # what changed?
+git add .           # stage everything
+git commit -m "description of what I did"
+git push            # send to GitHub
+```
+
+That’s the complete workflow. Four commands. You will use these every single time.
+
+-----
+
+## When You’re Starting Fresh (New Repo)
+
+```bash
+git init                          # start tracking this folder
+git add .                         # stage everything
+git commit -m "initial structure" # first snapshot
+git remote add origin [URL]       # connect to GitHub
+git push -u origin main           # send to GitHub for the first time
+```
+
+The `[URL]` comes from GitHub when you create a new repo. Copy it from there.
+
+-----
+
+## What Branch Means (Keep It Simple)
+
+You are always on a branch. The default is called `main`.
+
+For now: **stay on main.** Don’t worry about branches until the repo is stable and you have a collaborator who needs to work in parallel.
+
+-----
+
+## When Something Goes Wrong
+
+**“I made a mistake in my last commit”**
+
+```bash
+git commit --amend -m "corrected message"
+```
+
+Only use this before you’ve pushed.
+
+**“I want to see what a file looked like before I changed it”**
+
+```bash
+git diff filename.md
+```
+
+Shows what changed since your last commit.
+
+**“I want to undo changes to a file I haven’t committed yet”**
+
+```bash
+git checkout -- filename.md
+```
+
+Warning: this permanently discards your changes to that file.
+
+**“I’m confused about what state I’m in”**
+
+```bash
+git status
+git log --oneline
+```
+
+`git log --oneline` shows your recent commit history in plain form. It tells you where you are.
+
+-----
+
+## The Cognitive Translation Table
+
+|Git term         |What it actually means                              |
+|-----------------|----------------------------------------------------|
+|Repository (repo)|The folder Git is tracking                          |
+|Commit           |A snapshot of the current state                     |
+|Stage / add      |Selecting what goes into the next snapshot          |
+|Push             |Sending your snapshots to GitHub                    |
+|Pull             |Getting someone else’s snapshots from GitHub        |
+|Branch           |A parallel timeline (don’t worry about this yet)    |
+|Merge            |Combining two timelines (don’t worry about this yet)|
+|Clone            |Downloading a full repo to your computer            |
+|Origin           |The name for your GitHub remote                     |
+|Main             |The name of your primary timeline                   |
+
+-----
+
+## How This Repo Uses Git
+
+This repository maps Git’s logic onto the epistemic structure of the work:
+
+- **Commits** are stabilization events — moments when thinking solidifies enough to be recorded
+- **The commit message** is a signal log — what changed and why
+- **The history** is `03_memory` made concrete — the full evolution of the system
+- **Pushing** is publication to the distributed record
+
+When in doubt: commit often, with clear messages. Small snapshots are better than large ones. You can always look back. You cannot recover what was never committed.
+
+-----
+
+## The One Rule
+
+**Commit before you make big changes.**
+
+If you’re about to restructure a folder, move files, or rewrite something significant — take a snapshot first. Then you can always return to the moment before if something goes wrong.
+
+-----
+
+*This document exists because Git’s native language is not everyone’s native language. The protocol above translates Git into the terms this system already understands: memory, signal, state, and repair.*
