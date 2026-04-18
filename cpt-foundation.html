@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Condition Preservation Theory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0f0e0c;
+      --paper: #f5f2ec;
+      --warm-mid: #8c7b6b;
+      --rule: #d4cfc7;
+      --accent: #2c4a3e;
+      --accent-light: #4a7c6f;
+      --warn: #7a3b2e;
+      --mono: 'DM Mono', monospace;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Instrument Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 1px solid var(--rule);
+      padding: 3rem 0 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 60%, transparent 100%);
+    }
+
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .discipline-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .header-sub {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: var(--warm-mid);
+      margin-top: 1rem;
+      font-weight: 400;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ── META AXIOM ── */
+    .meta-axiom {
+      margin: 4rem 0 4.5rem;
+      padding: 2.5rem 2.5rem 2.5rem 0;
+      border-left: 3px solid var(--accent);
+      padding-left: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .meta-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 1rem;
+    }
+
+    .meta-axiom blockquote {
+      font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .meta-axiom blockquote strong {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section {
+      margin: 4rem 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--warm-mid);
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .section-intro {
+      font-size: 1rem;
+      font-family: var(--sans);
+      color: var(--warm-mid);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    /* ── AXIOM CARDS ── */
+    .axiom-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .axiom {
+      background: white;
+      border: 1px solid var(--rule);
+      padding: 1.75rem 2rem;
+      position: relative;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .axiom:hover {
+      border-color: var(--accent-light);
+      box-shadow: 0 4px 20px rgba(44,74,62,0.08);
+    }
+
+    .axiom-num {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--accent-light);
+      margin-bottom: 0.6rem;
+    }
+
+    .axiom-title {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .axiom-body {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: #4a453f;
+      line-height: 1.65;
+    }
+
+    .axiom-body p + p {
+      margin-top: 0.5rem;
+    }
+
+    .axiom-note {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--rule);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--warm-mid);
+      font-style: italic;
+    }
+
+    /* ── OUTPUTS ── */
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .output-grid { grid-template-columns: 1fr; }
+    }
+
+    .output-card {
+      border: 1px solid var(--rule);
+      padding: 1.5rem;
+      background: white;
+      transition: border-color 0.2s ease;
+    }
+
+    .output-card:hover {
+      border-color: var(--accent-light);
+    }
+
+    .output-abbr {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .output-name {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--ink);
+    }
+
+    .output-desc {
+      font-family: var(--sans);
+      font-size: 0.83rem;
+      color: #4a453f;
+      line-height: 1.6;
+    }
+
+    /* ── DISCIPLINE DEFINITION ── */
+    .definition-block {
+      background: var(--accent);
+      color: var(--paper);
+      padding: 2.5rem 2.5rem;
+      margin: 3rem 0;
+    }
+
+    .definition-block .meta-label {
+      color: var(--accent-light);
+      opacity: 0.8;
+    }
+
+    .definition-block p {
+      font-family: var(--serif);
+      font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+      font-weight: 300;
+      line-height: 1.6;
+      color: #e8e2d8;
+    }
+
+    .definition-block strong {
+      font-weight: 600;
+      color: white;
+    }
+
+    /* ── PRECONDITION FILTER ── */
+    .filter-block {
+      margin: 2rem 0;
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .filter-item:first-child {
+      border-top: 1px solid var(--rule);
+    }
+
+    .filter-domain {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      min-width: 120px;
+      flex-shrink: 0;
+    }
+
+    .filter-desc {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: #4a453f;
+      line-height: 1.5;
+    }
+
+    /* ── CONSTRAINT REFINEMENT ── */
+    .constraint-box {
+      border: 1px solid var(--warn);
+      padding: 1.5rem 2rem;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .constraint-box::before {
+      content: 'Constraint Refinement';
+      position: absolute;
+      top: -0.6rem;
+      left: 1rem;
+      background: var(--paper);
+      padding: 0 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--warn);
+    }
+
+    .constraint-box p {
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: #4a453f;
+      line-height: 1.65;
+    }
+
+    .constraint-box .not {
+      color: var(--warn);
+      font-style: italic;
+    }
+
+    .constraint-box .but {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── IMPLEMENTATION ── */
+    .impl-block {
+      background: #eeeae2;
+      border-left: 3px solid var(--accent-light);
+      padding: 1.75rem 2rem;
+      margin: 2rem 0;
+    }
+
+    .impl-block .meta-label {
+      color: var(--accent);
+    }
+
+    .impl-block p {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: #3a3530;
+      line-height: 1.65;
+    }
+
+    .impl-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-light);
+      padding-bottom: 1px;
+      transition: color 0.15s ease;
+    }
+
+    .impl-link:hover { color: var(--accent-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2rem;
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-left {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--warm-mid);
+    }
+
+    .footer-right {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      color: var(--warm-mid);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── NAV ── */
+    .toc {
+      margin: 3rem 0 4rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--rule);
+      background: white;
+    }
+
+    .toc-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--warm-mid);
+      margin-bottom: 1rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+    }
+
+    .toc-list a {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s ease;
+    }
+
+    .toc-list a:hover { border-color: var(--accent-light); }
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="discipline-tag">Working Paper · 2026</div>
+      <h1>Condition<br><em>Preservation</em><br>Theory</h1>
+      <p class="header-sub">A foundational discipline for the study of system viability under constraint</p>
+    </div>
+  </header>
+
+  <main>
+
+```
+<nav class="toc reveal">
+  <div class="toc-label">Contents</div>
+  <ul class="toc-list">
+    <li><a href="#meta-axiom">Foundational Axiom</a></li>
+    <li><a href="#axioms">Eight Axioms</a></li>
+    <li><a href="#outputs">Discipline Outputs</a></li>
+    <li><a href="#definition">Discipline Definition</a></li>
+    <li><a href="#scope">Scope & Constraint</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+  </ul>
+</nav>
+
+<!-- META AXIOM -->
+<section id="meta-axiom" class="meta-axiom">
+  <div class="meta-label">Foundational Axiom</div>
+  <blockquote>
+    A system must maintain the integrity of the conditions it depends on,
+    <strong>without displacing degradation</strong>
+    across time, space, or participants.
+  </blockquote>
+</section>
+
+<!-- EIGHT AXIOMS -->
+<section id="axioms" class="section reveal">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>The Eight Axioms</h2>
+  </div>
+  <p class="section-intro">
+    Extractive systems survive by exploiting specific structural openings. Each axiom closes one. Together they map the complete attack surface of condition degradation.
+  </p>
+
+  <div class="axiom-grid">
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 01</div>
+      <div class="axiom-title">Regeneration is a hard constraint, not an outcome</div>
+      <div class="axiom-body">
+        <p>A system cannot be considered viable if it depletes the conditions that sustain it. If inputs degrade faster than they recover, the system is structurally invalid — regardless of current output.</p>
+        <p>This flips sustainability from branding to operational requirement.</p>
+      </div>
+      <div class="axiom-note">Closes the viability loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 02</div>
+      <div class="axiom-title">Externalities must be internalized</div>
+      <div class="axiom-body">
+        <p>A system cannot export its costs to unseen or unaccounted domains. Environmental damage, psychological burnout, social fragmentation — if harm exists, it must be measured, attributed, and fed back into decision-making.</p>
+        <p>Otherwise extraction hides. It doesn't disappear.</p>
+      </div>
+      <div class="axiom-note">Closes the externalization loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 03</div>
+      <div class="axiom-title">Signal integrity is prerequisite to coordination</div>
+      <div class="axiom-body">
+        <p>A system cannot function coherently if its feedback signals are distorted. This includes price signals, metrics, and communication. If the system rewards misrepresentation, it will optimize for illusion, not reality.</p>
+      </div>
+      <div class="axiom-note">Closes the signal corruption loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 04</div>
+      <div class="axiom-title">Throughput cannot exceed adaptive capacity</div>
+      <div class="axiom-body">
+        <p>Any system has a rate at which it can process, respond, and adapt. When growth, production, or decision velocity exceeds that capacity, breakdown is inevitable. This is where many systems quietly become extractive: they scale faster than they can stay coherent.</p>
+      </div>
+      <div class="axiom-note">Closes the scale loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 05</div>
+      <div class="axiom-title">Power must remain revisable</div>
+      <div class="axiom-body">
+        <p>If control within a system cannot be challenged, updated, or redistributed, extraction will emerge — not as moral failure, but as structural inevitability. Authority must be auditable. Decisions must be contestable. Capture must be detectable and correctable.</p>
+      </div>
+      <div class="axiom-note">Closes the capture loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 06</div>
+      <div class="axiom-title">Participation must not degrade the participant</div>
+      <div class="axiom-body">
+        <p>If engaging with a system leaves workers, users, or citizens less resourced, less aware, or less capable — the system is extractive, regardless of output. A valid system increases capacity through participation, not drains it.</p>
+      </div>
+      <div class="axiom-note">Closes the participation loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 07</div>
+      <div class="axiom-title">Value must map to real-world effects</div>
+      <div class="axiom-body">
+        <p>If a system's internal rewards diverge from real-world outcomes, extraction emerges. Profit without ecological accounting. Engagement without well-being. Growth without stability. A system must reward what actually sustains the broader field it operates within.</p>
+      </div>
+      <div class="axiom-note">Closes the reward divergence loophole</div>
+    </div>
+
+    <div class="axiom reveal">
+      <div class="axiom-num">AXIOM 08</div>
+      <div class="axiom-title">Collapse signals must be legible early</div>
+      <div class="axiom-body">
+        <p>If a system only reveals failure at the point of crisis, it guarantees overshoot. Degradation must be visible before it becomes catastrophic. Early warnings must be actionable, not ignorable. Otherwise systems run until they break.</p>
+      </div>
+      <div class="axiom-note">Closes the legibility loophole</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- OUTPUTS -->
+<section id="outputs" class="section reveal">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>What CPT Produces</h2>
+  </div>
+  <p class="section-intro">
+    A useful discipline is defined less by its claims and more by its outputs under constraint. CPT produces four distinct artifact types that no existing systems field is currently generating.
+  </p>
+
+  <div class="output-grid">
+
+    <div class="output-card reveal">
+      <div class="output-abbr">SLD</div>
+      <div class="output-name">System Legitimacy Diagnoses</div>
+      <div class="output-desc">Not "is this system good or bad" — but: does it preserve the conditions that make its own continuation possible, without displacement? Produces a graded output: condition-preserving, condition-neutral, or condition-degrading. CPT as falsification engine for systemic viability.</div>
+    </div>
+
+    <div class="output-card reveal">
+      <div class="output-abbr">DM</div>
+      <div class="output-name">Displacement Maps</div>
+      <div class="output-desc">Every system produces hidden transfers — ecological to economic, labor to productivity, attention to revenue, stability to growth. CPT makes displacement legible as a primary object, not a side-effect. A theory of where systems hide their cost structure.</div>
+    </div>
+
+    <div class="output-card reveal">
+      <div class="output-abbr">CBDG</div>
+      <div class="output-name">Constraint-Based Design Grammars</div>
+      <div class="output-desc">Instead of prescribing solutions, CPT generates allowed structures, forbidden structures, and failure modes under scaling. Design prohibition logic, not design inspiration. Architecturally powerful because it operates at the level of what cannot be built.</div>
+    </div>
+
+    <div class="output-card reveal">
+      <div class="output-abbr">MSAT</div>
+      <div class="output-name">Meta-System Auditing Tools</div>
+      <div class="output-desc">Instruments including Condition Dependency Registers, Extraction Vectors, Integrity Drift Scores, and Feedback Fidelity Indexes. Where the diagnostic instinct becomes operational infrastructure.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEFINITION -->
+<section id="definition" class="section reveal">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Discipline Definition</h2>
+  </div>
+
+  <div class="definition-block">
+    <div class="meta-label">CPT defined</div>
+    <p>
+      Condition Preservation Theory is <strong>the study of whether systems can sustain their enabling conditions without displacing degradation across hidden boundaries</strong>, and the production of instruments that make that constraint measurable, designable, and enforceable.
+    </p>
+  </div>
+</section>
+
+<!-- SCOPE -->
+<section id="scope" class="section reveal">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Scope & Precondition Filter</h2>
+  </div>
+
+  <p class="section-intro">
+    CPT is not another framework competing within existing disciplines. It functions as a precondition filter — a prior constraint that all other system design fields must pass through.
+  </p>
+
+  <div class="filter-block">
+    <div class="filter-item reveal">
+      <span class="filter-domain">Economics</span>
+      <span class="filter-desc">Becomes a subsystem subject to CPT constraints. Economic models must account for condition preservation before optimization.</span>
+    </div>
+    <div class="filter-item reveal">
+      <span class="filter-domain">Policy</span>
+      <span class="filter-desc">Becomes implementation under CPT validation. Policy design must demonstrate non-displacement before adoption.</span>
+    </div>
+    <div class="filter-item reveal">
+      <span class="filter-domain">Technology</span>
+      <span class="filter-desc">Becomes infrastructure that must pass CPT thresholds. Scaling decisions require adaptive capacity assessment.</span>
+    </div>
+    <div class="filter-item reveal">
+      <span class="filter-domain">Governance</span>
+      <span class="filter-desc">Becomes maintenance of condition integrity. Governance legitimacy is measured by preservation, not control.</span>
+    </div>
+  </div>
+
+  <div class="constraint-box reveal">
+    <p>
+      <span class="not">Not: no cost transfer ever</span> — too absolute, vulnerable to trivial counterexample.
+    </p>
+    <p style="margin-top: 0.75rem;">
+      <span class="but">But: no unaccounted or non-recoverable cost transfer across system boundaries.</span>
+    </p>
+    <p style="margin-top: 0.75rem;">
+      This preserves realism while keeping the constraint intact. Transfer that is visible, attributed, and recoverable is not extraction. Transfer that is hidden, unattributed, or permanent is.
+    </p>
+  </div>
+</section>
+
+<!-- IMPLEMENTATION -->
+<section id="implementation" class="section reveal">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Current Implementation</h2>
+  </div>
+
+  <div class="impl-block reveal">
+    <div class="meta-label">Domain-specific implementation · Institutional coherence</div>
+    <p>
+      <strong>Field &amp; Signal</strong> is the first operational implementation of Condition Preservation Theory, demonstrating how CPT constraints manifest in institutional coherence systems and can be operationalized into diagnostic and design instruments.
+    </p>
+    <p style="margin-top: 0.75rem;">
+      F&amp;S demonstrates that CPT is not hypothetical. The diagnostic stack — Loop Integrity Architecture, Conditions Layer, Field Reading instruments, Cross-Scale Check — constitutes working proof that post-extractive system design can be instrumented and deployed at the practitioner level.
+    </p>
+    <a class="impl-link" href="./index.html">Field &amp; Signal → complete tool stack</a>
+  </div>
+</section>
+```
+
+  </main>
+
+  <footer>
+    <div class="footer-left">CPT · WORKING PAPER · 2026</div>
+    <div class="footer-right">Field &amp; Signal is a domain-specific implementation</div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
