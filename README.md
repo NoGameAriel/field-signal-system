@@ -59,56 +59,7 @@ This is not a recommendation. It is a structural requirement.
 - **Integrity:** Structural recognition must precede narrative explanation.
 
 -----
-<img src="diagrams/cpt-stack.svg" alt="CPT Stack Diagram" width="600"/>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" width="600" height="520" font-family="Georgia, serif">
 
-  <!-- Background -->
-  <rect width="600" height="520" fill="#ffffff"/>
-
-  <!-- Title -->
-<text x="300" y="38" text-anchor="middle" font-size="15" font-weight="bold" fill="#111111" letter-spacing="2">CONDITION PRESERVATION THEORY</text>
-<text x="300" y="58" text-anchor="middle" font-size="11" fill="#555555" letter-spacing="1">The Five-Level Stack</text>
-
-  <!-- Level 5 — F&S (top) -->
-  <rect x="60" y="80" width="480" height="64" fill="#111111" rx="2"/>
-  <text x="110" y="106" font-size="11" fill="#aaaaaa" letter-spacing="1">LEVEL 5</text>
-  <text x="110" y="124" font-size="14" font-weight="bold" fill="#ffffff">Field &amp; Signal (F&amp;S)</text>
-  <text x="430" y="115" font-size="11" fill="#aaaaaa" text-anchor="middle">Human operational meta-feedback layer</text>
-
-  <!-- Level 4 — Meta-feedback -->
-  <rect x="60" y="160" width="480" height="64" fill="#222222" rx="2"/>
-  <text x="110" y="186" font-size="11" fill="#aaaaaa" letter-spacing="1">LEVEL 4</text>
-  <text x="110" y="204" font-size="14" font-weight="bold" fill="#ffffff">Meta-Feedback</text>
-  <text x="430" y="195" font-size="11" fill="#aaaaaa" text-anchor="middle">Detects drift independent of reinforcement</text>
-
-  <!-- Level 3 — Drift -->
-  <rect x="60" y="240" width="480" height="64" fill="#444444" rx="2"/>
-  <text x="110" y="266" font-size="11" fill="#cccccc" letter-spacing="1">LEVEL 3</text>
-  <text x="110" y="284" font-size="14" font-weight="bold" fill="#ffffff">Drift</text>
-  <text x="430" y="275" font-size="11" fill="#cccccc" text-anchor="middle">Accumulated divergence from external reality</text>
-
-  <!-- Level 2 — Feedback -->
-  <rect x="60" y="320" width="480" height="64" fill="#666666" rx="2"/>
-  <text x="110" y="346" font-size="11" fill="#eeeeee" letter-spacing="1">LEVEL 2</text>
-  <text x="110" y="364" font-size="14" font-weight="bold" fill="#ffffff">Feedback</text>
-  <text x="430" y="355" font-size="11" fill="#eeeeee" text-anchor="middle">Reinforces behavior within the domain</text>
-
-  <!-- Level 1 — Domain (bottom) -->
-  <rect x="60" y="400" width="480" height="64" fill="#999999" rx="2"/>
-  <text x="110" y="426" font-size="11" fill="#ffffff" letter-spacing="1">LEVEL 1</text>
-  <text x="110" y="444" font-size="14" font-weight="bold" fill="#ffffff">Domain</text>
-  <text x="430" y="435" font-size="11" fill="#ffffff" text-anchor="middle">Defines what is real and what counts as change</text>
-
-  <!-- Reinforcement arrow — bottom to top, left side -->
-  <line x1="30" y1="464" x2="30" y2="96" stroke="#111111" stroke-width="1.5"/>
-  <polygon points="30,80 24,100 36,100" fill="#111111"/>
-  <text x="22" y="290" font-size="10" fill="#111111" text-anchor="middle" transform="rotate(-90 22 290)" letter-spacing="1">REINFORCEMENT</text>
-
-  <!-- Detection arrow — top to bottom, right side -->
-  <line x1="570" y1="96" x2="570" y2="464" stroke="#111111" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <polygon points="570,480 564,460 576,460" fill="#111111"/>
-  <text x="578" y="290" font-size="10" fill="#111111" text-anchor="middle" transform="rotate(90 578 290)" letter-spacing="1">DETECTION</text>
-</svg>
 
 *Referential integrity is the constant. All else is drift.*
 
