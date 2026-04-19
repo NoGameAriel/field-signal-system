@@ -1,111 +1,126 @@
-# Field & Signal System
+# 📄 Condition Preservation Theory (CPT)
 
-A three-year body of work in post-extractive system design.
+**Axiom:** Systems maintain or lose referential integrity with reality through the interaction of three elements: domain, feedback, and meta-feedback.
 
------
-
-## What This Is
-
-This repository is the working architecture for two interconnected bodies of work:
-
-**Condition Preservation Theory (CPT)** — a foundational discipline for the study of system viability under constraint. CPT asks whether a system can sustain the conditions it depends on without displacing degradation across time, space, or participants. It produces System Legitimacy Diagnoses, Displacement Maps, Constraint-Based Design Grammars, and Meta-System Auditing Tools.
-
-**Field & Signal (F&S)** — a domain-specific implementation of CPT, demonstrating how CPT constraints manifest in institutional coherence systems and can be operationalized into diagnostic and design instruments.
-
-> *Field & Signal is a domain-specific implementation of Condition Preservation Theory, demonstrating how CPT constraints manifest in institutional coherence systems and can be operationalized into diagnostic and design instruments.*
-
-CPT is prior. F&S does not define CPT. CPT defines the constraint; F&S operationalizes it in one domain.
+**Core Warning:** Systems fail not when they stop functioning, but when they continue functioning on an outdated model of what functioning means.
 
 -----
 
-## The Foundational Claim
+## 📐 I. Structural Truth: The CPT Stack
 
-> A system must maintain the integrity of the conditions it depends on, without displacing degradation across time, space, or participants.
+The following diagram is the primary anchor for this repository. It establishes the bedrock logic of the system. All text in this repository is subordinate to its structural logic. Navigation must proceed with this hierarchy as the reference point.
 
-Everything in this repository is downstream of that statement.
+![CPT Stack Diagram](<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" width="600" height="520" font-family="Georgia, serif">
 
------
+  <!-- Background -->
 
-## Repository Structure
+  <rect width="600" height="520" fill="#ffffff"/>
 
-This repo is organized by **epistemic state**, not document type. Each folder represents a different relationship between knowledge and trust.
+  <!-- Title -->
 
-```
-00_live_field/          What is alive and unresolved right now
-01_stabilized_signals/  What is trusted enough to build on
-02_expression/          What goes out into the world
-03_memory/              What was true and is now history
-04_repair_layer/        What happens when the system drifts
-05_entry_interface/     What strangers see first
-99_meta/                How the system maintains itself
-```
+<text x="300" y="38" text-anchor="middle" font-size="15" font-weight="bold" fill="#111111" letter-spacing="2">CONDITION PRESERVATION THEORY</text>
+<text x="300" y="58" text-anchor="middle" font-size="11" fill="#555555" letter-spacing="1">The Five-Level Stack</text>
 
-### 00_live_field
+  <!-- Level 5 — F&S (top) -->
 
-Current state of thinking. Active notes, unresolved questions, working ideas. This folder is always in motion. Nothing here is final. Everything here is signal.
+  <rect x="60" y="80" width="480" height="64" fill="#111111" rx="2"/>
+  <text x="110" y="106" font-size="11" fill="#aaaaaa" letter-spacing="1">LEVEL 5</text>
+  <text x="110" y="124" font-size="14" font-weight="bold" fill="#ffffff">Field &amp; Signal (F&amp;S)</text>
+  <text x="430" y="115" font-size="11" fill="#aaaaaa" text-anchor="middle">Human operational meta-feedback layer</text>
 
-### 01_stabilized_signals
+  <!-- Level 4 — Meta-feedback -->
 
-What has been tested, refined, and trusted. CPT core principles, F&S foundational documents, validated instruments. This is the layer everything else builds on. Changes here require deliberate decision, not drift.
+  <rect x="60" y="160" width="480" height="64" fill="#222222" rx="2"/>
+  <text x="110" y="186" font-size="11" fill="#aaaaaa" letter-spacing="1">LEVEL 4</text>
+  <text x="110" y="204" font-size="14" font-weight="bold" fill="#ffffff">Meta-Feedback</text>
+  <text x="430" y="195" font-size="11" fill="#aaaaaa" text-anchor="middle">Detects drift independent of reinforcement</text>
 
-### 02_expression
+  <!-- Level 3 — Drift -->
 
-Output into the world. Essays, Substack pieces, diagrams, HTML tools. These are the public face of the work — organized by format, mapped back to the theoretical layers that generated them.
+  <rect x="60" y="240" width="480" height="64" fill="#444444" rx="2"/>
+  <text x="110" y="266" font-size="11" fill="#cccccc" letter-spacing="1">LEVEL 3</text>
+  <text x="110" y="284" font-size="14" font-weight="bold" fill="#ffffff">Drift</text>
+  <text x="430" y="275" font-size="11" fill="#cccccc" text-anchor="middle">Accumulated divergence from external reality</text>
 
-### 03_memory
+  <!-- Level 2 — Feedback -->
 
-Historical material. No longer active, but preserved. Evolution logs, deprecated understanding, old iterations. The past is not deleted — it is archived. Knowing where you came from is part of knowing where you are.
+  <rect x="60" y="320" width="480" height="64" fill="#666666" rx="2"/>
+  <text x="110" y="346" font-size="11" fill="#eeeeee" letter-spacing="1">LEVEL 2</text>
+  <text x="110" y="364" font-size="14" font-weight="bold" fill="#ffffff">Feedback</text>
+  <text x="430" y="355" font-size="11" fill="#eeeeee" text-anchor="middle">Reinforces behavior within the domain</text>
 
-### 04_repair_layer
+  <!-- Level 1 — Domain (bottom) -->
 
-When things break. Drift detection, contradiction logs, repair protocols. This folder exists because CPT demands it: a system that cannot detect its own degradation is already failing. This repo detects its own drift.
+  <rect x="60" y="400" width="480" height="64" fill="#999999" rx="2"/>
+  <text x="110" y="426" font-size="11" fill="#ffffff" letter-spacing="1">LEVEL 1</text>
+  <text x="110" y="444" font-size="14" font-weight="bold" fill="#ffffff">Domain</text>
+  <text x="430" y="435" font-size="11" fill="#ffffff" text-anchor="middle">Defines what is real and what counts as change</text>
 
-### 05_entry_interface
+  <!-- Reinforcement arrow — bottom to top, left side -->
 
-Human-facing front door. The index, orientation documents, reading paths. Someone arriving here for the first time should be able to find their footing without needing to understand the full architecture first.
+  <line x1="30" y1="464" x2="30" y2="96" stroke="#111111" stroke-width="1.5"/>
+  <polygon points="30,80 24,100 36,100" fill="#111111"/>
+  <text x="22" y="290" font-size="10" fill="#111111" text-anchor="middle" transform="rotate(-90 22 290)" letter-spacing="1">REINFORCEMENT</text>
 
-### 99_meta
+  <!-- Detection arrow — top to bottom, right side -->
 
-How the system maintains itself. Update rules, Git cognition protocol, structure evolution log. This folder governs the repo the way the repo’s frameworks govern institutions — through stated principles, not assumed understanding.
+  <line x1="570" y1="96" x2="570" y2="464" stroke="#111111" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <polygon points="570,480 564,460 576,460" fill="#111111"/>
+  <text x="578" y="290" font-size="10" fill="#111111" text-anchor="middle" transform="rotate(90 578 290)" letter-spacing="1">DETECTION</text>
 
------
-
-## Who This Is For
-
-**Practitioners** — people working inside institutions that are breaking down, looking for diagnostic tools and intervention language.
-
-**Designers** — people building systems and needing a constraint-based grammar for what cannot be built.
-
-**Theorists** — people working in adjacent fields (economics, governance, ecology, complexity) who need the upstream theoretical frame.
-
-**Future collaborators** — people who may carry this work forward and need to understand not just what exists but how it thinks.
-
------
-
-## What This Is Not
-
-This is not a critique framework. It does not assume collapse. It evaluates recalibration potential before escalation.
-
-This is not a moral system. CPT produces admissible/non-admissible verdicts, not good/bad judgments. Structural viability is not the same as ethical approval.
-
-This is not finished. This is a living system. It will drift, repair, and evolve.
+</svg>)
 
 -----
 
-## Current State (April 2026)
+## 🏗️ II. Build Order & Implementation
 
-- CPT foundational architecture: established
-- F&S instrument stack: 9 tools live, 3 planned, 17+ in Google Docs awaiting migration
-- Full corpus: ~60 written works across Substack, Google Docs, and Notes
-- GitHub Pages: active at nogameariel.github.io (migration in progress)
+Referential integrity is maintained only through strict adherence to the dependency stack. Deviation from this order introduces systemic drift.
 
------
-
-## Contact
-
-arcanastrategies@gmail.com  
-[arielwillingham.substack.com](https://arielwillingham.substack.com)
+1. **CPT (Foundation Layer):** The structural theory contained herein.
+1. **F&S (Operational Layer):** Field & Signal — the meta-feedback layer operationalized.
+1. **Integration (Synthesis Layer):** Applied environmental alignment.
 
 -----
 
-*This repository obeys its own logic. It is a condition-preserving system — designed to maintain the integrity of the thinking it depends on, without displacing degradation into future versions of the work.*
+## 🧩 III. Conceptual Elements
+
+CPT is a system of relationships, not isolated definitions. Integrity is maintained through the continuous detection of drift across these three layers:
+
+- **[Domain](theory/domain.md):** The definition of reality. What the system treats as real, relevant, and capable of change.
+- **[Feedback](theory/feedback.md):** Internal reinforcement. It does not correct reality — it reinforces the domain’s definitions.
+- **[Meta-Feedback](theory/meta-feedback.md):** The detection layer. The only mechanism capable of recognizing misalignment between the system and external reality.
+
+-----
+
+## 🗺️ IV. Referential Map (Core Documents)
+
+These links preserve structure across interpretation. Navigate the conceptual layers in order.
+
+|Component                                       |Function                                                        |
+|------------------------------------------------|----------------------------------------------------------------|
+|[Core Statement](theory/core-statement.md)      |The foundational thesis of referential integrity.               |
+|[The Drift Principle](theory/drift-principle.md)|Analysis of the baseline condition of all modeled systems.      |
+|[Truth Anchor](theory/truth-anchor.md)          |The structural requirement for a non-co-opted detection layer.  |
+|[The Five-Level Stack](theory/stack.md)         |The full dependency hierarchy from domain to F&S.               |
+|[CPT-FS Mapping](relationship/cpt-fs-mapping.md)|Constraints for operationalizing CPT without integrity collapse.|
+
+-----
+
+## 🛠️ V. Constraint: Structural Decoupling
+
+Field & Signal (F&S) must remain structurally decoupled from the incentive systems it evaluates. If the meta-feedback layer becomes optimized by the feedback loop it measures, **CPT integrity collapses.**
+
+This is not a recommendation. It is a structural requirement.
+
+-----
+
+## ⚙️ VI. Canonical Maintenance
+
+- **Modularity:** Files are kept modular to prevent the dilution of core principles.
+- **Stability:** All links are relative to ensure the system remains stable when mirrored or copied.
+- **Integrity:** Structural recognition must precede narrative explanation.
+
+-----
+
+*Referential integrity is the constant. All else is drift.*
+
