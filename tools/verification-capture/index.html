@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #0f0e0c;
+    --ink: #1a1814;
     --paper: #f6f1e9;
     --cream: #ede8db;
     --accent: #c0402a;
@@ -16,7 +16,11 @@
     --teal: #2a6b5e;
     --muted: #7a746e;
     --rule: #d8d2c6;
-    --dark: #1a1814;
+    --dark-bg: #2a2420;
+    --card-bg: #3a3430;
+    --dark-text: #f0ebe0;
+    --dark-muted: #a09080;
+    --dark-rule: #4a4440;
   }
 
 - { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,14 +28,14 @@
 html { font-size: 16px; }
 
 body {
-background: #1a1814;
+background: #1a1410;
 font-family: ‘DM Sans’, sans-serif;
 color: var(–ink);
 -webkit-font-smoothing: antialiased;
 }
 
 .page {
-max-width: 680px;
+max-width: 1100px;
 margin: 0 auto;
 background: var(–paper);
 }
@@ -39,10 +43,17 @@ background: var(–paper);
 /* ── MASTHEAD ── */
 .masthead {
 background: var(–ink);
-padding: clamp(32px, 6vw, 52px) clamp(24px, 6vw, 52px) clamp(28px, 5vw, 44px);
+padding: clamp(32px, 5vw, 72px) clamp(32px, 6vw, 80px) clamp(28px, 4vw, 60px);
 position: relative;
 overflow: hidden;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 40px;
+align-items: end;
 }
+
+.masthead-left {}
+.masthead-right { text-align: right; padding-bottom: 4px; }
 
 .masthead::before {
 content: ‘VC’;
@@ -80,7 +91,7 @@ font-family: ‘Playfair Display’, serif;
 font-size: clamp(44px, 12vw, 72px);
 font-weight: 900;
 line-height: 0.92;
-color: #f6f1e9;
+color: var(–dark-text);
 letter-spacing: -0.02em;
 margin-bottom: clamp(16px, 3vw, 24px);
 }
@@ -94,7 +105,7 @@ color: var(–accent);
 font-family: ‘Playfair Display’, serif;
 font-size: clamp(14px, 3.5vw, 18px);
 font-style: italic;
-color: #908880;
+color: var(–dark-muted);
 line-height: 1.5;
 max-width: 340px;
 }
@@ -113,12 +124,12 @@ margin-bottom: 6px;
 
 /* ── SECTION WRAPPER ── */
 .section {
-padding: clamp(28px, 6vw, 44px) clamp(24px, 6vw, 48px);
+padding: clamp(28px, 4vw, 60px) clamp(32px, 6vw, 80px);
 border-bottom: 1px solid var(–rule);
 }
 
 .section.dark {
-background: var(–dark);
+background: var(–dark-bg);
 border-bottom: none;
 }
 
@@ -146,11 +157,11 @@ background: var(–rule);
 }
 
 .section.dark .section-label {
-color: #4a4540;
+color: var(–dark-muted);
 }
 
 .section.dark .section-label::after {
-background: #2a2520;
+background: var(–dark-rule);
 }
 
 .section-title {
@@ -292,7 +303,7 @@ font-family: ‘DM Mono’, monospace;
 margin-top: clamp(20px, 4vw, 28px);
 padding: clamp(16px, 3vw, 20px);
 background: var(–ink);
-color: var(–paper);
+color: var(–dark-text);
 }
 
 .result-bar-label {
@@ -383,7 +394,7 @@ margin-bottom: clamp(24px, 5vw, 32px);
 font-family: ‘Playfair Display’, serif;
 font-size: clamp(24px, 7vw, 36px);
 font-weight: 900;
-color: var(–paper);
+color: var(–dark-text);
 line-height: 1.1;
 margin-bottom: 6px;
 }
@@ -393,12 +404,12 @@ font-family: ‘DM Mono’, monospace;
 font-size: clamp(9px, 2.2vw, 10px);
 letter-spacing: 0.15em;
 text-transform: uppercase;
-color: #504844;
+color: var(–dark-muted);
 }
 
 .question-card {
 padding: clamp(20px, 5vw, 28px);
-background: #141210;
+background: var(–card-bg);
 margin-bottom: 2px;
 position: relative;
 }
@@ -412,7 +423,7 @@ position: relative;
 font-family: ‘Playfair Display’, serif;
 font-size: clamp(40px, 10vw, 56px);
 font-weight: 900;
-color: #201e1c;
+color: #504840;
 line-height: 1;
 margin-bottom: clamp(10px, 3vw, 16px);
 }
@@ -421,14 +432,14 @@ margin-bottom: clamp(10px, 3vw, 16px);
 font-family: ‘Playfair Display’, serif;
 font-size: clamp(16px, 4vw, 20px);
 font-weight: 700;
-color: var(–paper);
+color: var(–dark-text);
 line-height: 1.3;
 margin-bottom: 10px;
 }
 
 .q-note {
 font-size: clamp(12px, 3vw, 13px);
-color: #605850;
+color: var(–dark-muted);
 line-height: 1.6;
 font-weight: 300;
 }
@@ -444,16 +455,16 @@ font-family: ‘DM Mono’, monospace;
 font-size: 9px;
 letter-spacing: 0.15em;
 text-transform: uppercase;
-color: rgba(255,255,255,0.65);
+color: rgba(255,255,255,0.75);
 display: block;
 margin-bottom: 6px;
 }
 
 .verdict-text {
 font-size: clamp(13px, 3vw, 14px);
-color: white;
+color: #fff;
 line-height: 1.6;
-font-weight: 300;
+font-weight: 400;
 }
 
 /* ── CLEAN ── */
@@ -558,7 +569,7 @@ line-height: 1.6;
 .footer {
 background: var(–cream);
 border-top: 3px solid var(–ink);
-padding: clamp(28px, 6vw, 44px) clamp(24px, 6vw, 48px);
+padding: clamp(28px, 4vw, 60px) clamp(32px, 6vw, 80px);
 }
 
 .final-frame {
@@ -625,7 +636,7 @@ color: var(–accent);
 /* ── COLOPHON ── */
 .colophon {
 background: var(–ink);
-padding: clamp(16px, 4vw, 20px) clamp(24px, 6vw, 48px);
+padding: clamp(16px, 3vw, 24px) clamp(32px, 6vw, 80px);
 display: flex;
 flex-direction: column;
 gap: 8px;
@@ -661,6 +672,75 @@ flex-shrink: 0;
 height: 3px;
 background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
 }
+
+/* ── DESKTOP OVERRIDES ── */
+@media (min-width: 700px) {
+.masthead-tagline { max-width: 300px; }
+
+```
+/* Two-column: pathways + signs side by side */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.two-col > .section {
+  border-right: 1px solid var(--rule);
+  border-bottom: none;
+}
+
+.two-col > .section:last-child {
+  border-right: none;
+}
+
+/* Four questions in 2x2 grid */
+.questions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* Clean + Domains side by side */
+.bottom-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.bottom-two-col > .section {
+  border-right: 1px solid var(--rule);
+  border-bottom: none;
+}
+
+.bottom-two-col > .section:last-child {
+  border-right: none;
+}
+
+/* Footer side by side */
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.colophon {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+```
+
+}
+
+@media (min-width: 900px) {
+/* Questions 4-across on wide */
+.questions-grid {
+grid-template-columns: repeat(4, 1fr);
+}
+}
 </style>
 
 </head>
@@ -670,11 +750,19 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
   <!-- MASTHEAD -->
 
   <div class="masthead">
-    <div class="eyebrow">Field Guide · Structural Literacy Series</div>
-    <div class="title">Verification<br><em>Capture</em></div>
-    <div class="masthead-tagline">
-      <span class="masthead-sub">The Question to Ask</span>
-      How to spot when the check isn't checking.
+    <div class="masthead-left">
+      <div class="eyebrow">Field Guide · Structural Literacy Series</div>
+      <div class="title">Verification<br><em>Capture</em></div>
+      <div class="masthead-tagline">
+        <span class="masthead-sub">The Question to Ask</span>
+        How to spot when the check isn't checking.
+      </div>
+    </div>
+    <div class="masthead-right">
+      <div class="masthead-tagline" style="text-align:right; color: #606870; font-size: clamp(13px,2vw,16px); max-width:260px; margin-left:auto;">
+        <span class="masthead-sub" style="text-align:right;">Field Guide</span>
+        Structural Literacy Series<br>nogameariel.github.io
+      </div>
     </div>
   </div>
 
@@ -696,6 +784,10 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
       </div>
     </div>
   </div>
+
+  <!-- TWO COL: PATHWAYS + SIGNS -->
+
+  <div class="two-col">
 
   <!-- CAPTURE PATHWAYS -->
 
@@ -787,6 +879,8 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
 
   </div>
 
+  </div><!-- end two-col -->
+
   <div class="section-divider"></div>
 
   <!-- FOUR QUESTIONS -->
@@ -794,30 +888,32 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
   <div class="section dark">
     <div class="section-label">Diagnostic</div>
     <div class="questions-header">
-      <div class="questions-title">The Four<br>Questions</div>
+      <div class="questions-title">The Four Questions</div>
       <div class="questions-sub">Use these anywhere — no expertise required</div>
     </div>
 
 ```
-<div class="question-card">
-  <div class="q-num">01</div>
-  <div class="q-text">Who funds the verifier?</div>
-  <div class="q-note">If the money traces back to the entity being verified — or to an ecosystem that benefits from favorable outcomes — the signal is at structural risk.</div>
-</div>
-<div class="question-card">
-  <div class="q-num">02</div>
-  <div class="q-text">Who controls their future work?</div>
-  <div class="q-note">Referrals, reputation, reappointment — these are leverage. Even clean payment doesn't protect independence if access is conditional.</div>
-</div>
-<div class="question-card">
-  <div class="q-num">03</div>
-  <div class="q-text">How quickly does reality correct the system?</div>
-  <div class="q-note">If corrections only arrive through crisis or external pressure, the internal feedback loop is not functioning.</div>
-</div>
-<div class="question-card">
-  <div class="q-num">04</div>
-  <div class="q-text">Is disagreement preserved?</div>
-  <div class="q-note">Healthy verification produces variance. When disagreement disappears, that uniformity is itself a signal worth examining.</div>
+<div class="questions-grid">
+  <div class="question-card">
+    <div class="q-num">01</div>
+    <div class="q-text">Who funds the verifier?</div>
+    <div class="q-note">If the money traces back to the entity being verified — or to an ecosystem that benefits from favorable outcomes — the signal is at structural risk.</div>
+  </div>
+  <div class="question-card">
+    <div class="q-num">02</div>
+    <div class="q-text">Who controls their future work?</div>
+    <div class="q-note">Referrals, reputation, reappointment — these are leverage. Even clean payment doesn't protect independence if access is conditional.</div>
+  </div>
+  <div class="question-card">
+    <div class="q-num">03</div>
+    <div class="q-text">How quickly does reality correct the system?</div>
+    <div class="q-note">If corrections only arrive through crisis or external pressure, the internal feedback loop is not functioning.</div>
+  </div>
+  <div class="question-card">
+    <div class="q-num">04</div>
+    <div class="q-text">Is disagreement preserved?</div>
+    <div class="q-note">Healthy verification produces variance. When disagreement disappears, that uniformity is itself a signal worth examining.</div>
+  </div>
 </div>
 
 <div class="verdict">
@@ -830,8 +926,9 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
 
   <div class="section-divider"></div>
 
-  <!-- WHAT CLEAN LOOKS LIKE -->
+  <!-- BOTTOM TWO COL: CLEAN + DOMAINS -->
 
+  <div class="bottom-two-col">
   <div class="section">
     <div class="section-label">What Clean Looks Like</div>
     <div class="section-title" style="font-size: clamp(16px,4vw,20px);">Independence is structural — not personal.</div>
@@ -889,32 +986,31 @@ background: linear-gradient(90deg, var(–accent), var(–gold), var(–teal));
 
   </div>
 
+  </div><!-- end bottom-two-col -->
+
   <!-- FOOTER -->
 
   <div class="footer">
-    <div class="final-frame">
-      <div class="final-frame-label">Final Frame</div>
-      <div class="final-frame-lead">When something feels off — too smooth, too consistent, too clean —</div>
-      <div class="final-frame-punch">You may not be confused.<br><em>You may be noticing structure.</em></div>
+    <div class="footer-inner">
+      <div class="final-frame">
+        <div class="final-frame-label">Final Frame</div>
+        <div class="final-frame-lead">When something feels off — too smooth, too consistent, too clean —</div>
+        <div class="final-frame-punch">You may not be confused.<br><em>You may be noticing structure.</em></div>
+      </div>
+      <div class="one-line">
+        <div class="one-line-label">One-Line Test</div>
+        <div class="one-line-text">If the system being checked can <em>influence the checker's survival,</em> the signal is at risk.</div>
+      </div>
     </div>
-
-```
-<div class="one-line">
-  <div class="one-line-label">One-Line Test</div>
-  <div class="one-line-text">If the system being checked can <em>influence the checker's survival,</em> the signal is at risk.</div>
-</div>
-```
-
   </div>
 
   <!-- COLOPHON -->
 
   <div class="colophon">
-    <div class="colophon-note">A diagnostic tool, not a verdict. Use it to ask better questions,<br>design better systems, and protect the integrity of the signal.</div>
+    <div class="colophon-note">A diagnostic tool, not a verdict. Use it to ask better questions, design better systems, and protect the integrity of the signal.</div>
     <div class="colophon-url">nogameariel.github.io/tools/verification-capture</div>
   </div>
 
 </div>
 </body>
 </html>
-
