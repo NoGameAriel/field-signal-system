@@ -132,7 +132,18 @@ color: var(–blue);
 }
 
 /* hand drawn arrow */
-.arrow-wrap { display: flex; align-items: center; }
+.shift-arrow {
+font-size: 22px;
+color: var(–muted);
+flex-shrink: 0;
+}
+
+.pathway-arrow {
+font-size: 16px;
+color: var(–blue);
+flex-shrink: 0;
+margin-right: 4px;
+}
 
 /* ── PATHWAYS ── */
 .pathway {
@@ -544,12 +555,7 @@ text-decoration: none;
 ```
 <div class="shift-row">
   <div class="shift-pill">Truth Detection</div>
-  <div class="arrow-wrap">
-    <svg width="52" height="20" viewBox="0 0 52 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 10 C12 9, 22 11, 32 10 C40 9, 46 10, 49 10" stroke="#111" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <path d="M44 5 C46 7, 49 9, 50 10 C49 11, 46 13, 44 15" stroke="#111" stroke-width="2" stroke-linecap="round" fill="none"/>
-    </svg>
-  </div>
+  <div class="shift-arrow">→</div>
   <div class="shift-pill to">Relationship Preservation</div>
 </div>
 ```
@@ -567,10 +573,7 @@ text-decoration: none;
   <div class="pathway-title">The subject funds the verifier.</div>
   <div class="pathway-desc">No instruction needed. When the entity being checked controls the money, the structure produces favorable results on its own.</div>
   <div class="pathway-note">
-    <svg width="36" height="16" viewBox="0 0 36 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 8 C8 7, 16 9, 22 8 C27 7, 31 8, 33 8" stroke="#1a4faa" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <path d="M29 4 C31 6, 33 7, 34 8 C33 9, 31 10, 29 12" stroke="#1a4faa" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-    </svg>
+    <span class="pathway-arrow">→</span>
     the subject pays; the verifier learns what passing looks like.
   </div>
 </div>
@@ -580,10 +583,7 @@ text-decoration: none;
   <div class="pathway-title">The subject controls future work.</div>
   <div class="pathway-desc">Payment may be clean, but the network decides who keeps getting hired. Over time, the market teaches the verifier what it rewards.</div>
   <div class="pathway-note">
-    <svg width="36" height="16" viewBox="0 0 36 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 8 C8 7, 16 9, 22 8 C27 7, 31 8, 33 8" stroke="#666" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <path d="M29 4 C31 6, 33 7, 34 8 C33 9, 31 10, 29 12" stroke="#666" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-    </svg>
+    <span class="pathway-arrow">→</span>
     no instruction needed; the market teaches the lesson.
   </div>
 </div>
