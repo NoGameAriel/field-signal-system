@@ -1,1 +1,373 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification Capture — Field Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #1c1f2e;
+    --paper:     #faf8f4;
+    --cream:     #f0ece4;
+    --slate:     #3a4a6b;
+    --slate-mid: #5a6e96;
+    --slate-lt:  #e8edf5;
+    --stone:     #8a7560;
+    --muted:     #7a7870;
+    --rule:      #dddad2;
+    --dark-bg:   #252836;
+    --dark-card: #2f3348;
+    --dark-text: #e8e6e0;
+    --dark-muted:#9a98a0;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; }
+
+body {
+background: #1c1f2e;
+font-family: ‘DM Sans’, sans-serif;
+color: var(–ink);
+-webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 1100px; margin: 0 auto; background: var(–paper); }
+
+/* MASTHEAD */
+.masthead {
+background: var(–dark-bg);
+padding: clamp(40px,5vw,80px) clamp(32px,6vw,80px) clamp(36px,4vw,64px);
+position: relative; overflow: hidden;
+display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: end;
+}
+.masthead::after { content:’’; position:absolute; bottom:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(–slate),var(–stone)); }
+.masthead::before { content:‘VC’; position:absolute; right:-20px;top:-10px; font-family:‘Libre Baskerville’,serif; font-size:clamp(140px,22vw,260px); font-weight:700; color:rgba(255,255,255,0.03); line-height:1; pointer-events:none; user-select:none; }
+@media(max-width:640px){ .masthead{grid-template-columns:1fr;} .masthead-right{display:none;} }
+
+.eyebrow { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.5vw,11px); letter-spacing:0.22em; text-transform:uppercase; color:var(–stone); margin-bottom:clamp(12px,2vw,20px); }
+.title { font-family:‘Libre Baskerville’,serif; font-size:clamp(48px,8vw,88px); font-weight:700; line-height:0.95; color:var(–dark-text); letter-spacing:-0.02em; margin-bottom:clamp(16px,2.5vw,28px); }
+.title em { font-style:italic; color:var(–slate-mid); }
+.masthead-tagline { font-family:‘Libre Baskerville’,serif; font-size:clamp(14px,2vw,18px); font-style:italic; color:var(–dark-muted); line-height:1.6; }
+.masthead-right { text-align:right; padding-bottom:6px; }
+.masthead-right-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(–slate-mid); display:block; margin-bottom:8px; }
+.masthead-right-text { font-family:‘Libre Baskerville’,serif; font-size:clamp(12px,1.5vw,15px); font-style:italic; color:var(–dark-muted); line-height:1.6; }
+
+/* SECTIONS */
+.section { padding:clamp(36px,4vw,64px) clamp(32px,6vw,80px); border-bottom:1px solid var(–rule); }
+.section.cream { background:var(–cream); }
+.section.slate-lt { background:var(–slate-lt); }
+.section.dark { background:var(–dark-bg); border-bottom:none; }
+
+.section-label { font-family:‘DM Mono’,monospace; font-size:clamp(8px,1.2vw,10px); letter-spacing:0.24em; text-transform:uppercase; color:var(–muted); margin-bottom:clamp(20px,3vw,32px); display:flex; align-items:center; gap:12px; }
+.section-label::after { content:’’; flex:1; height:1px; background:var(–rule); }
+.section.dark .section-label { color:var(–dark-muted); }
+.section.dark .section-label::after { background:#3a3d50; }
+
+/* CORE */
+.core-grid { display:grid; grid-template-columns:1fr auto; gap:48px; align-items:start; }
+@media(max-width:640px){ .core-grid{grid-template-columns:1fr;} }
+.core-statement { font-family:‘Libre Baskerville’,serif; font-size:clamp(20px,3vw,28px); font-weight:700; color:var(–ink); line-height:1.4; margin-bottom:14px; }
+.core-statement em { font-style:italic; color:var(–slate); }
+.core-note { font-size:clamp(14px,1.8vw,16px); color:var(–muted); line-height:1.75; font-weight:300; }
+.shift-box { flex-shrink:0; border:1px solid var(–rule); background:white; min-width:200px; }
+.shift-cell { padding:18px 24px; text-align:center; border-bottom:1px solid var(–rule); }
+.shift-cell:last-child { border-bottom:none; }
+.shift-cell-label { font-family:‘DM Mono’,monospace; font-size:8px; letter-spacing:0.22em; text-transform:uppercase; color:var(–muted); display:block; margin-bottom:6px; }
+.shift-cell-word { font-family:‘Libre Baskerville’,serif; font-size:clamp(12px,1.5vw,14px); font-weight:700; }
+.shift-cell.from .shift-cell-word { color:var(–stone); }
+.shift-cell.arrow .shift-cell-word { color:var(–rule); font-size:20px; font-family:sans-serif; }
+.shift-cell.to .shift-cell-word { color:var(–slate); }
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(–rule); }
+@media(max-width:640px){ .two-col{grid-template-columns:1fr;} .two-col>.section{border-right:none;} }
+.two-col>.section { border-right:1px solid var(–rule); border-bottom:none; }
+.two-col>.section:last-child { border-right:none; }
+
+/* PATHWAYS */
+.pathway { margin-bottom:20px; padding:24px; background:white; border-left:2px solid var(–slate-mid); }
+.pathway:last-of-type { border-left-color:var(–stone); margin-bottom:0; }
+.pathway-type { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.2vw,10px); letter-spacing:0.18em; text-transform:uppercase; color:var(–slate-mid); margin-bottom:6px; }
+.pathway:last-of-type .pathway-type { color:var(–stone); }
+.pathway-title { font-family:‘Libre Baskerville’,serif; font-size:clamp(15px,2vw,17px); font-weight:700; color:var(–ink); margin-bottom:10px; line-height:1.3; }
+.pathway-desc { font-size:clamp(13px,1.5vw,14px); color:var(–muted); line-height:1.7; font-weight:300; margin-bottom:16px; }
+.flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.flow-node { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.2vw,10px); letter-spacing:0.1em; text-transform:uppercase; padding:6px 12px; background:var(–cream); border:1px solid var(–rule); color:var(–ink); }
+.flow-connector { font-size:12px; color:var(–muted); font-family:‘DM Mono’,monospace; }
+.flow-handwritten {
+font-family: ‘Caveat’, cursive;
+font-size: clamp(16px, 2vw, 20px);
+font-weight: 400;
+color: var(–slate);
+line-height: 1.5;
+padding: 10px 0 4px 4px;
+border-left: 1.5px solid var(–rule);
+margin-left: 4px;
+}
+.result-bar { margin-top:24px; padding:20px 24px; background:var(–dark-bg); }
+.result-bar-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:var(–stone); display:block; margin-bottom:8px; }
+.result-bar-text { font-size:clamp(13px,1.6vw,15px); line-height:1.7; font-weight:300; color:var(–dark-text); }
+
+/* SIGNS */
+.sign-item { display:flex; gap:18px; padding:clamp(14px,2vw,18px) 0; border-bottom:1px solid var(–rule); align-items:flex-start; }
+.sign-item:last-of-type { border-bottom:none; }
+.sign-marker { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+.sign-marker.slate { background:var(–slate-mid); }
+.sign-marker.stone { background:var(–stone); }
+.sign-main { font-size:clamp(13px,1.6vw,15px); color:var(–ink); line-height:1.5; margin-bottom:4px; }
+.sign-note { font-family:‘DM Mono’,monospace; font-size:clamp(10px,1.2vw,11px); color:var(–muted); line-height:1.6; }
+.key-signal { margin-top:24px; padding:18px 22px; border:1.5px solid var(–slate-mid); background:var(–slate-lt); }
+.key-signal-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(–slate); margin-bottom:8px; }
+.key-signal-text { font-family:‘Libre Baskerville’,serif; font-size:clamp(15px,2vw,18px); font-style:italic; color:var(–slate); line-height:1.4; }
+
+/* QUESTIONS */
+.questions-header { margin-bottom:clamp(28px,3vw,40px); }
+.questions-title { font-family:‘Libre Baskerville’,serif; font-size:clamp(28px,4vw,44px); font-weight:700; color:var(–dark-text); line-height:1.1; margin-bottom:8px; }
+.questions-sub { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.2vw,10px); letter-spacing:0.18em; text-transform:uppercase; color:var(–dark-muted); }
+.questions-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-bottom:2px; }
+@media(max-width:800px){ .questions-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:500px){ .questions-grid{grid-template-columns:1fr;} }
+.question-card { padding:clamp(20px,2.5vw,32px); background:var(–dark-card); }
+.question-card:nth-child(odd) { border-top:2px solid var(–slate-mid); }
+.question-card:nth-child(even) { border-top:2px solid var(–stone); }
+.q-num { font-family:‘Libre Baskerville’,serif; font-size:clamp(44px,5vw,64px); font-weight:700; color:#3a3d52; line-height:1; margin-bottom:clamp(12px,2vw,20px); }
+.q-text { font-family:‘Libre Baskerville’,serif; font-size:clamp(15px,2vw,18px); font-weight:700; color:var(–dark-text); line-height:1.35; margin-bottom:12px; }
+.q-note { font-size:clamp(12px,1.4vw,14px); color:var(–dark-muted); line-height:1.7; font-weight:300; }
+.verdict-bar { padding:clamp(18px,2.5vw,28px) clamp(24px,3vw,36px); background:var(–slate); }
+.verdict-bar-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.55); display:block; margin-bottom:8px; }
+.verdict-bar-text { font-size:clamp(13px,1.6vw,15px); color:white; line-height:1.7; font-weight:300; }
+
+/* BOTTOM TWO COL */
+.bottom-two-col { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(–rule); }
+@media(max-width:640px){ .bottom-two-col{grid-template-columns:1fr;} .bottom-two-col>.section{border-right:none;} }
+.bottom-two-col>.section { border-right:1px solid var(–rule); border-bottom:none; }
+.bottom-two-col>.section:last-child { border-right:none; }
+.section-title { font-family:‘Libre Baskerville’,serif; font-size:clamp(16px,2vw,20px); font-weight:700; color:var(–ink); line-height:1.3; margin-bottom:clamp(18px,2.5vw,28px); font-style:italic; }
+.clean-item { display:flex; align-items:flex-start; gap:14px; padding:clamp(12px,1.5vw,16px) 0; border-bottom:1px solid var(–rule); }
+.clean-item:last-child { border-bottom:none; }
+.clean-check { width:20px; height:20px; border:1.5px solid var(–slate-mid); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(–slate-mid); margin-top:1px; }
+.clean-text { font-size:clamp(13px,1.5vw,15px); color:var(–ink); line-height:1.6; }
+.clean-note { margin-top:20px; padding:18px 20px; border-left:2px solid var(–slate-mid); background:var(–slate-lt); font-family:‘Libre Baskerville’,serif; font-size:clamp(13px,1.5vw,15px); font-style:italic; color:var(–slate); line-height:1.7; }
+.domain-intro { font-size:clamp(13px,1.5vw,15px); color:var(–muted); line-height:1.75; font-weight:300; margin-bottom:20px; }
+.domain-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.domain-tag { padding:7px 14px; border:1px solid var(–rule); font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.1vw,10px); letter-spacing:0.1em; text-transform:uppercase; color:var(–ink); background:white; }
+.domain-tag.primary { background:var(–slate); color:white; border-color:var(–slate); }
+.pattern-note { padding:18px 20px; background:white; border:1px solid var(–rule); }
+.pattern-note-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:var(–muted); display:block; margin-bottom:8px; }
+.pattern-note-text { font-size:clamp(13px,1.5vw,15px); color:var(–ink); line-height:1.7; }
+
+/* FOOTER */
+.footer { background:var(–cream); border-top:2px solid var(–ink); padding:clamp(36px,4vw,64px) clamp(32px,6vw,80px); }
+.footer-inner { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+@media(max-width:640px){ .footer-inner{grid-template-columns:1fr; gap:36px;} }
+.final-frame-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.22em; text-transform:uppercase; color:var(–muted); margin-bottom:12px; }
+.final-frame-lead { font-family:‘Libre Baskerville’,serif; font-size:clamp(14px,1.8vw,17px); font-style:italic; color:var(–muted); line-height:1.6; margin-bottom:10px; }
+.final-frame-punch { font-family:‘Libre Baskerville’,serif; font-size:clamp(20px,2.8vw,28px); font-weight:700; color:var(–ink); line-height:1.3; }
+.final-frame-punch em { font-style:italic; color:var(–slate); }
+.one-line-label { font-family:‘DM Mono’,monospace; font-size:9px; letter-spacing:0.22em; text-transform:uppercase; color:var(–muted); margin-bottom:12px; }
+.one-line-text { font-family:‘Libre Baskerville’,serif; font-size:clamp(17px,2.2vw,22px); font-weight:700; color:var(–ink); line-height:1.5; }
+.one-line-text em { font-style:italic; color:var(–slate); }
+
+/* COLOPHON */
+.colophon { background:var(–dark-bg); padding:clamp(18px,2.5vw,24px) clamp(32px,6vw,80px); display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+.colophon-note { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.1vw,10px); letter-spacing:0.08em; color:var(–dark-muted); line-height:1.7; }
+.colophon-url { font-family:‘DM Mono’,monospace; font-size:clamp(9px,1.1vw,11px); letter-spacing:0.14em; text-transform:uppercase; color:var(–stone); text-decoration:none; }
+
+.section-divider { height:2px; background:linear-gradient(90deg,var(–slate),var(–stone)); }
+</style>
+
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="masthead-left">
+      <div class="eyebrow">Field Guide · Structural Literacy Series</div>
+      <div class="title">Verification<br><em>Capture</em></div>
+      <div class="masthead-tagline">How to spot when the check isn't checking.</div>
+    </div>
+    <div class="masthead-right">
+      <span class="masthead-right-label">A diagnostic framework</span>
+      <div class="masthead-right-text">For citizens reading<br>systems under stress.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Core Idea</div>
+    <div class="core-grid">
+      <div>
+        <div class="core-statement">Verification breaks when <em>the verifier depends on the entity being verified.</em></div>
+        <div class="core-note">This is not about corruption or bad actors. It is about what the structure makes likely — regardless of anyone's intentions. Good people inside captured systems still produce captured outcomes.</div>
+      </div>
+      <div class="shift-box">
+        <div class="flow-handwritten" style="border-left:none; padding: 16px 20px; font-size: clamp(16px,2vw,21px); color: var(--stone);">from truth detection...</div>
+        <div class="flow-handwritten" style="border-left:none; padding: 4px 20px 16px 20px; font-size: clamp(16px,2vw,21px); color: var(--slate);">→ to relationship preservation.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="section cream">
+      <div class="section-label">Two Capture Pathways</div>
+      <div class="pathway">
+        <div class="pathway-type">1 · Payment Capture</div>
+        <div class="pathway-title">The subject funds the verifier.</div>
+        <div class="pathway-desc">No instruction needed. When the entity being checked controls the money, the structure produces favorable results on its own.</div>
+        <div class="flow-handwritten">the subject pays → the verifier learns what passing looks like.</div>
+      </div>
+      <div class="pathway">
+        <div class="pathway-type">2 · Referral Capture</div>
+        <div class="pathway-title">The subject controls future work.</div>
+        <div class="pathway-desc">Payment may be clean, but the network decides who keeps getting hired. Over time, the market teaches the verifier what it rewards.</div>
+        <div class="flow-handwritten">no instruction needed → the market teaches the lesson.</div>
+      </div>
+      <div class="result-bar">
+        <span class="result-bar-label">Same Result</span>
+        <div class="result-bar-text">The system still produces reports — but the signal has been replaced with something that <em>performs</em> like signal.</div>
+      </div>
+    </div>
+
+```
+<div class="section">
+  <div class="section-label">Common Signs of Capture</div>
+  <div class="sign-item">
+    <div class="sign-marker slate"></div>
+    <div class="sign-body">
+      <div class="sign-main">Unusually high pass rates across diverse cases</div>
+      <div class="sign-note">When everything passes, the check may not be checking.</div>
+    </div>
+  </div>
+  <div class="sign-item">
+    <div class="sign-marker stone"></div>
+    <div class="sign-body">
+      <div class="sign-main">Very low disagreement between reviewers</div>
+      <div class="sign-note">Healthy systems produce variance. Uniformity is a warning.</div>
+    </div>
+  </div>
+  <div class="sign-item">
+    <div class="sign-marker slate"></div>
+    <div class="sign-body">
+      <div class="sign-main">Language that softens over time</div>
+      <div class="sign-note">"Concerns noted" replacing "failed." Hedging replacing specificity.</div>
+    </div>
+  </div>
+  <div class="sign-item">
+    <div class="sign-marker stone"></div>
+    <div class="sign-body">
+      <div class="sign-main">Problems only surface after external exposure</div>
+      <div class="sign-note">Corrections that require crisis are corrections the system suppressed.</div>
+    </div>
+  </div>
+  <div class="sign-item">
+    <div class="sign-marker slate"></div>
+    <div class="sign-body">
+      <div class="sign-main">Stability in outcomes even as reality changes</div>
+      <div class="sign-note">Captured systems lag. Clean until they suddenly aren't.</div>
+    </div>
+  </div>
+  <div class="key-signal">
+    <div class="key-signal-label">★ Key Signal</div>
+    <div class="key-signal-text">Everything looks consistently fine.</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="section dark">
+    <div class="section-label">Diagnostic</div>
+    <div class="questions-header">
+      <div class="questions-title">The Four Questions</div>
+      <div class="questions-sub">Use these anywhere — no expertise required</div>
+    </div>
+    <div class="questions-grid">
+      <div class="question-card">
+        <div class="q-num">01</div>
+        <div class="q-text">Who funds the verifier?</div>
+        <div class="q-note">If the money traces back to the entity being verified — or to an ecosystem that benefits from favorable outcomes — the signal is at structural risk.</div>
+      </div>
+      <div class="question-card">
+        <div class="q-num">02</div>
+        <div class="q-text">Who controls their future work?</div>
+        <div class="q-note">Referrals, reputation, reappointment — these are leverage. Even clean payment doesn't protect independence if access is conditional.</div>
+      </div>
+      <div class="question-card">
+        <div class="q-num">03</div>
+        <div class="q-text">How quickly does reality correct the system?</div>
+        <div class="q-note">If corrections only arrive through crisis or external pressure, the internal feedback loop is not functioning.</div>
+      </div>
+      <div class="question-card">
+        <div class="q-num">04</div>
+        <div class="q-text">Is disagreement preserved?</div>
+        <div class="q-note">Healthy verification produces variance. When disagreement disappears, that uniformity is itself a signal worth examining.</div>
+      </div>
+    </div>
+    <div class="verdict-bar">
+      <span class="verdict-bar-label">Quick Read</span>
+      <div class="verdict-bar-text">If funding and future control both point back to the subject, the verification is structurally compromised — regardless of anyone's intentions.</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="bottom-two-col">
+    <div class="section">
+      <div class="section-label">What Clean Looks Like</div>
+      <div class="section-title">Independence is structural — not personal.</div>
+      <div class="clean-item"><div class="clean-check">✓</div><div class="clean-text">Funding is separated from the subject being verified</div></div>
+      <div class="clean-item"><div class="clean-check">✓</div><div class="clean-text">Verifiers are assigned externally, randomly, or rotated</div></div>
+      <div class="clean-item"><div class="clean-check">✓</div><div class="clean-text">No single actor controls both outcomes and evaluator survival</div></div>
+      <div class="clean-item"><div class="clean-check">✓</div><div class="clean-text">Disagreement is visible, preserved, and treated as signal</div></div>
+      <div class="clean-item"><div class="clean-check">✓</div><div class="clean-text">Results are published where neither party can edit post-hoc</div></div>
+      <div class="clean-note">A good verifier in a captured system still produces captured outcomes. The structure matters more than the individual.</div>
+    </div>
+
+```
+<div class="section cream">
+  <div class="section-label">Where You'll See This</div>
+  <div class="domain-intro">Different industries. Different actors. The same structure. Once you recognize it, the differences between domains matter less than the similarities in how verification is shaped.</div>
+  <div class="domain-tags">
+    <div class="domain-tag primary">Supplements &amp; Food</div>
+    <div class="domain-tag">Healthcare</div>
+    <div class="domain-tag">Scientific Research</div>
+    <div class="domain-tag">Journalism &amp; Media</div>
+    <div class="domain-tag">Financial Auditing</div>
+    <div class="domain-tag">Education</div>
+    <div class="domain-tag">Regulation</div>
+    <div class="domain-tag">Democratic Oversight</div>
+  </div>
+  <div class="pattern-note">
+    <span class="pattern-note-label">The Pattern</span>
+    <div class="pattern-note-text">What feels rigged may not be imagined. It may be structural perception — sensing a system that has drifted from truth-detection into relationship-preservation.</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <div class="final-frame">
+        <div class="final-frame-label">Final Frame</div>
+        <div class="final-frame-lead">When something feels off — too smooth, too consistent, too clean —</div>
+        <div class="final-frame-punch">You may not be confused.<br><em>You may be noticing structure.</em></div>
+      </div>
+      <div class="one-line">
+        <div class="one-line-label">One-Line Test</div>
+        <div class="one-line-text">If the system being checked can <em>influence the checker's survival,</em> the signal is at risk.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="colophon">
+    <div class="colophon-note">A diagnostic tool, not a verdict. Use it to ask better questions, design better systems, and protect the integrity of the signal.</div>
+    <div class="colophon-url">nogameariel.github.io/tools/verification-capture</div>
+  </div>
+
+</div>
+</body>
+</html>
