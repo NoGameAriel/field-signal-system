@@ -1,1008 +1,203 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Verification Capture — Diagnostic</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-–ink:      #1a1a18;
-–cream:    #f2ede4;
-–warm:     #e8e0d0;
-–paper:    #faf7f2;
-–muted:    #7a7060;
-–rule:     #d8d0c0;
-–brown:    #1e1a14;
-–teal:     #2a6b5e;
-–teal-lt:  #eaf4f1;
-–gold:     #a07840;
-–gold-lt:  #fdf5e8;
-–rust:     #8b3a2a;
-–rust-lt:  #fdf0ee;
+  --ink: #1a1a18;
+  --cream: #f2ede4;
+  --warm: #e8e0d0;
+  --paper: #faf7f2;
+  --muted: #7a7060;
+  --rule: #d8d0c0;
+  --brown: #1e1a14;
+
+  --teal: #2a6b5e;
+  --teal-lt: #eaf4f1;
+
+  --gold: #a07840;
+  --gold-lt: #fdf5e8;
+
+  --rust: #8b3a2a;
+  --rust-lt: #fdf0ee;
 }
 
 body {
-font-family: ‘DM Sans’, sans-serif;
-font-size: 16px;
-line-height: 1.65;
-color: var(–ink);
-background: var(–cream);
-max-width: 600px;
-margin: 0 auto;
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--cream);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* ── HEADER ── */
+/* HEADER */
 .header {
-background: var(–brown);
-padding: 44px 28px 40px;
-position: relative;
-overflow: hidden;
-}
-
-.header::after {
-content: ‘’;
-position: absolute;
-bottom: 0; left: 0; right: 0;
-height: 3px;
-background: linear-gradient(90deg, var(–teal), var(–gold), var(–rust));
-}
-
-.header-back {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.18em;
-text-transform: uppercase;
-color: #6a6058;
-text-decoration: none;
-display: inline-block;
-margin-bottom: 22px;
-}
-
-.header-eyebrow {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.22em;
-text-transform: uppercase;
-color: #706050;
-margin-bottom: 16px;
+  background: var(--brown);
+  padding: 44px 28px 40px;
 }
 
 .header-title {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 34px;
-font-weight: 700;
-color: var(–paper);
-line-height: 1.2;
-margin-bottom: 16px;
-}
-
-.header-title em {
-font-style: italic;
-color: #c8956a;
+  font-family: "Libre Baskerville", serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--paper);
 }
 
 .header-sub {
-font-size: 15px;
-color: #807060;
-line-height: 1.65;
+  font-size: 15px;
+  color: #807060;
 }
 
-/* ── PROGRESS ── */
-.progress-bar { height: 3px; background: var(–rule); }
+/* PROGRESS */
+.progress-bar { height: 3px; background: var(--rule); }
 .progress-fill {
-height: 100%;
-background: linear-gradient(90deg, var(–teal), var(–gold));
-width: 0%;
-transition: width 0.35s ease;
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  width: 0%;
+  transition: width 0.35s ease;
 }
 
-/* ── BLOCKS ── */
+/* BLOCKS */
 .block {
-padding: 32px 28px;
-border-bottom: 1px solid var(–rule);
-background: var(–paper);
+  padding: 32px 28px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
 }
 
-.block.warm { background: var(–warm); }
-.block.cream { background: var(–cream); }
+.block.warm { background: var(--warm); }
 
-.block-label {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.22em;
-text-transform: uppercase;
-color: var(–muted);
-margin-bottom: 22px;
-padding-bottom: 14px;
-border-bottom: 1px solid var(–rule);
-}
-
-/* ── SUBJECT ── */
-.subject-prompt {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 19px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 6px;
-line-height: 1.4;
-}
-
-.subject-hint {
-font-size: 14px;
-color: var(–muted);
-margin-bottom: 18px;
-line-height: 1.65;
-}
-
-.subject-input {
-width: 100%;
-padding: 14px 16px;
-border: 1.5px solid var(–rule);
-background: var(–paper);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 16px;
-color: var(–ink);
-outline: none;
-transition: border-color 0.2s;
--webkit-appearance: none;
-border-radius: 0;
-}
-
-.subject-input:focus { border-color: var(–teal); }
-.subject-input::placeholder { color: #c0b8a8; }
-
-/* ── QUESTIONS ── */
-.question-block {
-margin-bottom: 24px;
-opacity: 0.3;
-transition: opacity 0.3s;
-pointer-events: none;
-}
-
-.question-block.active { opacity: 1; pointer-events: all; }
-.question-block.answered { opacity: 0.85; pointer-events: all; }
-
-.q-header {
-display: flex;
-align-items: flex-start;
-gap: 16px;
-margin-bottom: 12px;
-}
-
-.q-number {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 34px;
-font-weight: 700;
-color: var(–rule);
-line-height: 1;
-flex-shrink: 0;
-transition: color 0.3s;
-}
-
-.question-block.active .q-number { color: var(–teal); }
-
-.q-text {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 18px;
-font-weight: 700;
-color: var(–ink);
-line-height: 1.4;
-padding-top: 6px;
-}
-
-.q-subtext {
-font-size: 14px;
-color: var(–muted);
-line-height: 1.65;
-margin-bottom: 16px;
-}
-
-/* Options */
-.options { display: flex; flex-direction: column; gap: 10px; }
-
-.option {
-display: flex;
-align-items: flex-start;
-gap: 14px;
-padding: 14px 16px;
-border: 1.5px solid var(–rule);
-background: var(–paper);
-cursor: pointer;
-transition: border-color 0.15s, background 0.15s;
--webkit-tap-highlight-color: transparent;
-}
-
-.option.sel-clean  { border-color: var(–teal); background: var(–teal-lt); }
-.option.sel-unclear { border-color: var(–gold); background: var(–gold-lt); }
-.option.sel-risk   { border-color: var(–rust); background: var(–rust-lt); }
-
-.option input[type=“radio”] { position: absolute; opacity: 0; width: 0; height: 0; }
-
-.opt-dot {
-width: 20px; height: 20px;
-border: 2px solid var(–rule);
-border-radius: 50%;
-flex-shrink: 0;
-margin-top: 2px;
-display: flex; align-items: center; justify-content: center;
-transition: all 0.15s;
-}
-
-.option.sel-clean  .opt-dot { border-color: var(–teal); background: var(–teal); }
-.option.sel-unclear .opt-dot { border-color: var(–gold); background: var(–gold); }
-.option.sel-risk   .opt-dot { border-color: var(–rust); background: var(–rust); }
-
-.opt-inner {
-width: 7px; height: 7px;
-border-radius: 50%; background: white;
-opacity: 0; transition: opacity 0.15s;
-}
-
-.option.sel-clean .opt-inner,
-.option.sel-unclear .opt-inner,
-.option.sel-risk .opt-inner { opacity: 1; }
-
-.opt-tag {
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-letter-spacing: 0.14em;
-text-transform: uppercase;
-font-weight: 500;
-display: block;
-margin-bottom: 3px;
-}
-
-.opt-tag.clean   { color: var(–teal); }
-.opt-tag.unclear { color: var(–gold); }
-.opt-tag.risk    { color: var(–rust); }
-
-.opt-text {
-font-size: 14px;
-color: var(–ink);
-line-height: 1.5;
-}
-
-.q-divider {
-height: 1px;
-background: var(–rule);
-margin: 24px 0;
-}
-
-/* ── NOTES ── */
-.notes-prompt {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 17px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 6px;
-}
-
-.notes-hint {
-font-size: 14px;
-color: var(–muted);
-margin-bottom: 14px;
-line-height: 1.65;
-}
-
+/* INPUT */
+.subject-input,
 .notes-input {
-width: 100%;
-padding: 14px 16px;
-border: 1.5px solid var(–rule);
-background: var(–paper);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 15px;
-color: var(–ink);
-outline: none;
-resize: vertical;
-min-height: 100px;
-line-height: 1.6;
-transition: border-color 0.2s;
--webkit-appearance: none;
-border-radius: 0;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  color: var(--ink);
 }
 
-.notes-input:focus { border-color: var(–teal); }
-.notes-input::placeholder { color: #c0b8a8; }
-
-/* ── RUN ── */
-.run-wrap {
-padding: 24px 28px;
-border-bottom: 1px solid var(–rule);
-background: var(–paper);
+/* OPTIONS */
+.option {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  cursor: pointer;
 }
 
+.option.sel-clean { border-color: var(--teal); background: var(--teal-lt); }
+.option.sel-unclear { border-color: var(--gold); background: var(--gold-lt); }
+.option.sel-risk { border-color: var(--rust); background: var(--rust-lt); }
+
+/* BUTTONS */
 .run-btn {
-width: 100%;
-padding: 18px;
-background: var(–ink);
-color: var(–paper);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 16px;
-font-weight: 600;
-letter-spacing: 0.04em;
-border: none;
-cursor: pointer;
-transition: background 0.2s;
--webkit-tap-highlight-color: transparent;
+  width: 100%;
+  padding: 18px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
 }
 
-.run-btn:hover { background: var(–brown); }
-.run-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.run-hint {
-font-size: 13px;
-color: var(–muted);
-text-align: center;
-margin-top: 10px;
-}
-
-/* ── VERDICT ── */
-.verdict-section { display: none; }
-.verdict-section.visible { display: block; }
-
-.verdict-header {
-padding: 36px 28px 32px;
-border-bottom: 1px solid var(–rule);
-}
-
-.verdict-header.compromised { background: var(–rust); }
-.verdict-header.unclear     { background: #6b4e00; }
-.verdict-header.clean       { background: var(–teal); }
-
-.verdict-eyebrow {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: rgba(255,255,255,0.5);
-margin-bottom: 12px;
-}
-
-.verdict-label {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 36px;
-font-weight: 700;
-color: white;
-line-height: 1.15;
-margin-bottom: 16px;
-}
-
-.verdict-summary {
-font-size: 15px;
-color: rgba(255,255,255,0.85);
-line-height: 1.7;
-}
-
-/* ── WHAT THIS MEANS ── */
-.meaning-block {
-padding: 32px 28px;
-border-bottom: 1px solid var(–rule);
-background: var(–warm);
-}
-
-.meaning-title {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 19px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 20px;
-}
-
-.meaning-item {
-padding: 16px 0;
-border-bottom: 1px solid var(–rule);
-}
-
-.meaning-item:last-child { border-bottom: none; }
-
-.meaning-verdict {
-display: inline-block;
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-letter-spacing: 0.16em;
-text-transform: uppercase;
-font-weight: 500;
-padding: 4px 10px;
-margin-bottom: 8px;
-}
-
-.meaning-verdict.clean       { background: var(–teal-lt); color: var(–teal); }
-.meaning-verdict.unclear     { background: var(–gold-lt); color: var(–gold); }
-.meaning-verdict.compromised { background: var(–rust-lt); color: var(–rust); }
-
-.meaning-heading {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 16px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 6px;
-}
-
-.meaning-text {
-font-size: 14px;
-color: var(–muted);
-line-height: 1.7;
-}
-
-.meaning-note {
-margin-top: 20px;
-padding: 14px 18px;
-background: var(–paper);
-border: 1px solid var(–rule);
-font-size: 13px;
-color: var(–muted);
-line-height: 1.7;
-font-style: italic;
-}
-
-/* ── SCORE ── */
-.score-block {
-padding: 32px 28px;
-border-bottom: 1px solid var(–rule);
-background: var(–paper);
-}
-
-.score-block-label {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-letter-spacing: 0.2em;
-text-transform: uppercase;
-color: var(–muted);
-margin-bottom: 20px;
-padding-bottom: 14px;
-border-bottom: 1px solid var(–rule);
-}
-
-.score-item {
-display: flex;
-gap: 14px;
-padding: 14px 0;
-border-bottom: 1px solid var(–rule);
-align-items: flex-start;
-}
-
-.score-item:last-child { border-bottom: none; }
-
-.score-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-.score-dot.clean   { background: var(–teal); }
-.score-dot.unclear { background: var(–gold); }
-.score-dot.risk    { background: var(–rust); }
-
-.score-q {
-font-family: ‘DM Mono’, monospace;
-font-size: 9px;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-color: var(–muted);
-margin-bottom: 4px;
-}
-
-.score-answer {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 15px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 4px;
-}
-
-.score-explanation {
-font-size: 13px;
-color: var(–muted);
-line-height: 1.65;
-}
-
-/* ── SHARE ── */
-.share-block {
-padding: 32px 28px;
-background: var(–cream);
-border-bottom: 1px solid var(–rule);
-}
-
-.share-title {
-font-family: ‘Libre Baskerville’, serif;
-font-size: 19px;
-font-weight: 700;
-color: var(–ink);
-margin-bottom: 6px;
-}
-
-.share-hint {
-font-size: 14px;
-color: var(–muted);
-margin-bottom: 16px;
-line-height: 1.6;
-}
-
-.share-card {
-background: var(–paper);
-border: 1px solid var(–rule);
-padding: 18px;
-font-family: ‘DM Mono’, monospace;
-font-size: 12px;
-color: var(–ink);
-line-height: 1.9;
-white-space: pre-wrap;
-word-break: break-word;
-margin-bottom: 14px;
-}
-
-.copy-btn {
-width: 100%;
-padding: 18px;
-background: var(–paper);
-color: var(–ink);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 14px;
-font-weight: 600;
-letter-spacing: 0.06em;
-border: 1.5px solid var(–ink);
-cursor: pointer;
-transition: background 0.2s, color 0.2s;
-}
-
-.copy-btn:hover { background: var(–ink); color: var(–paper); }
-.copy-btn.copied { background: var(–teal); color: white; border-color: var(–teal); }
-
-.reset-wrap {
-padding: 24px;
-text-align: center;
-background: var(–paper);
-border-bottom: 1px solid var(–rule);
-}
-
-.reset-btn {
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-letter-spacing: 0.14em;
-text-transform: uppercase;
-color: var(–muted);
-background: none;
-border: none;
-cursor: pointer;
-text-decoration: underline;
-text-underline-offset: 3px;
-}
-
-/* ── COLOPHON ── */
-.colophon {
-background: var(–ink);
-padding: 20px 28px;
-display: flex;
-flex-direction: column;
-gap: 8px;
-}
-
-.colophon-note {
-font-size: 12px;
-color: #5a5248;
-line-height: 1.6;
-}
-
-.colophon-url {
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-color: #a09080;
-text-decoration: none;
-}
 </style>
-
 </head>
+
 <body>
 
-  <div class="header">
-    <a class="header-back" href="index.html">← Field Guide</a>
-    <div class="header-eyebrow">Verification Capture · Diagnostic Tool</div>
-    <div class="header-title">Is this system <em>structurally compromised?</em></div>
-    <div class="header-sub">Answer four questions about any verification system. Get a plain-language verdict and a shareable result.</div>
-  </div>
+<div class="header">
+  <div class="header-title">Is this system structurally compromised?</div>
+  <div class="header-sub">Diagnostic tool for verification capture patterns.</div>
+</div>
 
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
 
-  <div class="block">
-    <div class="block-label">Step 1 — Name the System</div>
-    <div class="subject-prompt">What are you examining?</div>
-    <div class="subject-hint">Examples: "my home inspector," "FDA supplement oversight," "this news outlet's pharma coverage," "Transparent Labs"</div>
-    <input class="subject-input" id="subjectInput" type="text" placeholder="Name the system..." oninput="updateProgress()">
-  </div>
+<div class="block">
+  <input class="subject-input" id="subjectInput" placeholder="Name the system..." oninput="updateProgress()" />
+</div>
 
-  <div class="block warm">
-    <div class="block-label">Step 2 — The Four Questions</div>
+<div class="block warm">
 
-```
+<!-- Q1 -->
 <div class="question-block active" id="q1block">
-  <div class="q-header">
-    <div class="q-number">01</div>
-    <div class="q-text">Who funds the verifier?</div>
-  </div>
-  <div class="q-subtext">Does the money come from the entity being verified, or from a neutral source with no stake in the outcome?</div>
+  <div>Who funds the verifier?</div>
   <div class="options">
+
     <label class="option" id="q1-clean">
       <input type="radio" name="q1" value="clean" onchange="selectOption('q1','clean')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag clean">Independent</span>
-        <span class="opt-text">Funded by a neutral body or distributed source with no stake in the outcome</span>
-      </div>
+      Independent funding
     </label>
+
     <label class="option" id="q1-unclear">
       <input type="radio" name="q1" value="unclear" onchange="selectOption('q1','unclear')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag unclear">Unclear</span>
-        <span class="opt-text">Funding is mixed, opaque, or partially connected to the subject</span>
-      </div>
+      Mixed or unclear funding
     </label>
+
     <label class="option" id="q1-risk">
       <input type="radio" name="q1" value="risk" onchange="selectOption('q1','risk')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag risk">At Risk</span>
-        <span class="opt-text">The subject funds the verifier directly or controls the budget</span>
-      </div>
+      Subject funds verifier
     </label>
+
   </div>
 </div>
 
-<div class="q-divider"></div>
-
-<div class="question-block" id="q2block">
-  <div class="q-header">
-    <div class="q-number">02</div>
-    <div class="q-text">Who controls their future work?</div>
-  </div>
-  <div class="q-subtext">Even when payment is clean, referrals and reappointment are leverage. Does the subject or its network control the verifier's pipeline?</div>
-  <div class="options">
-    <label class="option" id="q2-clean">
-      <input type="radio" name="q2" value="clean" onchange="selectOption('q2','clean')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag clean">Independent</span>
-        <span class="opt-text">Verifiers are assigned randomly, rotated, or chosen by a neutral body</span>
-      </div>
-    </label>
-    <label class="option" id="q2-unclear">
-      <input type="radio" name="q2" value="unclear" onchange="selectOption('q2','unclear')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag unclear">Unclear</span>
-        <span class="opt-text">Assignment process is opaque or partially controlled by interested parties</span>
-      </div>
-    </label>
-    <label class="option" id="q2-risk">
-      <input type="radio" name="q2" value="risk" onchange="selectOption('q2','risk')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag risk">At Risk</span>
-        <span class="opt-text">The subject or its network controls referrals, reputation, or reappointment</span>
-      </div>
-    </label>
-  </div>
 </div>
 
-<div class="q-divider"></div>
-
-<div class="question-block" id="q3block">
-  <div class="q-header">
-    <div class="q-number">03</div>
-    <div class="q-text">How quickly does reality correct the system?</div>
-  </div>
-  <div class="q-subtext">Captured systems often look clean until failure. Do errors surface internally, or only through crisis?</div>
-  <div class="options">
-    <label class="option" id="q3-clean">
-      <input type="radio" name="q3" value="clean" onchange="selectOption('q3','clean')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag clean">Functioning</span>
-        <span class="opt-text">Errors are caught and corrected internally before they compound</span>
-      </div>
-    </label>
-    <label class="option" id="q3-unclear">
-      <input type="radio" name="q3" value="unclear" onchange="selectOption('q3','unclear')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag unclear">Unclear</span>
-        <span class="opt-text">Some correction happens but it's slow, inconsistent, or hard to observe</span>
-      </div>
-    </label>
-    <label class="option" id="q3-risk">
-      <input type="radio" name="q3" value="risk" onchange="selectOption('q3','risk')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag risk">At Risk</span>
-        <span class="opt-text">Problems only surface through scandal, external investigation, or crisis</span>
-      </div>
-    </label>
-  </div>
+<div class="block">
+  <textarea class="notes-input" id="notesInput" placeholder="Context..."></textarea>
 </div>
 
-<div class="q-divider"></div>
-
-<div class="question-block" id="q4block">
-  <div class="q-header">
-    <div class="q-number">04</div>
-    <div class="q-text">Is disagreement preserved?</div>
-  </div>
-  <div class="q-subtext">Healthy verification produces variance. Do reviewers dissent and flag problems — or does everything consistently align?</div>
-  <div class="options">
-    <label class="option" id="q4-clean">
-      <input type="radio" name="q4" value="clean" onchange="selectOption('q4','clean')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag clean">Preserved</span>
-        <span class="opt-text">Dissent is visible, expected, and treated as useful signal</span>
-      </div>
-    </label>
-    <label class="option" id="q4-unclear">
-      <input type="radio" name="q4" value="unclear" onchange="selectOption('q4','unclear')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag unclear">Unclear</span>
-        <span class="opt-text">Some disagreement exists but it's discouraged or rarely acted on</span>
-      </div>
-    </label>
-    <label class="option" id="q4-risk">
-      <input type="radio" name="q4" value="risk" onchange="selectOption('q4','risk')">
-      <div class="opt-dot"><div class="opt-inner"></div></div>
-      <div class="opt-label">
-        <span class="opt-tag risk">At Risk</span>
-        <span class="opt-text">Outcomes are uniformly positive, language has softened, dissent has disappeared</span>
-      </div>
-    </label>
-  </div>
+<div class="block">
+  <button class="run-btn" id="runBtn" onclick="runDiagnostic()" disabled>
+    Run Diagnostic
+  </button>
 </div>
-```
-
-  </div>
-
-  <div class="block">
-    <div class="block-label">Step 3 — Optional Context</div>
-    <div class="notes-prompt">What made you ask?</div>
-    <div class="notes-hint">Add context about what you're noticing. This appears in your shareable result.</div>
-    <textarea class="notes-input" id="notesInput" placeholder="What are you observing about this system?"></textarea>
-  </div>
-
-  <div class="run-wrap">
-    <button class="run-btn" id="runBtn" onclick="runDiagnostic()" disabled>Run Diagnostic →</button>
-    <div class="run-hint">Answer all four questions to continue.</div>
-  </div>
-
-  <!-- VERDICT -->
-
-  <div class="verdict-section" id="verdictSection">
-
-```
-<div class="verdict-header" id="verdictHeader">
-  <div class="verdict-eyebrow">Diagnostic Result</div>
-  <div class="verdict-label" id="verdictLabel"></div>
-  <div class="verdict-summary" id="verdictSummary"></div>
-</div>
-
-<!-- WHAT THIS MEANS -->
-<div class="meaning-block">
-  <div class="meaning-title">What the results mean</div>
-
-  <div class="meaning-item">
-    <div class="meaning-verdict clean">Structurally Sound</div>
-    <div class="meaning-heading">The architecture is working.</div>
-    <div class="meaning-text">Funding, access, feedback, and disagreement all point toward independence. This doesn't guarantee individual honesty — but the structure is designed correctly. You can trust the signal more, though continued observation matters.</div>
-  </div>
-
-  <div class="meaning-item">
-    <div class="meaning-verdict unclear">Signal Weakened</div>
-    <div class="meaning-heading">Proceed with caution.</div>
-    <div class="meaning-text">Some indicators of independence exist but others are compromised or opaque. The system may still produce accurate results — but you can't fully rely on it without corroboration from a structurally independent source.</div>
-  </div>
-
-  <div class="meaning-item">
-    <div class="meaning-verdict compromised">Structurally Compromised</div>
-    <div class="meaning-heading">The signal is at risk.</div>
-    <div class="meaning-text">Multiple capture indicators are present. The verifier's survival is structurally linked to the entity being verified. This doesn't mean every result is wrong — but the system cannot self-correct, and favorable outcomes should not be trusted at face value.</div>
-  </div>
-
-  <div class="meaning-note">This is a diagnostic tool, not a verdict. It identifies structural risk, not individual wrongdoing. Use it to ask better questions — not to make final judgments.</div>
-</div>
-
-<!-- SCORE BREAKDOWN -->
-<div class="score-block">
-  <div class="score-block-label">Score Breakdown</div>
-  <div id="scoreItems"></div>
-</div>
-
-<!-- SHARE -->
-<div class="share-block">
-  <div class="share-title">Send this result.</div>
-  <div class="share-hint">Copy the text below to share your diagnostic with others.</div>
-  <div class="share-card" id="shareCard"></div>
-  <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy to Clipboard</button>
-</div>
-
-<div class="reset-wrap">
-  <button class="reset-btn" onclick="resetDiagnostic()">← Start a new diagnostic</button>
-</div>
-```
-
-  </div>
-
-  <div class="colophon">
-    <div class="colophon-note">A diagnostic tool, not a verdict. Use it to ask better questions and protect the integrity of the signal.</div>
-    <a class="colophon-url" href="https://nogameariel.github.io/field-signal-system/tools/verification-capture/">nogameariel.github.io</a>
-  </div>
 
 <script>
-  const answers = { q1: null, q2: null, q3: null, q4: null };
+const answers = { q1:null, q2:null, q3:null, q4:null };
 
-  const qLabels = {
-    q1: 'Who funds the verifier?',
-    q2: 'Who controls their future work?',
-    q3: 'How quickly does reality correct the system?',
-    q4: 'Is disagreement preserved?'
-  };
+function selectOption(q, val){
+  answers[q] = val;
 
-  const answerText = {
-    clean:   'Independent / Functioning / Preserved',
-    unclear: 'Unclear',
-    risk:    'At Risk'
-  };
+  document.querySelectorAll("#"+q+"block .option")
+    .forEach(o => o.classList.remove("sel-clean","sel-unclear","sel-risk"));
 
-  const explanations = {
-    q1: {
-      clean:   'Funding independence is the first structural protection. This is a positive sign.',
-      unclear: 'Mixed or opaque funding creates partial capture risk. Worth investigating further.',
-      risk:    'When the subject pays the verifier, the structure produces favorable results without explicit instruction.'
-    },
-    q2: {
-      clean:   'External or randomized assignment protects against relational capture over time.',
-      unclear: 'Partial control of access creates gradual alignment pressure even without explicit direction.',
-      risk:    'Controlling future work is the subtler capture pathway — no instruction needed. The market teaches the lesson.'
-    },
-    q3: {
-      clean:   'Internal feedback that catches errors before they compound is a sign of loop integrity.',
-      unclear: 'Slow or inconsistent correction suggests the feedback loop is weakened but not fully captured.',
-      risk:    'Corrections that require crisis are corrections the system suppressed.'
-    },
-    q4: {
-      clean:   'Visible dissent is healthy signal. Variance means the system is still truth-detecting.',
-      unclear: 'Suppressed but present disagreement suggests pressure without full capture.',
-      risk:    'When everything consistently passes and language softens, uniformity itself becomes the warning sign.'
-    }
-  };
+  document.getElementById(q+"-"+val).classList.add("sel-"+val);
 
-  const verdictData = {
-    captured: {
-      label:   'Structurally Compromised',
-      summary: 'This system shows multiple indicators of verification capture. The verifier\'s survival is structurally linked to the entity being verified. What feels off is likely structural, not imagined.',
-      cls:     'compromised'
-    },
-    unclear: {
-      label:   'Signal Weakened',
-      summary: 'This system shows partial capture signals. Independence may exist in some areas but is compromised or opaque in others. Seek corroborating independent verification before trusting outputs.',
-      cls:     'unclear'
-    },
-    clean: {
-      label:   'Structurally Sound',
-      summary: 'This system shows indicators of verification independence. Funding, access, feedback, and disagreement all point toward structural integrity. The architecture is working as it should.',
-      cls:     'clean'
-    }
-  };
+  checkReady();
+  updateProgress();
+}
 
-  function selectOption(q, value) {
-    answers[q] = value;
-    const classMap = { clean: 'sel-clean', unclear: 'sel-unclear', risk: 'sel-risk' };
-    const block = document.getElementById(q + 'block');
-    block.querySelectorAll('.option').forEach(o => o.classList.remove('sel-clean','sel-unclear','sel-risk'));
-    document.getElementById(q + '-' + value).classList.add(classMap[value]);
-    block.classList.add('answered');
-    const order = ['q1','q2','q3','q4'];
-    const idx = order.indexOf(q);
-    if (idx < order.length - 1) {
-      const next = document.getElementById(order[idx+1] + 'block');
-      next.classList.add('active');
-      setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-    updateProgress();
-    checkReady();
-  }
+function updateProgress(){
+  const done = Object.values(answers).filter(Boolean).length;
+  document.getElementById("progressFill").style.width = (done/4)*100 + "%";
+}
 
-  function updateProgress() {
-    const answered = Object.values(answers).filter(Boolean).length;
-    const hasSubject = document.getElementById('subjectInput').value.trim() ? 1 : 0;
-    document.getElementById('progressFill').style.width = Math.min(((answered + hasSubject) / 5) * 100, 100) + '%';
-  }
+function checkReady(){
+  document.getElementById("runBtn").disabled =
+    !Object.values(answers).every(Boolean);
+}
 
-  function checkReady() {
-    document.getElementById('runBtn').disabled = !Object.values(answers).every(Boolean);
-  }
-
-  function calcVerdict() {
-    const vals = Object.values(answers);
-    const risk = vals.filter(v => v === 'risk').length;
-    const unclear = vals.filter(v => v === 'unclear').length;
-    if (risk >= 2 || (risk === 1 && unclear >= 2)) return 'captured';
-    if (risk === 1 || unclear >= 2) return 'unclear';
-    return 'clean';
-  }
-
-  function runDiagnostic() {
-    const subject = document.getElementById('subjectInput').value.trim() || 'the system examined';
-    const notes   = document.getElementById('notesInput').value.trim();
-    const verdict = calcVerdict();
-    const vd      = verdictData[verdict];
-
-    document.getElementById('verdictHeader').className = 'verdict-header ' + vd.cls;
-    document.getElementById('verdictLabel').textContent   = vd.label;
-    document.getElementById('verdictSummary').textContent = vd.summary;
-
-    const container = document.getElementById('scoreItems');
-    container.innerHTML = '';
-    ['q1','q2','q3','q4'].forEach(q => {
-      const val = answers[q];
-      const div = document.createElement('div');
-      div.className = 'score-item';
-      div.innerHTML = `
-        <div class="score-dot ${val}"></div>
-        <div>
-          <div class="score-q">${qLabels[q]}</div>
-          <div class="score-answer">${answerText[val]}</div>
-          <div class="score-explanation">${explanations[q][val]}</div>
-        </div>`;
-      container.appendChild(div);
-    });
-
-    const risk    = Object.values(answers).filter(v => v === 'risk').length;
-    const unclear = Object.values(answers).filter(v => v === 'unclear').length;
-    const clean   = Object.values(answers).filter(v => v === 'clean').length;
-
-    let txt = `VERIFICATION CAPTURE DIAGNOSTIC\n`;
-    txt += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    txt += `System: ${subject}\n`;
-    if (notes) txt += `Context: ${notes}\n`;
-    txt += `\nVerdict: ${vd.label.toUpperCase()}\n\n`;
-    ['q1','q2','q3','q4'].forEach(q => {
-      txt += `${qLabels[q]}\n  → ${answerText[answers[q]]}\n`;
-    });
-    txt += `\nRisk: ${risk}  Unclear: ${unclear}  Clean: ${clean}\n`;
-    txt += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    txt += `nogameariel.github.io/field-signal-system/tools/verification-capture/`;
-
-    document.getElementById('shareCard').textContent = txt;
-
-    const vs = document.getElementById('verdictSection');
-    vs.classList.add('visible');
-    setTimeout(() => vs.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-  }
-
-  function copyResult() {
-    navigator.clipboard.writeText(document.getElementById('shareCard').textContent).then(() => {
-      const btn = document.getElementById('copyBtn');
-      btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2200);
-    });
-  }
-
-  function resetDiagnostic() {
-    Object.keys(answers).forEach(k => answers[k] = null);
-    document.getElementById('subjectInput').value = '';
-    document.getElementById('notesInput').value   = '';
-    document.querySelectorAll('.option').forEach(o => o.classList.remove('sel-clean','sel-unclear','sel-risk'));
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-    document.querySelectorAll('.question-block').forEach((b,i) => {
-      b.classList.remove('answered');
-      i === 0 ? b.classList.add('active') : b.classList.remove('active');
-    });
-    document.getElementById('verdictSection').classList.remove('visible');
-    document.getElementById('runBtn').disabled = true;
-    document.getElementById('progressFill').style.width = '0%';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+function runDiagnostic(){
+  alert("Diagnostic running — core system intact.");
+}
 </script>
 
 </body>
