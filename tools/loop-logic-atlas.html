@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loop Logic Atlas — Field & Signal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f7f5f0;
+      --warm-mid: #e8e4da;
+      --rule: #c8c2b4;
+      --accent: #2d5a3d;
+      --accent-light: #e8f0ea;
+      --muted: #6b6560;
+      --white: #ffffff;
+    }
+
+```
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+}
+
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 2rem 2rem;
+}
+
+.instrument-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.hero-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+
+.divider {
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 2.5rem;
+}
+
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 2rem 5rem;
+}
+
+.step { display: none; }
+.step.active { display: block; animation: fadeIn 0.35s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.step-prompt {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+
+.step-hint {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.75rem;
+}
+
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
+}
+
+.domain-card {
+  border: 1px solid var(--rule);
+  background: var(--white);
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.domain-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.domain-icon { font-size: 1.2rem; flex-shrink: 0; }
+.domain-name { font-size: 0.975rem; font-weight: 500; }
+
+.signal-list { list-style: none; margin-bottom: 2rem; }
+
+.signal-item { border-bottom: 1px solid var(--warm-mid); }
+
+.signal-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  cursor: pointer;
+  font-size: 0.975rem;
+  line-height: 1.5;
+}
+
+.signal-item input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--rule);
+  background: var(--white);
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+
+.signal-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.signal-item input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.selected-domain-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.selected-domain-header .domain-icon { font-size: 1.4rem; }
+
+.selected-domain-header h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.selected-domain-header .change-link {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.btn-primary {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 0.85rem 1.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background: var(--accent); }
+
+.btn-back {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.result-section { margin-bottom: 2rem; }
+
+.result-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.loop-equation {
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  background: var(--accent-light);
+  margin-bottom: 2rem;
+}
+
+.loop-equation .eq-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.loop-equation p {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.loop-equation .eq-note {
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-style: normal;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.build-cards { display: grid; gap: 0.6rem; margin-bottom: 2rem; }
+
+.build-card {
+  border: 1px solid var(--rule);
+  background: var(--white);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.build-card .arrow {
+  font-family: 'DM Mono', monospace;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.build-card .build-text { font-size: 0.975rem; line-height: 1.5; }
+
+.start-box {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.start-box .start-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--rule);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.start-box p { font-size: 0.975rem; line-height: 1.65; color: var(--paper); }
+
+.restart-row {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.restart-row p { font-size: 0.875rem; color: var(--muted); }
+
+.btn-restart {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checked-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--warm-mid);
+  font-size: 0.95rem;
+}
+
+.checked-item .check-mark {
+  font-family: 'DM Mono', monospace;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.page-footer {
+  border-top: 1px solid var(--rule);
+  padding: 2rem;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.page-footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .hero, .main { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .site-header { padding: 1rem 1.25rem; }
+  .domain-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding-top: 2.5rem; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <span class="wordmark">Field & Signal</span>
+  <span class="tag">Loop Logic Atlas</span>
+</header>
+
+<div class="hero">
+  <div class="instrument-label">Build Guide · LLA-01</div>
+  <h1>Loop Logic Atlas</h1>
+  <p class="hero-sub">Something around you isn't working. This tool helps you name what's broken and find a parallel path forward.</p>
+  <div class="divider"></div>
+</div>
+
+<div class="main">
+
+  <div class="step active" id="step1">
+    <div class="step-label">Step 1 of 3</div>
+    <p class="step-prompt">Where is this happening?</p>
+    <p class="step-hint">Choose the domain that feels closest to your situation.</p>
+    <div class="domain-grid">
+      <div class="domain-card" onclick="selectDomain('psychology')"><span class="domain-icon">🧠</span><span class="domain-name">Psychology</span></div>
+      <div class="domain-card" onclick="selectDomain('education')"><span class="domain-icon">📚</span><span class="domain-name">Education</span></div>
+      <div class="domain-card" onclick="selectDomain('ecology')"><span class="domain-icon">🌿</span><span class="domain-name">Ecology</span></div>
+      <div class="domain-card" onclick="selectDomain('governance')"><span class="domain-icon">🏛️</span><span class="domain-name">Governance</span></div>
+      <div class="domain-card" onclick="selectDomain('economy')"><span class="domain-icon">⚖️</span><span class="domain-name">Economy</span></div>
+      <div class="domain-card" onclick="selectDomain('relationships')"><span class="domain-icon">🤝</span><span class="domain-name">Relationships</span></div>
+      <div class="domain-card" onclick="selectDomain('healthcare')"><span class="domain-icon">🩺</span><span class="domain-name">Healthcare</span></div>
+      <div class="domain-card" onclick="selectDomain('media')"><span class="domain-icon">📡</span><span class="domain-name">Media</span></div>
+      <div class="domain-card" onclick="selectDomain('technology')"><span class="domain-icon">💻</span><span class="domain-name">Technology</span></div>
+      <div class="domain-card" onclick="selectDomain('spirituality')"><span class="domain-icon">✨</span><span class="domain-name">Spirituality</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="step-label">Step 2 of 3</div>
+    <p class="step-prompt">What are you noticing?</p>
+    <p class="step-hint">Check everything that feels true. You don't need all of them.</p>
+    <div class="selected-domain-header" id="domainHeader"></div>
+    <ul class="signal-list" id="signalList"></ul>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="showResults()">See what to build</button>
+      <button class="btn-back" onclick="showStep(1)">← Change domain</button>
+    </div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="step-label">Step 3 of 3 — Your Build Guide</div>
+    <div class="selected-domain-header" id="domainHeader3"></div>
+    <div id="buildContent"></div>
+    <div class="restart-row">
+      <p>Try a different domain or situation.</p>
+      <button class="btn-restart" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <p>Field & Signal · <a href="https://nogameariel.github.io/field-signal-system/">field-signal-system</a> · <a href="https://arielwillingham.substack.com">Substack</a></p>
+  <p style="margin-top:0.5rem;">Instrument LLA-01 · Loop Logic Atlas · A. Willingham</p>
+</footer>
+
+<script>
+const DOMAINS = {
+  psychology: {
+    name: 'Psychology', icon: '🧠',
+    signals: [
+      'I can articulate what\'s wrong but nothing actually changes',
+      'I perform wellness or healing while still feeling broken inside',
+      'I depend on someone else to validate my experience before I trust it',
+      'I keep replaying the same patterns even when I can see them clearly',
+      'My emotional truth gets explained away or pathologized',
+      'I feel shame about needs that seem completely reasonable',
+      'I\'ve stopped trusting my own perception of situations',
+    ],
+    loopShift: 'False Resonance + Somatic Safety + Power With → Amplification',
+    loopNote: 'When emotional truth is safely mirrored and metabolized, emergent coherence becomes possible.',
+    builds: [
+      'A regular practice of naming your emotional signal without immediately analyzing it — journaling, voice memo, or witness conversation',
+      'A small trusted circle where honesty is the norm, not performance',
+      'A personal protocol for moments of relational friction: pause, locate the signal in your body before responding',
+      'Shared language with someone close — a word or phrase that means "I need to be honest right now, not managed"',
+      'A way to track your own pattern over time — not to fix it, but to make it visible to yourself',
+    ],
+    startWhere: 'Start with one honest conversation you\'ve been avoiding. Not to resolve anything — just to let the signal exist out loud. Notice what happens to the pattern after that.',
+  },
+  education: {
+    name: 'Education', icon: '📚',
+    signals: [
+      'Students are rewarded for compliance, not curiosity',
+      'Feedback is collected but never actually changes anything',
+      'Teachers are constrained from responding to what\'s actually in the room',
+      'Innovation is branded, not structural',
+      'Assessment measures performance, not understanding',
+      'The people most affected by decisions have the least input',
+      'Burnout is normalized among educators',
+    ],
+    loopShift: 'Power Over + Emergent Signal + Relational Trust → Resonance',
+    loopNote: 'When coercion is reduced and curiosity is met with safety, education becomes a mutual field of learning again.',
+    builds: [
+      'A learning circle outside institutional walls — neighbors, library, kitchen table',
+      'A community-taught module where elders, practitioners, or peers hold knowledge the institution doesn\'t recognize',
+      'A feedback loop that actually redirects something: students shape one real decision',
+      'Documentation of what\'s being suppressed — the questions that get redirected, the knowledge that gets dismissed',
+      'A local apprenticeship or mentorship pairing that bypasses credentialing',
+    ],
+    startWhere: 'Find one person in your community whose knowledge is not recognized by the formal system. Create one context where that knowledge gets transmitted.',
+  },
+  ecology: {
+    name: 'Ecology', icon: '🌿',
+    signals: [
+      'Sustainability is used as marketing without structural change',
+      'Local ecological knowledge is dismissed or ignored',
+      'Land is owned by people who don\'t steward it',
+      'Environmental signals are visible but not acted on',
+      'Extraction is happening faster than regeneration',
+      'Indigenous or traditional practices are erased or co-opted',
+      'Climate grief has no container or outlet',
+    ],
+    loopShift: 'Power Over − Extraction + Stewarded Reciprocity + Field Memory → Amplification',
+    loopNote: 'When humans re-enter the ecological field as stewards instead of dominators, new abundance becomes possible — without demand.',
+    builds: [
+      'A neighborhood seed library, tool share, or repair economy',
+      'A community land trust or ecological stewardship agreement',
+      'A local food system loop: growing, sharing, composting, back to soil',
+      'A grief ritual or seasonal practice that reconnects people to ecological cycles',
+      'Documentation of what the land looked like before — oral history, photography, elder knowledge',
+    ],
+    startWhere: 'Find one piece of land near you that is neglected or extractively managed. Find out who has standing to make a decision about it. Show up to that conversation.',
+  },
+  governance: {
+    name: 'Governance', icon: '🏛️',
+    signals: [
+      'Public input is collected but doesn\'t change outcomes',
+      'Decisions are made before consultation happens',
+      'Representation exists without power transfer',
+      'Policy is shaped by those least affected by it',
+      'Dissent is managed, not integrated',
+      'Crisis is used to justify centralized control',
+      'Civic engagement feels performative',
+    ],
+    loopShift: 'False Resonance + Public Self-Trust + Horizontal Signal Flow → Resonance',
+    loopNote: 'When people reclaim authorship over their shared reality, governance becomes relational again — not representational theater.',
+    builds: [
+      'A neighborhood assembly or block-level decision-making body with real scope',
+      'A parallel budget process: community decides how a pool of shared resources flows',
+      'A civic trust — a group that holds shared commitments and meets accountability',
+      'A memetic audit: tracking how public language distorts local reality',
+      'A local truth commission or community listening process on a specific harm',
+    ],
+    startWhere: 'Identify one decision being made near you that affects people who have no seat at the table. Convene those people first. Build their analysis before the official process closes.',
+  },
+  economy: {
+    name: 'Economy', icon: '⚖️',
+    signals: [
+      'More effort is producing less predictable reward',
+      'I can\'t trace where the value I generate actually goes',
+      'The rules keep shifting in ways I can\'t anticipate',
+      'Meritocracy is invoked to justify outcomes that feel structurally determined',
+      'Care work and relational labor are invisible in how value gets counted',
+      'Survival requires participation in systems I know are harmful',
+      'Exit feels impossible — there\'s no outside to move to',
+    ],
+    loopShift: 'Power Over + Resourced Exit + Mutual Trust → Resonance',
+    loopNote: 'When economic participation becomes voluntary, transparent, and needs-aware, value becomes relational — not extractive.',
+    builds: [
+      'A worker cooperative or shared ownership structure in your field',
+      'A mutual aid network with explicit reciprocity tracking',
+      'A local time bank or skill exchange that operates outside wage logic',
+      'A transparent value tracking practice: where does energy go, who benefits',
+      'A shared equity arrangement — pooled resources, distributed decision-making',
+    ],
+    startWhere: 'Map one economic loop you\'re inside right now: what you put in, what moves, who benefits. Make it visible on paper. Share it with one other person who\'s in the same loop.',
+  },
+  relationships: {
+    name: 'Relationships', icon: '🤝',
+    signals: [
+      'Things feel fine on the surface but something is consistently unspoken',
+      'One person\'s comfort is consistently prioritized over shared truth',
+      'Repair happens through performance, not honesty',
+      'Emotional bids go unmet or get managed instead of received',
+      'Roles have hardened in ways nobody agreed to',
+      'Conflict is avoided at the cost of real connection',
+      'I adapt constantly without anyone adapting toward me',
+    ],
+    loopShift: 'False Resonance + Boundary Clarity + Co-Regulation → Resonance',
+    loopNote: 'When emotional truth is met without punishment, relationships shift from role performance into shared healing.',
+    builds: [
+      'A shared language for naming what\'s actually happening — not what should be happening',
+      'A regular honest check-in: not "how are you" but "what are you not saying"',
+      'A repair protocol: a specific sequence you both agree to when rupture happens',
+      'A role map: what each person actually carries, made visible and renegotiable',
+      'One honest conversation that has been deferred — with a commitment to stay in it',
+    ],
+    startWhere: 'Name one thing you have been managing instead of saying. Find the smallest honest version of it. Say that.',
+  },
+  healthcare: {
+    name: 'Healthcare', icon: '🩺',
+    signals: [
+      'My symptoms have been dismissed or minimized',
+      'Care decisions are shaped by cost or coverage, not health',
+      'I know more about my condition than the person treating me',
+      'The system treats the chart, not the person',
+      'Providers are burned out and can\'t give what they want to give',
+      'Cultural or lived knowledge is treated as less valid than clinical protocol',
+      'Wellness is being sold back to me at a premium',
+    ],
+    loopShift: 'Power Over + Lived Experience + Collaborative Design → Amplification',
+    loopNote: 'When care honors the full truth of the person — not just the chart — the body begins to trust again.',
+    builds: [
+      'A community health pod: neighbors who share knowledge, resources, and accompaniment',
+      'A lived-experience documentation practice: tracking your own signals over time, in your own language',
+      'A collective of people navigating the same condition — peer knowledge, shared strategy',
+      'A relationship with a provider outside the dominant system: community health worker, traditional healer, doula',
+      'An advocacy practice: accompanying someone else through the system, bearing witness',
+    ],
+    startWhere: 'Find one person navigating a similar health situation. Compare notes. What do you know between you that the system hasn\'t told either of you?',
+  },
+  media: {
+    name: 'Media', icon: '📡',
+    signals: [
+      'I can\'t tell what\'s true but I can feel something is being managed',
+      'Harm is aestheticized or made consumable',
+      'Dissent gets absorbed and neutralized rather than addressed',
+      'Visibility is controlled by platforms I don\'t own or understand',
+      'My attention is being used in ways I didn\'t agree to',
+      'Local or community stories have no infrastructure to travel',
+      'The people most affected by events are least present in coverage',
+    ],
+    loopShift: 'False Resonance + Narrative Integrity + Decentralized Platforming → Resonance',
+    loopNote: 'When media is used to reflect and restore truth — not to perform it — culture becomes capable of remembering itself.',
+    builds: [
+      'A local newsletter, zine, or audio document — community voice, community distribution',
+      'A narrative integrity practice: tracking how a story travels and what changes',
+      'A slow media habit: one long-form piece per week, shared and discussed with others',
+      'A platform that you own or co-own with others: a website, a listserv, a printing practice',
+      'A storytelling circle: oral transmission, recorded with consent, kept in community hands',
+    ],
+    startWhere: 'Write one thing down that is true about your community that hasn\'t been said publicly. Find one way to make it visible — even to ten people.',
+  },
+  technology: {
+    name: 'Technology', icon: '💻',
+    signals: [
+      'I use tools I don\'t understand and can\'t exit easily',
+      'My attention is being monetized in ways I didn\'t consent to',
+      'The interface is designed to keep me in it, not serve me',
+      'Data I generate is being used in ways I can\'t track',
+      'Innovation is justified despite visible harm',
+      'The tools that would help me most are behind paywalls',
+      'Speed is treated as a virtue regardless of what\'s lost',
+    ],
+    loopShift: 'Power Over + Opt-Out Infrastructure + Relational Design → Amplification',
+    loopNote: 'When technology respects signal, rhythm, and sovereignty, it doesn\'t replace humanity — it reflects it.',
+    builds: [
+      'An audit of your current tool stack: what do you use, who owns it, what does it cost you',
+      'A move toward open-source or community-governed alternatives in one area',
+      'A device-free practice: regular time outside the attention economy',
+      'A local tech commons: shared tools, shared knowledge, mutual support',
+      'A data dignity practice: understanding what you share, with whom, under what terms',
+    ],
+    startWhere: 'Pick one tool you use daily. Find out who owns it, how it makes money, and what it knows about you. Decide whether that\'s a trade you\'re making consciously.',
+  },
+  spirituality: {
+    name: 'Spirituality', icon: '✨',
+    signals: [
+      'Spiritual authority is used to bypass accountability',
+      'Questioning is treated as a failure of faith',
+      'Healing is used as a currency of hierarchy',
+      'Love and light language is used to suppress legitimate conflict',
+      'Traditions are used without consent or cultural context',
+      'The sacred has been captured by performance or branding',
+      'Obedience is mistaken for devotion',
+    ],
+    loopShift: 'False Resonance + Sacred Honesty + Shared Mystery → Amplification',
+    loopNote: 'When the sacred is reclaimed from control and returned to the field of coherence, we don\'t just believe — we remember.',
+    builds: [
+      'A circle over a pulpit: gathering with no hierarchy, shared intention, honest presence',
+      'A practice of spiritual discernment that centers your own experience as valid data',
+      'A lineage acknowledgment: knowing where your practices came from and what that means',
+      'A grief or rage ritual: making space for what the dominant spiritual container excludes',
+      'A community of doubt: people who hold questions together without needing resolution',
+    ],
+    startWhere: 'Name one spiritual belief you hold that you\'ve never questioned out loud. Find one person who will stay curious with you rather than resolve it for you.',
+  },
+};
+
+let currentDomain = null;
+
+function selectDomain(key) {
+  currentDomain = key;
+  const domain = DOMAINS[key];
+
+  document.getElementById('domainHeader').innerHTML = `
+    <span class="domain-icon">${domain.icon}</span>
+    <h2>${domain.name}</h2>
+    <button class="change-link" onclick="showStep(1)">Change</button>
+  `;
+
+  const list = document.getElementById('signalList');
+  list.innerHTML = domain.signals.map((s, i) => `
+    <li class="signal-item">
+      <label>
+        <input type="checkbox" id="sig${i}" value="${i}">
+        ${s}
+      </label>
+    </li>
+  `).join('');
+
+  showStep(2);
+}
+
+function showResults() {
+  const domain = DOMAINS[currentDomain];
+  const checked = Array.from(document.querySelectorAll('#signalList input:checked'));
+  const checkedSignals = checked.map(c => domain.signals[parseInt(c.value)]);
+
+  document.getElementById('domainHeader3').innerHTML = `
+    <span class="domain-icon">${domain.icon}</span>
+    <h2>${domain.name}</h2>
+    <button class="change-link" onclick="restart()">Start over</button>
+  `;
+
+  const checkedSection = checkedSignals.length > 0
+    ? `<div class="result-section">
+        <div class="result-section-label">What you're seeing</div>
+        ${checkedSignals.map(s => `
+          <div class="checked-item">
+            <span class="check-mark">✓</span>
+            <span>${s}</span>
+          </div>
+        `).join('')}
+      </div>`
+    : '';
+
+  const buildCards = domain.builds.map(b => `
+    <div class="build-card">
+      <span class="arrow">→</span>
+      <span class="build-text">${b}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('buildContent').innerHTML = `
+    ${checkedSection}
+
+    <div class="loop-equation">
+      <div class="eq-label">Loop Shift Equation</div>
+      <p>${domain.loopShift}</p>
+      <span class="eq-note">${domain.loopNote}</span>
+    </div>
+
+    <div class="result-section">
+      <div class="result-section-label">What you could build</div>
+      <div class="build-cards">${buildCards}</div>
+    </div>
+
+    <div class="start-box">
+      <div class="start-label">Where to start</div>
+      <p>${domain.startWhere}</p>
+    </div>
+  `;
+
+  showStep(3);
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step${n}`).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  currentDomain = null;
+  showStep(1);
+}
+</script>
+
+</body>
+</html>
