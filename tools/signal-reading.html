@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What is the light showing?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+:root {
+–bg: #0d0c0a;
+–surface: #131210;
+–surface2: #181610;
+–border: #252320;
+–border-lit: #3a3628;
+–text: #e2dcd0;
+–text-mid: #a89e90;
+–text-dim: #6a6258;
+–amber: #c0882a;
+–amber-soft: rgba(192,136,42,0.09);
+–amber-glow: rgba(192,136,42,0.18);
+–red-border: #3d2020;
+–red-text: #8a4a3a;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Lora’, serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 56px 20px 100px;
+}
+
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘200’ height=‘200’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.85’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘200’ height=‘200’ filter=‘url(%23n)’ opacity=‘0.035’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 0;
+}
+
+.wrap {
+width: 100%;
+max-width: 500px;
+position: relative;
+z-index: 1;
+}
+
+/* ── Porch light ── */
+.porch-light {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+border: 1.5px solid var(–border-lit);
+margin: 0 auto 44px;
+transition: all 0.7s ease;
+position: relative;
+}
+
+.porch-light.on {
+border-color: var(–amber);
+box-shadow: 0 0 0 5px rgba(192,136,42,0.07), 0 0 28px rgba(192,136,42,0.14);
+background: radial-gradient(circle, rgba(192,136,42,0.18) 0%, transparent 70%);
+}
+
+.porch-light.flicker {
+border-color: var(–amber);
+animation: flk 2.8s ease-in-out infinite;
+}
+
+.porch-light.off {
+border-color: var(–border-lit);
+}
+
+.porch-light.none {
+border-color: var(–border);
+border-style: dashed;
+}
+
+@keyframes flk {
+0%,100% { box-shadow: 0 0 0 4px rgba(192,136,42,0.07), 0 0 20px rgba(192,136,42,0.1); opacity:1; }
+20%      { box-shadow: none; opacity: 0.35; }
+45%      { box-shadow: 0 0 0 3px rgba(192,136,42,0.05); opacity: 0.75; }
+70%      { box-shadow: none; opacity: 0.28; }
+}
+
+/* ── Progress dots ── */
+.dots {
+display: flex;
+gap: 5px;
+justify-content: center;
+margin-bottom: 44px;
+}
+
+.dot {
+width: 4px;
+height: 4px;
+border-radius: 50%;
+background: var(–border-lit);
+transition: background 0.35s;
+}
+.dot.active { background: var(–amber); }
+.dot.done   { background: #3a5040; }
+
+/* ── Question screen ── */
+.q-label {
+font-family: ‘DM Mono’, monospace;
+font-size: 10px;
+font-weight: 300;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(–text-dim);
+text-align: center;
+margin-bottom: 18px;
+}
+
+.q-text {
+font-size: clamp(18px, 3.8vw, 24px);
+font-weight: 400;
+line-height: 1.4;
+text-align: center;
+margin-bottom: 36px;
+color: var(–text);
+}
+
+/* ── Choices ── */
+.choices { display: flex; flex-direction: column; gap: 5px; }
+
+.choice {
+display: flex;
+align-items: flex-start;
+gap: 14px;
+padding: 15px 17px;
+background: var(–surface);
+border: 1px solid var(–border);
+cursor: pointer;
+text-align: left;
+width: 100%;
+font-family: ‘Lora’, serif;
+transition: border-color 0.14s, background 0.14s;
+}
+
+.choice:hover { border-color: var(–border-lit); background: var(–surface2); }
+.choice.selected { border-color: var(–amber); background: var(–amber-soft); }
+
+.c-dot {
+width: 7px;
+height: 7px;
+border-radius: 50%;
+border: 1px solid var(–text-dim);
+flex-shrink: 0;
+margin-top: 6px;
+transition: all 0.14s;
+}
+.choice.selected .c-dot { background: var(–amber); border-color: var(–amber); }
+
+.c-main { font-size: 14px; line-height: 1.5; color: var(–text); display: block; }
+.c-sub  { font-size: 12px; font-style: italic; color: var(–text-dim); margin-top: 2px; display: block; line-height: 1.5; }
+
+/* ── Output ── */
+.output {
+animation: rise 0.45s ease forwards;
+opacity: 0;
+transform: translateY(7px);
+}
+
+@keyframes rise { to { opacity:1; transform:translateY(0); } }
+
+.out-block {
+padding: 22px 22px 18px;
+background: var(–surface);
+border: 1px solid var(–border);
+margin-bottom: 1px;
+}
+
+.out-label {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px;
+font-weight: 300;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(–text-dim);
+margin-bottom: 10px;
+}
+
+.out-body {
+font-size: 15px;
+line-height: 1.75;
+color: var(–text);
+}
+
+.out-body p + p { margin-top: 8px; }
+
+.out-bullets {
+list-style: none;
+margin-top: 10px;
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.out-bullets li {
+font-size: 14px;
+line-height: 1.6;
+color: var(–text-mid);
+padding-left: 14px;
+position: relative;
+font-style: italic;
+}
+
+.out-bullets li::before {
+content: ‘—’;
+position: absolute;
+left: 0;
+color: var(–text-dim);
+}
+
+.pattern-tag {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: var(–text-dim);
+margin-top: 14px;
+display: block;
+border-top: 1px solid var(–border);
+padding-top: 10px;
+}
+
+/* ── Structural stop ── */
+.stop-block {
+padding: 24px 22px 20px;
+background: var(–surface);
+border: 1px solid var(–red-border);
+}
+
+.stop-label {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(–red-text);
+margin-bottom: 12px;
+}
+
+.stop-body {
+font-size: 15px;
+line-height: 1.75;
+color: var(–text-mid);
+margin-bottom: 14px;
+}
+
+.stop-type {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: var(–text-dim);
+border: 1px solid var(–border-lit);
+display: inline-block;
+padding: 4px 9px;
+}
+
+/* ── Restart ── */
+.restart {
+font-family: ‘DM Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–text-dim);
+background: transparent;
+border: 1px solid var(–border);
+padding: 11px 18px;
+cursor: pointer;
+width: 100%;
+margin-top: 20px;
+transition: color 0.14s, border-color 0.14s;
+}
+.restart:hover { color: var(–text); border-color: var(–border-lit); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div class="porch-light" id="glyph"></div>
+  <div class="dots" id="dots">
+    <div class="dot" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+    <div class="dot" id="d4"></div>
+  </div>
+  <div id="stage"></div>
+</div>
+
+<script>
+// ─── Pre-written output matrix ────────────────────────────────────────────────
+// Key: lightState + '_' + toneKey (balanced | soft)
+// toneKey: 'soft' when strong asymmetry detected, 'balanced' otherwise
+
+const OUTPUTS = {
+
+  // S1 — Steady / Maintaining
+  s1_balanced: {
+    block1: {
+      text: 'What is showing here is a pattern of sustained coherence between what is said and how things actually move.',
+      sub: 'Signal is reaching decision points and returning. The system is reading itself accurately.'
+    },
+    block2: {
+      text: 'This resembles a maintained resonance pattern where shared consequence keeps signal honest.',
+      mechanism: 'Coordination is stable because the cost of inaccuracy is felt by those generating the signal.'
+    },
+    block3: {
+      intro: 'This pattern tends to persist when:',
+      bullets: [
+        'feedback reaches decision points without significant filtering',
+        'consequence is distributed across participants',
+        'accurate signal does not carry social or relational cost',
+        'exit from the system is genuinely costly for all parties'
+      ]
+    },
+    block4: {
+      intro: 'This typically begins to destabilize when:',
+      bullets: [
+        'one party gains the ability to offload consequence to others',
+        'feedback is filtered before it reaches those who act on it',
+        'the cost of accurate signal increases for any participant'
+      ]
+    },
+    pattern: 'Maintained Resonance'
+  },
+
+  s1_soft: {
+    block1: {
+      text: 'What is showing here is a surface pattern of coherence — though the conditions generating it may not be fully shared across participants.',
+      sub: 'Signal appears stable. Whether that stability is structural or performed is worth watching.'
+    },
+    block2: {
+      text: 'This resembles a held resonance pattern where apparent alignment may reflect compliance rather than shared consequence.',
+      mechanism: 'Stability of this kind tends to hold until the asymmetry becomes visible or the cost of maintaining it rises.'
+    },
+    block3: {
+      intro: 'This pattern tends to emerge when:',
+      bullets: [
+        'the costs of misalignment fall unevenly across participants',
+        'some parties have more to lose from visible disagreement than others',
+        'signal appears shared but consequence is not'
+      ]
+    },
+    block4: {
+      intro: 'This tends to shift when:',
+      bullets: [
+        'consequence becomes more evenly distributed',
+        'those absorbing hidden cost are able to make it visible',
+        'stability is no longer maintained at the expense of accurate signal'
+      ]
+    },
+    pattern: 'Compliance Stability'
+  },
+
+  // S2 — Flickering / Distorting
+  s2_balanced: {
+    block1: {
+      text: 'What is showing here is a pattern of increasing strain between what the system says it is doing and what is actually happening.',
+      sub: 'Things are still moving. But the effort required to keep them moving is rising without a corresponding increase in result.'
+    },
+    block2: {
+      text: 'This resembles a load accumulation pattern where maintenance work is absorbing capacity that was previously available for coordination.',
+      mechanism: 'The system is drawing on reserves it is not restoring. Correction lags are appearing before failures are visible.'
+    },
+    block3: {
+      intro: 'This pattern tends to emerge when:',
+      bullets: [
+        'stabilizing work is invisible or uncounted in how the system understands itself',
+        'feedback arrives too late to inform behavior before the next cycle',
+        'the signal that something is wrong is being filtered or absorbed before it reaches decision points',
+        'those doing maintenance work have no mechanism to surface what they are seeing'
+      ]
+    },
+    block4: {
+      intro: 'This typically begins to shift when:',
+      bullets: [
+        'invisible maintenance work becomes visible and counted',
+        'early-warning signals reach decision points before accumulation becomes crisis',
+        'feedback velocity increases — the gap between signal and response narrows',
+        'those closest to the friction have a safe way to name what they are seeing'
+      ]
+    },
+    pattern: 'Load Accumulation Loop'
+  },
+
+  s2_soft: {
+    block1: {
+      text: 'What is showing here is a pattern of increasing effort without proportional result — though the strain may not be distributed equally across the system.',
+      sub: 'Some participants are likely absorbing more of the maintenance burden than others. This tends to be invisible until it is not.'
+    },
+    block2: {
+      text: 'This resembles a masked load pattern where deterioration is absorbed by specific participants rather than distributed as a legible system signal.',
+      mechanism: 'The flickering remains partially hidden because those experiencing it most directly may not have a safe or credible way to surface it.'
+    },
+    block3: {
+      intro: 'This pattern tends to emerge when:',
+      bullets: [
+        'consequence of system strain falls unevenly on participants with less structural protection',
+        'those absorbing hidden costs lack the standing or channel to name what they are seeing',
+        'the system reads as functional because the friction is being absorbed rather than surfaced'
+      ]
+    },
+    block4: {
+      intro: 'This tends to shift when:',
+      bullets: [
+        'those absorbing invisible maintenance cost gain a credible way to make it visible',
+        'the system begins to count what it has been discounting',
+        'early signal from less-protected participants reaches decision points without penalty'
+      ]
+    },
+    pattern: 'Masked Load Pattern'
+  },
+
+  // S3 — Off but occupied / Concealed
+  s3_balanced: {
+    block1: {
+      text: 'What is showing here is a pattern of known but withheld state — where accurate information exists inside the system but is not moving outward.',
+      sub: 'This is not a failure of knowledge. It is a failure of the conditions that make honest signal safe to send.'
+    },
+    block2: {
+      text: 'This resembles a rational concealment pattern where accurate signaling has been punished, ignored, or proven futile enough that participants have stopped attempting it.',
+      mechanism: 'The signal is off not because nothing is happening — but because the cost of turning it on has exceeded the perceived benefit.'
+    },
+    block3: {
+      intro: 'This pattern tends to emerge when:',
+      bullets: [
+        'accurate signal has been punished or ignored more than once',
+        'the benefit of honest transmission is outweighed by its relational or positional cost',
+        'there is no credible channel through which state can be named without consequence',
+        'those who tried to signal accurately experienced loss of standing or access'
+      ]
+    },
+    block4: {
+      intro: 'This typically begins to shift when:',
+      bullets: [
+        'a small accurate signal is received without penalty — and this is consistent over time',
+        'the channel for honest signal is separated from the channel for evaluation or judgment',
+        'those who previously signaled accurately and were ignored are explicitly acknowledged',
+        'contradiction can be expressed without loss of standing or access'
+      ]
+    },
+    pattern: 'Rational Concealment Loop'
+  },
+
+  s3_soft: {
+    block1: {
+      text: 'What is showing here is a pattern of withheld state — where accurate signal is known but not transmitted, in a system where the cost of transmission may not be equal across participants.',
+      sub: 'Who is withholding signal, and what they stand to lose by transmitting it, matters here more than the fact of concealment itself.'
+    },
+    block2: {
+      text: 'This resembles a protection-driven concealment pattern where silence is a rational response to an environment in which accurate signal has historically cost more for some participants than others.',
+      mechanism: 'Concealment of this kind is not dishonesty. It is a legible adaptation to a system where honesty was not safe or useful.'
+    },
+    block3: {
+      intro: 'This pattern tends to emerge when:',
+      bullets: [
+        'the cost of accurate signaling falls disproportionately on those with less structural protection',
+        'those with the most direct view of actual conditions have the least safe channel to name them',
+        'past attempts at honest signal resulted in consequence that was not shared by those who received the information'
+      ]
+    },
+    block4: {
+      intro: 'This tends to shift when:',
+      bullets: [
+        'the structural asymmetry that made concealment rational is named and addressed',
+        'those who absorbed cost for previous honesty receive something different this time',
+        'signal can be sent through channels that do not expose the sender to evaluation by those with power over them'
+      ]
+    },
+    pattern: 'Asymmetric Concealment'
+  },
+
+  // S4 — No light / No infrastructure
+  s4_balanced: {
+    block1: {
+      text: 'What is showing here is a pattern of foundational absence — where there is no shared channel through which the state of the situation can be transmitted and received with common meaning.',
+      sub: 'This is not signal failure. Signal was never established. Coordination failures here are structural, not behavioral.'
+    },
+    block2: {
+      text: 'This resembles a pre-signal condition where participants are operating without agreed meaning for what they observe — making shared interpretation structurally unavailable.',
+      mechanism: 'Without a shared channel, what looks like disagreement may simply be different people accurately describing different things with no common reference.'
+    },
+    block3: {
+      intro: 'This condition tends to exist when:',
+      bullets: [
+        'no agreed channel for state transmission was ever established',
+        'participants have not defined what signal would mean, or agreed to treat it as meaningful',
+        'coordination has been attempted through proximity or assumption rather than shared infrastructure',
+        'the system grew or formed without establishing how it would read itself'
+      ]
+    },
+    block4: {
+      intro: 'This typically begins to shift when:',
+      bullets: [
+        'participants agree on what a signal would mean before trying to send one',
+        'a minimal shared channel is established — not optimized, simply agreed upon',
+        'the absence of infrastructure is named as the problem, rather than participants being treated as the problem',
+        'one small signal is sent and received with shared meaning, establishing that it is possible'
+      ]
+    },
+    pattern: 'Foundational Absence'
+  },
+
+  s4_soft: {
+    block1: {
+      text: 'What is showing here is a pattern of foundational absence — where no shared signal infrastructure exists, in a system where the conditions for creating it may not be equally available to all participants.',
+      sub: 'The absence of a shared channel is structural. So is the question of who gets to define what the channel means once it is built.'
+    },
+    block2: {
+      text: 'This resembles a pre-signal condition with asymmetric founding risk — where establishing shared infrastructure requires trust or vulnerability that is not equally distributed.',
+      mechanism: 'In systems with uneven consequence, the question of who defines the signal is not neutral. Infrastructure built without addressing this tends to encode the asymmetry.'
+    },
+    block3: {
+      intro: 'This condition tends to exist when:',
+      bullets: [
+        'no shared channel exists, and the conditions for building one are not equally available',
+        'those with most to gain from coordination are also those with most to lose if the channel is misused',
+        'previous attempts to establish shared signal were defined by one party in ways that did not serve others'
+      ]
+    },
+    block4: {
+      intro: 'This tends to shift when:',
+      bullets: [
+        'the process of defining shared signal is itself shared — not handed down',
+        'foundational asymmetry is addressed before the channel is built, not after',
+        'a minimal agreed signal is established between the most equally-positioned participants first'
+      ]
+    },
+    pattern: 'Asymmetric Founding Condition'
+  }
+};
+
+// ─── Structural stops ─────────────────────────────────────────────────────────
+
+const STOPS = {
+  asymmetry: {
+    type: 'high asymmetry situation',
+    body: 'This situation isn\'t structured in a way that makes shared interpretation meaningful. One part of the system carries consequence that another does not. What presents as a communication or coordination problem is more likely a structural one. Signal engineering here does not address the actual condition.'
+  },
+  nonreciprocal: {
+    type: 'non-reciprocal system',
+    body: 'This situation isn\'t structured in a way that makes shared interpretation meaningful. Participants are experiencing this from positions too different to read the same signal. What looks like disagreement may be people accurately describing different realities from where they stand.'
+  },
+  uneven: {
+    type: 'uneven consequence structure',
+    body: 'This situation isn\'t structured in a way that makes shared interpretation fully meaningful. Consequence is not landing equally across participants. Any reading of what is happening here needs to account for that asymmetry before anything else.'
+  }
+};
+
+// ─── Questions ────────────────────────────────────────────────────────────────
+
+const QUESTIONS = [
+  {
+    id: 'light',
+    label: 'What is happening here',
+    text: 'What is the light showing right now?',
+    choices: [
+      { id: 's1', main: 'On and steady', sub: 'Things feel coherent. People know where they stand.', light: 'on' },
+      { id: 's2', main: 'Flickering', sub: 'Something is off. It\'s working, but it costs more than it should.', light: 'flicker' },
+      { id: 's3', main: 'Off — but someone\'s home', sub: 'Something is being withheld. People know more than they\'re saying.', light: 'off' },
+      { id: 's4', main: 'No light was ever put in', sub: 'There\'s no shared way to read what\'s happening here.', light: 'none' },
+    ]
+  },
+  {
+    id: 'g1',
+    label: 'Quick check',
+    text: 'When something goes wrong here, who actually feels it?',
+    choices: [
+      { id: 'shared', main: 'Everyone involved feels it', sub: 'The consequences land across the group.' },
+      { id: 'some',   main: 'Some people feel it more than others', sub: 'It depends on your position.' },
+      { id: 'one',    main: 'Mostly one person or group', sub: 'Someone absorbs what others don\'t have to.' },
+    ]
+  },
+  {
+    id: 'g2',
+    label: 'Quick check',
+    text: 'Could anyone here step away without it really costing them?',
+    choices: [
+      { id: 'no',   main: 'No — everyone is genuinely in it', sub: 'Leaving would cost everyone something real.' },
+      { id: 'some', main: 'Some people have an easier exit', sub: 'Not everyone carries the same stake.' },
+      { id: 'yes',  main: 'Yes — some could walk away cleanly', sub: 'There\'s a real difference in who bears the risk.' },
+    ]
+  },
+  {
+    id: 'g3',
+    label: 'Quick check',
+    text: 'Is responsibility for what happens here shared or concentrated?',
+    choices: [
+      { id: 'shared', main: 'Shared across the group', sub: 'Multiple people are accountable for what happens.' },
+      { id: 'mixed',  main: 'Partly shared, partly in one place', sub: 'Some areas are shared, some aren\'t.' },
+      { id: 'one',    main: 'Concentrated in one role or person', sub: 'One party carries it.' },
+    ]
+  },
+  {
+    id: 'g4',
+    label: 'Last check',
+    text: 'Does everyone experience this situation from a similar position?',
+    choices: [
+      { id: 'yes',    main: 'Broadly similar', sub: 'People are reading this from roughly the same place.' },
+      { id: 'varied', main: 'Noticeably different by role or standing', sub: 'Where you sit changes what you see.' },
+      { id: 'no',     main: 'Very different depending on who you are', sub: 'This is a fundamentally unequal experience across the group.' },
+    ]
+  }
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+const S = {
+  step: 0,
+  lightId: null,
+  lightCls: null,
+  gateAnswers: [],
+};
+
+// ─── Gate logic ───────────────────────────────────────────────────────────────
+
+function evaluateGate(answers) {
+  const [g1, g2, g3, g4] = answers;
+  // Hard structural stops
+  if (g1 === 'one' && g2 === 'yes') return { stop: STOPS.asymmetry };
+  if (g2 === 'yes' && g4 === 'no')  return { stop: STOPS.nonreciprocal };
+  if (g1 === 'one' && g3 === 'one') return { stop: STOPS.uneven };
+  // Tone: soft if any asymmetry signal present
+  const soft = (g1 === 'some' || g2 === 'some' || g3 === 'mixed' || g4 === 'varied' || g4 === 'no');
+  return { stop: null, tone: soft ? 'soft' : 'balanced' };
+}
+
+// ─── Rendering ────────────────────────────────────────────────────────────────
+
+function setLight(cls) {
+  document.getElementById('glyph').className = 'porch-light' + (cls ? ' ' + cls : '');
+}
+
+function updateDots(active) {
+  for (let i = 0; i < 5; i++) {
+    const d = document.getElementById('d' + i);
+    d.className = 'dot' + (i < active ? ' done' : i === active ? ' active' : '');
+  }
+}
+
+function render() {
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+  updateDots(S.step);
+
+  if (S.step < QUESTIONS.length) {
+    renderQuestion(stage, QUESTIONS[S.step]);
+  }
+}
+
+function renderQuestion(stage, q) {
+  const label = el('div', 'q-label', q.label);
+  const text  = el('div', 'q-text', q.text);
+  stage.appendChild(label);
+  stage.appendChild(text);
+
+  const wrap = el('div', 'choices');
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.innerHTML = `<span class="c-dot"></span><span><span class="c-main">${c.main}</span><span class="c-sub">${c.sub}</span></span>`;
+    btn.onclick = () => {
+      wrap.querySelectorAll('.choice').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      setTimeout(() => handleChoice(q.id, c), 240);
+    };
+    wrap.appendChild(btn);
+  });
+  stage.appendChild(wrap);
+}
+
+function handleChoice(qid, choice) {
+  if (qid === 'light') {
+    S.lightId  = choice.id;
+    S.lightCls = choice.light;
+    setLight(choice.light);
+  } else {
+    S.gateAnswers.push(choice.id);
+    if (S.gateAnswers.length === 4) {
+      const result = evaluateGate(S.gateAnswers);
+      if (result.stop) {
+        renderStop(result.stop);
+        updateDots(5);
+        return;
+      }
+      renderOutput(result.tone);
+      updateDots(5);
+      return;
+    }
+  }
+  S.step++;
+  render();
+}
+
+// ─── Stop ─────────────────────────────────────────────────────────────────────
+
+function renderStop(stop) {
+  setLight('');
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+
+  const wrap = el('div', 'output');
+  const block = el('div', 'stop-block');
+  block.innerHTML = `
+    <div class="stop-label">What is showing here</div>
+    <div class="stop-body">${stop.body}</div>
+    <div class="stop-type">${stop.type}</div>
+  `;
+  wrap.appendChild(block);
+  wrap.appendChild(restartBtn());
+  stage.appendChild(wrap);
+}
+
+// ─── Output ───────────────────────────────────────────────────────────────────
+
+function renderOutput(tone) {
+  const key  = S.lightId + '_' + tone;
+  const data = OUTPUTS[key] || OUTPUTS[S.lightId + '_balanced'];
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+
+  const wrap = el('div', 'output');
+
+  // Block 1
+  wrap.appendChild(makeBlock('What is showing here',
+    `<p>${data.block1.text}</p><p style="color:var(--text-mid);font-style:italic;font-size:14px;margin-top:8px">${data.block1.sub}</p>`
+  ));
+
+  // Block 2
+  wrap.appendChild(makeBlock('What this resembles',
+    `<p>${data.block2.text}</p><p style="color:var(--text-mid);font-size:14px;margin-top:8px">${data.block2.mechanism}</p>`
+  ));
+
+  // Block 3
+  wrap.appendChild(makeBlock('What is generating it',
+    `<p>${data.block3.intro}</p>${bulletsHTML(data.block3.bullets)}`
+  ));
+
+  // Block 4 + pattern tag
+  const b4 = makeBlock('What tends to shift it',
+    `<p>${data.block4.intro}</p>${bulletsHTML(data.block4.bullets)}`
+  );
+  const tag = el('div', 'pattern-tag', 'Pattern: ' + data.pattern);
+  b4.appendChild(tag);
+  wrap.appendChild(b4);
+
+  wrap.appendChild(restartBtn());
+  stage.appendChild(wrap);
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function makeBlock(label, bodyHTML) {
+  const block = el('div', 'out-block');
+  block.innerHTML = `<div class="out-label">${label}</div><div class="out-body">${bodyHTML}</div>`;
+  return block;
+}
+
+function bulletsHTML(items) {
+  return '<ul class="out-bullets">' + items.map(i => `<li>${i}</li>`).join('') + '</ul>';
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls)  e.className = cls;
+  if (text) e.textContent = text;
+  return e;
+}
+
+function restartBtn() {
+  const b = document.createElement('button');
+  b.className = 'restart';
+  b.textContent = 'Read another situation';
+  b.onclick = resetAll;
+  return b;
+}
+
+function resetAll() {
+  S.step = 0;
+  S.lightId = null;
+  S.lightCls = null;
+  S.gateAnswers = [];
+  setLight('');
+  render();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+
+</body>
+</html>
