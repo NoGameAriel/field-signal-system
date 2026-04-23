@@ -5,34 +5,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loop Logic Atlas — Field & Signal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Spectral:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink: #1a1a18;
-      --paper: #f7f5f0;
-      --warm-mid: #e8e4da;
-      --rule: #c8c2b4;
-      --accent: #2d5a3d;
-      --accent-light: #e8f0ea;
-      --muted: #6b6560;
-      --white: #ffffff;
+      --ink:       #18180f;
+      --paper:     #f6f3ec;
+      --linen:     #ede9df;
+      --rule:      #ccc6b8;
+      --faint:     #e5e1d6;
+      --sage:      #3b5249;
+      --sage-mid:  #c8d5cc;
+      --sage-pale: #edf2ee;
+      --warm:      #8c7f6e;
+      --white:     #ffffff;
+      --serif:     'Cormorant Garamond', Georgia, serif;
+      --body:      'Spectral', Georgia, serif;
+      --mono:      'DM Mono', monospace;
     }
 
 ```
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--body);
   background: var(--paper);
   color: var(--ink);
-  font-size: 17px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.75;
   min-height: 100vh;
 }
 
+/* ── HEADER ── */
 .site-header {
   border-bottom: 1px solid var(--rule);
-  padding: 1.25rem 2rem;
+  padding: 1.1rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -43,154 +51,225 @@ body {
 }
 
 .wordmark {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--warm);
+  text-transform: uppercase;
+}
+
+.header-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
   letter-spacing: 0.12em;
-  color: var(--muted);
+  color: var(--sage);
   text-transform: uppercase;
+  border-bottom: 1px solid var(--sage);
+  padding-bottom: 0.1rem;
 }
 
-.tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid var(--accent);
-  padding: 0.2rem 0.6rem;
-  border-radius: 2px;
-}
-
+/* ── HERO ── */
 .hero {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 4rem 2rem 2rem;
+  padding: 5rem 2.5rem 2.5rem;
 }
 
 .instrument-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--warm);
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 h1 {
-  font-family: 'Libre Baskerville', serif;
-  font-size: clamp(2rem, 5vw, 2.75rem);
-  font-weight: 700;
-  line-height: 1.15;
-  margin-bottom: 1rem;
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.25rem;
+  color: var(--ink);
 }
 
 .hero-sub {
+  font-family: var(--body);
   font-size: 1rem;
-  color: var(--muted);
   font-weight: 300;
-  max-width: 520px;
-  margin-bottom: 2.5rem;
+  color: var(--warm);
+  max-width: 460px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  font-style: italic;
 }
 
 .divider {
-  width: 48px;
-  height: 2px;
-  background: var(--accent);
-  margin-bottom: 2.5rem;
+  width: 32px;
+  height: 1px;
+  background: var(--sage);
+  margin-bottom: 3rem;
 }
 
+/* ── MAIN ── */
 .main {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 0 2rem 5rem;
+  padding: 0 2.5rem 6rem;
 }
 
+/* ── STEPS ── */
 .step { display: none; }
-.step.active { display: block; animation: fadeIn 0.35s ease; }
+.step.active { display: block; animation: fadeUp 0.4s ease both; }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .step-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--warm);
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .step-prompt {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 1.25rem;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 300;
   font-style: italic;
   color: var(--ink);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
 }
 
 .step-hint {
   font-size: 0.9rem;
-  color: var(--muted);
-  margin-bottom: 1.75rem;
+  color: var(--warm);
+  margin-bottom: 2.5rem;
+  font-weight: 300;
 }
 
+/* ── DOMAIN GRID ── */
 .domain-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
 }
 
 .domain-card {
-  border: 1px solid var(--rule);
-  background: var(--white);
-  padding: 1.1rem 1.25rem;
+  background: var(--paper);
+  padding: 1.4rem 1.5rem;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition: background 0.18s;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1.1rem;
 }
 
 .domain-card:hover {
-  border-color: var(--accent);
-  background: var(--accent-light);
+  background: var(--sage-pale);
 }
 
-.domain-icon { font-size: 1.2rem; flex-shrink: 0; }
-.domain-name { font-size: 0.975rem; font-weight: 500; }
+.domain-numeral {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--sage);
+  min-width: 1.6rem;
+  letter-spacing: 0.04em;
+}
 
-.signal-list { list-style: none; margin-bottom: 2rem; }
+.domain-name {
+  font-family: var(--body);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
 
-.signal-item { border-bottom: 1px solid var(--warm-mid); }
+/* ── SIGNAL LIST ── */
+.selected-domain-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.selected-numeral {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--sage);
+  line-height: 1;
+}
+
+.selected-domain-header h2 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--ink);
+}
+
+.change-link {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--warm);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.1rem;
+}
+
+.signal-list { list-style: none; margin-bottom: 2.5rem; }
+
+.signal-item { border-bottom: 1px solid var(--faint); }
 
 .signal-item label {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
-  padding: 0.9rem 0;
+  gap: 1.1rem;
+  padding: 1rem 0;
   cursor: pointer;
-  font-size: 0.975rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--ink);
+  transition: color 0.15s;
 }
+
+.signal-item label:hover { color: var(--sage); }
 
 .signal-item input[type="checkbox"] {
   appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid var(--rule);
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--rule);
   background: var(--white);
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 3px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
   position: relative;
 }
 
 .signal-item input[type="checkbox"]:checked {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--sage);
+  border-color: var(--sage);
 }
 
 .signal-item input[type="checkbox"]:checked::after {
@@ -198,160 +277,441 @@ h1 {
   position: absolute;
   left: 4px;
   top: 1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid white;
+  width: 5px;
+  height: 9px;
+  border: 1.5px solid white;
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
 }
 
-.selected-domain-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.selected-domain-header .domain-icon { font-size: 1.4rem; }
-
-.selected-domain-header h2 {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.selected-domain-header .change-link {
-  margin-left: auto;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  text-decoration: underline;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
+/* ── BUTTONS ── */
 .btn-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 0.5rem;
 }
 
 .btn-primary {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   background: var(--ink);
   color: var(--paper);
   border: none;
-  padding: 0.85rem 1.75rem;
+  padding: 0.9rem 2rem;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.btn-primary:hover { background: var(--accent); }
+.btn-primary:hover { background: var(--sage); }
 
 .btn-back {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--warm);
   background: none;
   border: none;
   cursor: pointer;
-  text-decoration: underline;
+  text-transform: uppercase;
   padding: 0;
+  border-bottom: 1px solid var(--rule);
 }
 
-.result-section { margin-bottom: 2rem; }
+/* ── RESULTS ── */
+.result-section { margin-bottom: 2.5rem; }
 
 .result-section-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--warm);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--faint);
+}
+
+.checked-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--faint);
+  font-size: 0.875rem;
+  font-weight: 300;
+  color: var(--ink);
+}
+
+.check-mark {
+  font-family: var(--mono);
+  color: var(--sage);
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 3px;
+}
+
+.loop-equation {
+  border-left: 2px solid var(--sage);
+  padding: 1.5rem 1.75rem;
+  background: var(--sage-pale);
+  margin-bottom: 2.5rem;
+}
+
+.loop-equation .eq-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--sage);
   text-transform: uppercase;
   margin-bottom: 0.75rem;
 }
 
-.loop-equation {
-  border-left: 3px solid var(--accent);
-  padding: 1.25rem 1.5rem;
-  background: var(--accent-light);
-  margin-bottom: 2rem;
-}
-
-.loop-equation .eq-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
 .loop-equation p {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 1.05rem;
+  font-family: var(--serif);
+  font-size: 1.15rem;
   font-style: italic;
-  margin-bottom: 0.5rem;
+  font-weight: 300;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink);
 }
 
 .loop-equation .eq-note {
-  font-size: 0.875rem;
-  color: var(--muted);
+  font-size: 0.85rem;
+  color: var(--warm);
   font-style: normal;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--body);
+  font-weight: 300;
 }
 
-.build-cards { display: grid; gap: 0.6rem; margin-bottom: 2rem; }
+.build-cards { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 2.5rem; }
 
 .build-card {
-  border: 1px solid var(--rule);
   background: var(--white);
-  padding: 1.1rem 1.25rem;
+  padding: 1.1rem 1.4rem;
   display: flex;
-  gap: 1rem;
+  gap: 1.1rem;
   align-items: flex-start;
+  transition: background 0.15s;
 }
+
+.build-card:hover { background: var(--sage-pale); }
 
 .build-card .arrow {
-  font-family: 'DM Mono', monospace;
-  color: var(--accent);
+  font-family: var(--mono);
+  color: var(--sage);
   flex-shrink: 0;
-  margin-top: 0.15rem;
+  margin-top: 0.1rem;
+  font-size: 0.75rem;
 }
 
-.build-card .build-text { font-size: 0.975rem; line-height: 1.5; }
+.build-card .build-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: var(--ink);
+}
 
 .start-box {
   background: var(--ink);
   color: var(--paper);
-  padding: 1.75rem;
-  margin-bottom: 2rem;
+  padding: 2rem 2.25rem;
+  margin-bottom: 2.5rem;
 }
 
 .start-box .start-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.14em;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
   color: var(--rule);
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+
+.start-box p {
+  font-family: var(--body);
+  font-size: 0.93rem;
+  line-height: 1.75;
+  font-weight: 300;
+  color: var(--linen);
+}
+
+/* ── PRINT BUTTON ── */
+.worksheet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2rem;
+}
+
+.worksheet-row p {
+  font-size: 0.85rem;
+  color: var(--warm);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.btn-worksheet {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+  background: none;
+  border: 1px solid var(--sage);
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-worksheet:hover {
+  background: var(--sage);
+  color: var(--white);
+}
+
+.restart-row {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.restart-row p { font-size: 0.85rem; color: var(--warm); font-weight: 300; }
+
+.btn-restart {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--warm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.1rem;
+}
+
+/* ── WORKSHEET MODAL ── */
+.worksheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(24,24,15,0.55);
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+}
+
+.worksheet-overlay.open { display: flex; }
+
+.worksheet-modal {
+  background: var(--white);
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  animation: fadeUp 0.3s ease both;
+}
+
+.worksheet-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.75rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--warm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.worksheet-content {
+  padding: 3rem 3.5rem 3rem;
+}
+
+.ws-header {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ws-meta {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--warm);
   text-transform: uppercase;
   margin-bottom: 0.75rem;
 }
 
-.start-box p { font-size: 0.975rem; line-height: 1.65; color: var(--paper); }
+.ws-header h2 {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.15;
+}
 
-.restart-row {
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
+.ws-header .ws-subtitle {
+  font-family: var(--body);
+  font-size: 0.88rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--warm);
+  margin-top: 0.5rem;
+}
+
+.ws-section { margin-bottom: 2rem; }
+
+.ws-section-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--sage);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--sage-mid);
+}
+
+.ws-signal-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--faint);
+}
+
+.ws-box {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.ws-signal-text {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.ws-build-row {
+  display: flex;
+  gap: 0.9rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--faint);
+  align-items: flex-start;
+}
+
+.ws-num {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--warm);
+  flex-shrink: 0;
+  width: 1.2rem;
+  margin-top: 2px;
+}
+
+.ws-build-text {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.ws-equation-box {
+  background: var(--sage-pale);
+  border-left: 2px solid var(--sage);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ws-equation-box .eq-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  color: var(--sage);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.ws-equation-box p {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 0.4rem;
+}
+
+.ws-equation-box .eq-note {
+  font-size: 0.8rem;
+  color: var(--warm);
+  font-weight: 300;
+}
+
+.ws-start-box {
+  background: var(--ink);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.ws-start-box .start-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  color: var(--rule);
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.ws-start-box p {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--linen);
+  line-height: 1.7;
+}
+
+.ws-reflect {
+  margin-bottom: 1.5rem;
+}
+
+.ws-reflect-q {
+  font-family: var(--body);
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.ws-lines {
+  width: 100%;
+}
+
+.ws-line {
+  width: 100%;
+  height: 1px;
+  background: var(--rule);
+  margin-bottom: 1.4rem;
+}
+
+.ws-footer {
+  padding: 1.25rem 3.5rem;
   border-top: 1px solid var(--rule);
   display: flex;
   align-items: center;
@@ -359,52 +719,57 @@ h1 {
   gap: 1rem;
 }
 
-.restart-row p { font-size: 0.875rem; color: var(--muted); }
+.ws-footer-text {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--warm);
+}
 
-.btn-restart {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  background: none;
-  border: 1px solid var(--accent);
-  padding: 0.5rem 1rem;
+.btn-print {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 0.7rem 1.4rem;
   cursor: pointer;
-  white-space: nowrap;
+  transition: background 0.18s;
 }
 
-.checked-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.7rem 0;
-  border-bottom: 1px solid var(--warm-mid);
-  font-size: 0.95rem;
-}
+.btn-print:hover { background: var(--sage); }
 
-.checked-item .check-mark {
-  font-family: 'DM Mono', monospace;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
+/* ── FOOTER ── */
 .page-footer {
   border-top: 1px solid var(--rule);
-  padding: 2rem;
+  padding: 2rem 2.5rem;
   text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--warm);
+  letter-spacing: 0.1em;
 }
 
-.page-footer a { color: var(--accent); text-decoration: none; }
+.page-footer a { color: var(--sage); text-decoration: none; }
 
+/* ── RESPONSIVE ── */
 @media (max-width: 600px) {
-  .hero, .main { padding-left: 1.25rem; padding-right: 1.25rem; }
-  .site-header { padding: 1rem 1.25rem; }
+  .hero, .main { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .site-header { padding: 1rem 1.5rem; }
   .domain-grid { grid-template-columns: 1fr 1fr; }
-  .hero { padding-top: 2.5rem; }
+  .hero { padding-top: 3rem; }
+  .worksheet-content { padding: 2rem 1.75rem; }
+  .ws-footer { padding: 1rem 1.75rem; }
+}
+
+/* ── PRINT STYLES ── */
+@media print {
+  .worksheet-overlay { display: flex !important; position: static; background: none; padding: 0; }
+  .worksheet-modal { box-shadow: none; max-width: 100%; }
+  .worksheet-close, .btn-print, .ws-footer { display: none; }
+  body > *:not(.worksheet-overlay) { display: none; }
 }
 ```
 
@@ -414,11 +779,11 @@ h1 {
 
 <header class="site-header">
   <span class="wordmark">Field & Signal</span>
-  <span class="tag">Loop Logic Atlas</span>
+  <span class="header-tag">Loop Logic Atlas</span>
 </header>
 
 <div class="hero">
-  <div class="instrument-label">Build Guide · LLA-01</div>
+  <div class="instrument-label">Build Guide &middot; LLA-01</div>
   <h1>Loop Logic Atlas</h1>
   <p class="hero-sub">Something around you isn't working. This tool helps you name what's broken and find a parallel path forward.</p>
   <div class="divider"></div>
@@ -426,57 +791,73 @@ h1 {
 
 <div class="main">
 
+  <!-- STEP 1 -->
+
   <div class="step active" id="step1">
     <div class="step-label">Step 1 of 3</div>
     <p class="step-prompt">Where is this happening?</p>
     <p class="step-hint">Choose the domain that feels closest to your situation.</p>
-    <div class="domain-grid">
-      <div class="domain-card" onclick="selectDomain('psychology')"><span class="domain-icon">🧠</span><span class="domain-name">Psychology</span></div>
-      <div class="domain-card" onclick="selectDomain('education')"><span class="domain-icon">📚</span><span class="domain-name">Education</span></div>
-      <div class="domain-card" onclick="selectDomain('ecology')"><span class="domain-icon">🌿</span><span class="domain-name">Ecology</span></div>
-      <div class="domain-card" onclick="selectDomain('governance')"><span class="domain-icon">🏛️</span><span class="domain-name">Governance</span></div>
-      <div class="domain-card" onclick="selectDomain('economy')"><span class="domain-icon">⚖️</span><span class="domain-name">Economy</span></div>
-      <div class="domain-card" onclick="selectDomain('relationships')"><span class="domain-icon">🤝</span><span class="domain-name">Relationships</span></div>
-      <div class="domain-card" onclick="selectDomain('healthcare')"><span class="domain-icon">🩺</span><span class="domain-name">Healthcare</span></div>
-      <div class="domain-card" onclick="selectDomain('media')"><span class="domain-icon">📡</span><span class="domain-name">Media</span></div>
-      <div class="domain-card" onclick="selectDomain('technology')"><span class="domain-icon">💻</span><span class="domain-name">Technology</span></div>
-      <div class="domain-card" onclick="selectDomain('spirituality')"><span class="domain-icon">✨</span><span class="domain-name">Spirituality</span></div>
-    </div>
+    <div class="domain-grid" id="domainGrid"></div>
   </div>
+
+  <!-- STEP 2 -->
 
   <div class="step" id="step2">
     <div class="step-label">Step 2 of 3</div>
     <p class="step-prompt">What are you noticing?</p>
-    <p class="step-hint">Check everything that feels true. You don't need all of them.</p>
+    <p class="step-hint">Mark everything that feels true. You don't need all of them.</p>
     <div class="selected-domain-header" id="domainHeader"></div>
     <ul class="signal-list" id="signalList"></ul>
     <div class="btn-row">
       <button class="btn-primary" onclick="showResults()">See what to build</button>
-      <button class="btn-back" onclick="showStep(1)">← Change domain</button>
+      <button class="btn-back" onclick="showStep(1)">Back</button>
     </div>
   </div>
 
+  <!-- STEP 3 -->
+
   <div class="step" id="step3">
-    <div class="step-label">Step 3 of 3 — Your Build Guide</div>
+    <div class="step-label">Step 3 of 3 &mdash; Build Guide</div>
     <div class="selected-domain-header" id="domainHeader3"></div>
     <div id="buildContent"></div>
+    <div class="worksheet-row">
+      <p>Take this with you. A printable field worksheet for this domain.</p>
+      <button class="btn-worksheet" onclick="openWorksheet()">Open worksheet</button>
+    </div>
     <div class="restart-row">
-      <p>Try a different domain or situation.</p>
+      <p>Try a different domain.</p>
       <button class="btn-restart" onclick="restart()">Start over</button>
     </div>
   </div>
 
 </div>
 
+<!-- WORKSHEET MODAL -->
+
+<div class="worksheet-overlay" id="worksheetOverlay">
+  <div class="worksheet-modal" id="worksheetModal">
+    <button class="worksheet-close" onclick="closeWorksheet()">Close</button>
+    <div class="worksheet-content" id="worksheetContent"></div>
+    <div class="ws-footer">
+      <span class="ws-footer-text">Field &amp; Signal &middot; LLA-01 &middot; A. Willingham &middot; nogameariel.github.io</span>
+      <button class="btn-print" onclick="window.print()">Print worksheet</button>
+    </div>
+  </div>
+</div>
+
 <footer class="page-footer">
-  <p>Field & Signal · <a href="https://nogameariel.github.io/field-signal-system/">field-signal-system</a> · <a href="https://arielwillingham.substack.com">Substack</a></p>
-  <p style="margin-top:0.5rem;">Instrument LLA-01 · Loop Logic Atlas · A. Willingham</p>
+  <p>Field &amp; Signal &middot; <a href="https://nogameariel.github.io/field-signal-system/">field-signal-system</a> &middot; <a href="https://arielwillingham.substack.com">Substack</a></p>
+  <p style="margin-top:0.4rem;">Instrument LLA-01 &middot; Loop Logic Atlas &middot; A. Willingham</p>
 </footer>
 
 <script>
-const DOMAINS = {
-  psychology: {
-    name: 'Psychology', icon: '🧠',
+const NUMERALS = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
+
+const DOMAINS = [
+  {
+    key: 'psychology',
+    name: 'Psychology',
+    tagline: 'Internal coherence and self-trust under pressure.',
     signals: [
       'I can articulate what\'s wrong but nothing actually changes',
       'I perform wellness or healing while still feeling broken inside',
@@ -496,9 +877,16 @@ const DOMAINS = {
       'A way to track your own pattern over time — not to fix it, but to make it visible to yourself',
     ],
     startWhere: 'Start with one honest conversation you\'ve been avoiding. Not to resolve anything — just to let the signal exist out loud. Notice what happens to the pattern after that.',
+    reflectQuestions: [
+      'What signal have I been explaining away instead of trusting?',
+      'Who in my life allows me to be honest without managing me?',
+      'What is one pattern I can name today, without trying to fix it?',
+    ],
   },
-  education: {
-    name: 'Education', icon: '📚',
+  {
+    key: 'education',
+    name: 'Education',
+    tagline: 'Learning as a living field — not a compliance system.',
     signals: [
       'Students are rewarded for compliance, not curiosity',
       'Feedback is collected but never actually changes anything',
@@ -518,9 +906,16 @@ const DOMAINS = {
       'A local apprenticeship or mentorship pairing that bypasses credentialing',
     ],
     startWhere: 'Find one person in your community whose knowledge is not recognized by the formal system. Create one context where that knowledge gets transmitted.',
+    reflectQuestions: [
+      'What knowledge in my community is being ignored by the formal system?',
+      'Where does curiosity still live in this context — and what does it need?',
+      'What would I build if I had no institutional constraints for one hour per week?',
+    ],
   },
-  ecology: {
-    name: 'Ecology', icon: '🌿',
+  {
+    key: 'ecology',
+    name: 'Ecology',
+    tagline: 'Re-entering the field as steward, not extractor.',
     signals: [
       'Sustainability is used as marketing without structural change',
       'Local ecological knowledge is dismissed or ignored',
@@ -540,9 +935,16 @@ const DOMAINS = {
       'Documentation of what the land looked like before — oral history, photography, elder knowledge',
     ],
     startWhere: 'Find one piece of land near you that is neglected or extractively managed. Find out who has standing to make a decision about it. Show up to that conversation.',
+    reflectQuestions: [
+      'What ecological signal near me is being ignored — and by whom?',
+      'What does this land\'s memory hold that no institution has recorded?',
+      'Where am I still participating in extraction I haven\'t fully reckoned with?',
+    ],
   },
-  governance: {
-    name: 'Governance', icon: '🏛️',
+  {
+    key: 'governance',
+    name: 'Governance',
+    tagline: 'Public self-trust and the architecture of real input.',
     signals: [
       'Public input is collected but doesn\'t change outcomes',
       'Decisions are made before consultation happens',
@@ -562,14 +964,21 @@ const DOMAINS = {
       'A local truth commission or community listening process on a specific harm',
     ],
     startWhere: 'Identify one decision being made near you that affects people who have no seat at the table. Convene those people first. Build their analysis before the official process closes.',
+    reflectQuestions: [
+      'What decision nearby is being made without the people most affected?',
+      'Where has "participation" been performed rather than practiced in my context?',
+      'What would a genuine transfer of power look like in one specific situation?',
+    ],
   },
-  economy: {
-    name: 'Economy', icon: '⚖️',
+  {
+    key: 'economy',
+    name: 'Economy',
+    tagline: 'Value made visible — and returned to those who generate it.',
     signals: [
       'More effort is producing less predictable reward',
       'I can\'t trace where the value I generate actually goes',
       'The rules keep shifting in ways I can\'t anticipate',
-      'Meritocracy is invoked to justify outcomes that feel structurally determined',
+      'Meritocracy is invoked to justify structurally determined outcomes',
       'Care work and relational labor are invisible in how value gets counted',
       'Survival requires participation in systems I know are harmful',
       'Exit feels impossible — there\'s no outside to move to',
@@ -584,9 +993,16 @@ const DOMAINS = {
       'A shared equity arrangement — pooled resources, distributed decision-making',
     ],
     startWhere: 'Map one economic loop you\'re inside right now: what you put in, what moves, who benefits. Make it visible on paper. Share it with one other person who\'s in the same loop.',
+    reflectQuestions: [
+      'What do I produce that the system counts — and what goes uncounted?',
+      'Where in my economic life do I have no real exit option?',
+      'What would transparent value tracking change about my relationship to this loop?',
+    ],
   },
-  relationships: {
-    name: 'Relationships', icon: '🤝',
+  {
+    key: 'relationships',
+    name: 'Relationships',
+    tagline: 'Honesty as infrastructure. Roles made renegotiable.',
     signals: [
       'Things feel fine on the surface but something is consistently unspoken',
       'One person\'s comfort is consistently prioritized over shared truth',
@@ -606,9 +1022,16 @@ const DOMAINS = {
       'One honest conversation that has been deferred — with a commitment to stay in it',
     ],
     startWhere: 'Name one thing you have been managing instead of saying. Find the smallest honest version of it. Say that.',
+    reflectQuestions: [
+      'What am I managing instead of saying — and how long has that been true?',
+      'What role am I carrying that no one agreed I should carry?',
+      'What would repair actually look like in this relationship — not performance of it?',
+    ],
   },
-  healthcare: {
-    name: 'Healthcare', icon: '🩺',
+  {
+    key: 'healthcare',
+    name: 'Healthcare',
+    tagline: 'The body as signal. The chart as incomplete record.',
     signals: [
       'My symptoms have been dismissed or minimized',
       'Care decisions are shaped by cost or coverage, not health',
@@ -628,9 +1051,16 @@ const DOMAINS = {
       'An advocacy practice: accompanying someone else through the system, bearing witness',
     ],
     startWhere: 'Find one person navigating a similar health situation. Compare notes. What do you know between you that the system hasn\'t told either of you?',
+    reflectQuestions: [
+      'What do I know about my body that has never been recorded in a chart?',
+      'Where has the clinical record failed to hold the full truth of my experience?',
+      'What would peer knowledge — not institutional knowledge — change about my situation?',
+    ],
   },
-  media: {
-    name: 'Media', icon: '📡',
+  {
+    key: 'media',
+    name: 'Media',
+    tagline: 'Narrative integrity and the infrastructure of local truth.',
     signals: [
       'I can\'t tell what\'s true but I can feel something is being managed',
       'Harm is aestheticized or made consumable',
@@ -650,9 +1080,16 @@ const DOMAINS = {
       'A storytelling circle: oral transmission, recorded with consent, kept in community hands',
     ],
     startWhere: 'Write one thing down that is true about your community that hasn\'t been said publicly. Find one way to make it visible — even to ten people.',
+    reflectQuestions: [
+      'What is true about my community that has never been put into public record?',
+      'Where has a story I know been distorted by the time it reached a larger platform?',
+      'What would I own if I built one piece of media infrastructure I controlled?',
+    ],
   },
-  technology: {
-    name: 'Technology', icon: '💻',
+  {
+    key: 'technology',
+    name: 'Technology',
+    tagline: 'Tools that serve signal — not attention extraction.',
     signals: [
       'I use tools I don\'t understand and can\'t exit easily',
       'My attention is being monetized in ways I didn\'t consent to',
@@ -672,9 +1109,16 @@ const DOMAINS = {
       'A data dignity practice: understanding what you share, with whom, under what terms',
     ],
     startWhere: 'Pick one tool you use daily. Find out who owns it, how it makes money, and what it knows about you. Decide whether that\'s a trade you\'re making consciously.',
+    reflectQuestions: [
+      'Which tools in my daily life do I use without understanding the terms?',
+      'Where has speed or convenience replaced something I actually valued?',
+      'What would a week look like if I audited my attention the way I audit my time?',
+    ],
   },
-  spirituality: {
-    name: 'Spirituality', icon: '✨',
+  {
+    key: 'spirituality',
+    name: 'Spirituality',
+    tagline: 'The sacred reclaimed from performance and hierarchy.',
     signals: [
       'Spiritual authority is used to bypass accountability',
       'Questioning is treated as a failure of faith',
@@ -694,23 +1138,38 @@ const DOMAINS = {
       'A community of doubt: people who hold questions together without needing resolution',
     ],
     startWhere: 'Name one spiritual belief you hold that you\'ve never questioned out loud. Find one person who will stay curious with you rather than resolve it for you.',
+    reflectQuestions: [
+      'What belief do I hold that has never been allowed to be a question?',
+      'Where has spiritual language been used to prevent accountability in my community?',
+      'What would my practice look like if no one was watching and nothing needed to be performed?',
+    ],
   },
-};
+];
 
-let currentDomain = null;
+// Build domain grid
+const grid = document.getElementById('domainGrid');
+DOMAINS.forEach((d, i) => {
+  const card = document.createElement('div');
+  card.className = 'domain-card';
+  card.innerHTML = `<span class="domain-numeral">${NUMERALS[i]}</span><span class="domain-name">${d.name}</span>`;
+  card.onclick = () => selectDomain(i);
+  grid.appendChild(card);
+});
 
-function selectDomain(key) {
-  currentDomain = key;
-  const domain = DOMAINS[key];
+let currentIndex = null;
+
+function selectDomain(index) {
+  currentIndex = index;
+  const d = DOMAINS[index];
 
   document.getElementById('domainHeader').innerHTML = `
-    <span class="domain-icon">${domain.icon}</span>
-    <h2>${domain.name}</h2>
+    <span class="selected-numeral">${NUMERALS[index]}</span>
+    <h2>${d.name}</h2>
     <button class="change-link" onclick="showStep(1)">Change</button>
   `;
 
   const list = document.getElementById('signalList');
-  list.innerHTML = domain.signals.map((s, i) => `
+  list.innerHTML = d.signals.map((s, i) => `
     <li class="signal-item">
       <label>
         <input type="checkbox" id="sig${i}" value="${i}">
@@ -723,57 +1182,148 @@ function selectDomain(key) {
 }
 
 function showResults() {
-  const domain = DOMAINS[currentDomain];
+  const d = DOMAINS[currentIndex];
   const checked = Array.from(document.querySelectorAll('#signalList input:checked'));
-  const checkedSignals = checked.map(c => domain.signals[parseInt(c.value)]);
+  const checkedSignals = checked.map(c => d.signals[parseInt(c.value)]);
 
   document.getElementById('domainHeader3').innerHTML = `
-    <span class="domain-icon">${domain.icon}</span>
-    <h2>${domain.name}</h2>
+    <span class="selected-numeral">${NUMERALS[currentIndex]}</span>
+    <h2>${d.name}</h2>
     <button class="change-link" onclick="restart()">Start over</button>
   `;
 
   const checkedSection = checkedSignals.length > 0
     ? `<div class="result-section">
-        <div class="result-section-label">What you're seeing</div>
+        <div class="result-section-label">What you are seeing</div>
         ${checkedSignals.map(s => `
           <div class="checked-item">
-            <span class="check-mark">✓</span>
+            <span class="check-mark">&#10003;</span>
             <span>${s}</span>
           </div>
         `).join('')}
       </div>`
     : '';
 
-  const buildCards = domain.builds.map(b => `
+  const buildCards = d.builds.map(b => `
     <div class="build-card">
-      <span class="arrow">→</span>
+      <span class="arrow">&#8594;</span>
       <span class="build-text">${b}</span>
     </div>
   `).join('');
 
   document.getElementById('buildContent').innerHTML = `
     ${checkedSection}
-
     <div class="loop-equation">
       <div class="eq-label">Loop Shift Equation</div>
-      <p>${domain.loopShift}</p>
-      <span class="eq-note">${domain.loopNote}</span>
+      <p>${d.loopShift}</p>
+      <span class="eq-note">${d.loopNote}</span>
     </div>
-
     <div class="result-section">
       <div class="result-section-label">What you could build</div>
       <div class="build-cards">${buildCards}</div>
     </div>
-
     <div class="start-box">
       <div class="start-label">Where to start</div>
-      <p>${domain.startWhere}</p>
+      <p>${d.startWhere}</p>
     </div>
   `;
 
   showStep(3);
 }
+
+function openWorksheet() {
+  const d = DOMAINS[currentIndex];
+  const num = NUMERALS[currentIndex];
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const signalRows = d.signals.map(s => `
+    <div class="ws-signal-row">
+      <div class="ws-box"></div>
+      <span class="ws-signal-text">${s}</span>
+    </div>
+  `).join('');
+
+  const buildRows = d.builds.map((b, i) => `
+    <div class="ws-build-row">
+      <span class="ws-num">${i + 1}.</span>
+      <span class="ws-build-text">${b}</span>
+    </div>
+  `).join('');
+
+  const reflectBlocks = d.reflectQuestions.map(q => `
+    <div class="ws-reflect">
+      <div class="ws-reflect-q">${q}</div>
+      <div class="ws-lines">
+        <div class="ws-line"></div>
+        <div class="ws-line"></div>
+        <div class="ws-line"></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('worksheetContent').innerHTML = `
+    <div class="ws-header">
+      <div class="ws-meta">Field &amp; Signal &middot; Loop Logic Atlas &middot; LLA-01 &middot; ${today}</div>
+      <h2>${num}. ${d.name}</h2>
+      <div class="ws-subtitle">${d.tagline}</div>
+    </div>
+
+    <div class="ws-section">
+      <div class="ws-section-label">Signal inventory &mdash; mark what is true</div>
+      ${signalRows}
+    </div>
+
+    <div class="ws-equation-box">
+      <div class="eq-label">Loop Shift Equation</div>
+      <p>${d.loopShift}</p>
+      <div class="eq-note">${d.loopNote}</div>
+    </div>
+
+    <div class="ws-section">
+      <div class="ws-section-label">Build options &mdash; circle or underline what applies</div>
+      ${buildRows}
+    </div>
+
+    <div class="ws-start-box">
+      <div class="start-label">Where to start</div>
+      <p>${d.startWhere}</p>
+    </div>
+
+    <div class="ws-section">
+      <div class="ws-section-label">Reflection prompts</div>
+      ${reflectBlocks}
+    </div>
+
+    <div class="ws-section">
+      <div class="ws-section-label">What I am committing to &mdash; one sentence</div>
+      <div class="ws-lines">
+        <div class="ws-line"></div>
+        <div class="ws-line"></div>
+      </div>
+    </div>
+
+    <div class="ws-section">
+      <div class="ws-section-label">Who I will share this with</div>
+      <div class="ws-lines">
+        <div class="ws-line"></div>
+        <div class="ws-line"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('worksheetOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWorksheet() {
+  document.getElementById('worksheetOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.getElementById('worksheetOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeWorksheet();
+});
 
 function showStep(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -782,7 +1332,7 @@ function showStep(n) {
 }
 
 function restart() {
-  currentDomain = null;
+  currentIndex = null;
   showStep(1);
 }
 </script>
