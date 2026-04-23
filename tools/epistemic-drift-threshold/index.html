@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>When Learning Stops Working — Field & Signal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f7f5f0;
+      --warm-mid: #e8e4da;
+      --rule: #c8c2b4;
+      --accent: #2d5a3d;
+      --accent-light: #e8f0ea;
+      --warning: #8b4513;
+      --warning-light: #fdf0e8;
+      --muted: #6b6560;
+      --stage-healthy: #2d5a3d;
+      --stage-warning: #b8860b;
+      --stage-danger: #8b2020;
+    }
+
+```
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* Header */
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+}
+
+.site-header .wordmark {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.site-header .tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+}
+
+/* Hero */
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 2rem 2rem;
+}
+
+.instrument-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 540px;
+  margin-bottom: 2.5rem;
+}
+
+.divider {
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 2.5rem;
+}
+
+/* Main content */
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+.prose p {
+  margin-bottom: 1.4rem;
+  color: var(--ink);
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* Pullquote */
+.pullquote {
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  margin: 2.5rem 0;
+  background: var(--accent-light);
+}
+
+.pullquote p {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Section headers */
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  margin-top: 3rem;
+}
+
+h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+/* Signal list */
+.signal-list {
+  list-style: none;
+  margin: 1.25rem 0 1.75rem;
+}
+
+.signal-list li {
+  padding: 0.85rem 1rem 0.85rem 1.25rem;
+  border-left: 2px solid var(--rule);
+  margin-bottom: 0.6rem;
+  font-size: 0.975rem;
+  color: var(--ink);
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.signal-list li:hover {
+  border-left-color: var(--warning);
+}
+
+/* Stage cards */
+.stage-stack {
+  margin: 1.5rem 0 2.5rem;
+}
+
+.stage-card {
+  border: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
+  background: white;
+  overflow: hidden;
+}
+
+.stage-card summary {
+  cursor: pointer;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  user-select: none;
+  list-style: none;
+}
+
+.stage-card summary::-webkit-details-marker { display: none; }
+
+.stage-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.stage-healthy .stage-num { background: #e8f0ea; color: var(--stage-healthy); }
+.stage-compressed .stage-num { background: #e8f0ea; color: var(--stage-healthy); }
+.stage-warning .stage-num { background: #fef9e7; color: var(--stage-warning); }
+.stage-threshold .stage-num { background: #fdf0e8; color: var(--warning); }
+.stage-opaque .stage-num { background: #fce8e8; color: var(--stage-danger); }
+.stage-severed .stage-num { background: #f5e0e0; color: var(--stage-danger); }
+
+.stage-title {
+  font-weight: 500;
+  font-size: 0.975rem;
+  flex: 1;
+}
+
+.stage-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.stage-healthy .stage-status { color: var(--stage-healthy); }
+.stage-compressed .stage-status { color: var(--stage-healthy); }
+.stage-warning .stage-status { color: var(--stage-warning); }
+.stage-threshold .stage-status { color: var(--warning); font-weight: 600; }
+.stage-opaque .stage-status { color: var(--stage-danger); }
+.stage-severed .stage-status { color: var(--stage-danger); }
+
+.stage-body {
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--warm-mid);
+}
+
+.stage-body p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin: 0.85rem 0 0.5rem;
+}
+
+.stage-body .example {
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--muted);
+  border-left: 2px solid var(--warm-mid);
+  padding-left: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* Threshold callout */
+.threshold-box {
+  background: var(--warning-light);
+  border: 1px solid #e8c4a0;
+  border-left: 3px solid var(--warning);
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.threshold-box .threshold-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--warning);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.threshold-box p {
+  font-size: 0.975rem;
+  margin: 0;
+}
+
+/* Practitioner prompt */
+.prompt-box {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2rem;
+  margin: 2.5rem 0;
+}
+
+.prompt-box .prompt-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--rule);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.prompt-box blockquote {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--paper);
+  border: none;
+  padding: 0;
+}
+
+.prompt-box .follow {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--rule);
+  font-style: normal;
+}
+
+/* Related instruments */
+.related {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.related-card {
+  border: 1px solid var(--rule);
+  padding: 1rem 1.25rem;
+  background: white;
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.related-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.related-card .card-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.related-card .card-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.related-card.coming-soon {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.related-card.coming-soon .card-type::after {
+  content: ' · coming soon';
+}
+
+/* Footer */
+.page-footer {
+  border-top: 1px solid var(--rule);
+  padding: 2rem;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.page-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .hero, .content {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .site-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .prompt-box {
+    padding: 1.5rem 1.25rem;
+  }
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <span class="wordmark">Field & Signal</span>
+    <span class="tag">Epistemic Integrity Layer</span>
+  </header>
+
+  <div class="hero">
+    <div class="instrument-label">Diagnostic Instrument · EDT-01</div>
+    <h1>When Learning Stops Working</h1>
+    <p class="hero-sub">How to recognize the earliest warning sign that a system has been captured—before the evidence shows up anywhere else.</p>
+    <div class="divider"></div>
+  </div>
+
+  <div class="content">
+
+```
+<div class="prose">
+  <p>There's a specific moment when a system stops being fair and starts being something worse.</p>
+  <p>It doesn't happen all at once. It happens when you notice that no matter how much you pay attention—no matter how carefully you track what's working, adjust your approach, try harder—your understanding of the system stops improving. You're not learning anything. You're just cycling.</p>
+  <p>This is the earliest warning sign we know of. Earlier than financial data. Earlier than policy changes. Earlier than anyone in charge will admit something is wrong.</p>
+</div>
+
+<div class="pullquote">
+  <p>At the moment when learning stops updating reality, capture has already begun.</p>
+</div>
+
+<div class="section-label">How to recognize it</div>
+<h2>The Signals</h2>
+
+<div class="prose">
+  <p>You've probably felt this before. It shows up as:</p>
+</div>
+
+<ul class="signal-list">
+  <li>"It used to make sense and now it doesn't—but I can't point to what changed."</li>
+  <li>Putting in more effort and getting less predictable results.</li>
+  <li>Hearing yourself explain outcomes with words like "the algorithm," "timing," or "luck"—because nothing more specific holds up.</li>
+  <li>Watching people around you stop asking why things work and start just chasing what works right now.</li>
+  <li>A quiet exhaustion that comes not from the work itself but from trying to understand a system that keeps not making sense.</li>
+</ul>
+
+<div class="prose">
+  <p>That exhaustion is a signal. It's your intelligence telling you the feedback has broken.</p>
+</div>
+
+<div class="section-label">How systems degrade</div>
+<h2>The Signal Continuity Lifecycle</h2>
+
+<div class="prose">
+  <p>Systems don't collapse overnight. They slide. Here is what that slide looks like from the inside.</p>
+</div>
+
+<div class="stage-stack">
+
+  <details class="stage-card stage-healthy">
+    <summary>
+      <span class="stage-num">Stage 1</span>
+      <span class="stage-title">Direct Continuity</span>
+      <span class="stage-status">Healthy</span>
+    </summary>
+    <div class="stage-body">
+      <p>The system is legible. Effort produces understanding. You can trace where value comes from and why outcomes happen. Your mental model of how it works actually matches reality.</p>
+      <p class="example">Example: A customer pays a farmer directly. Both parties can see exactly what they're exchanging and why.</p>
+    </div>
+  </details>
+
+  <details class="stage-card stage-compressed">
+    <summary>
+      <span class="stage-num">Stage 2</span>
+      <span class="stage-title">Compressed Continuity</span>
+      <span class="stage-status">Healthy</span>
+    </summary>
+    <div class="stage-body">
+      <p>The system has scaled. Things are more abstracted, but still traceable. You might not see every detail, but you can still understand how it works in broad strokes. Accountability exists, even if it's shared.</p>
+      <p class="example">Example: A cooperative or union pools contributions—individual lines blur, but the overall logic remains visible and reversible.</p>
+    </div>
+  </details>
+
+  <details class="stage-card stage-warning">
+    <summary>
+      <span class="stage-num">Stage 3</span>
+      <span class="stage-title">Abstracted Continuity</span>
+      <span class="stage-status">Fragile</span>
+    </summary>
+    <div class="stage-body">
+      <p>The system still functions—but it's becoming harder to learn. Your model of how it works starts to drift from what actually happens. Effort and outcome are decoupling. You can feel something has changed but can't name it.</p>
+      <p>This is where most systems that feel unfair are actually living. Not broken—but becoming unlearnable.</p>
+      <p class="example">Example: A social media creator notices their content is performing differently, but the platform won't explain why. They start optimizing for signals they don't understand.</p>
+    </div>
+  </details>
+
+  <details class="stage-card stage-threshold">
+    <summary>
+      <span class="stage-num">Stage 3 → 4</span>
+      <span class="stage-title">The Threshold</span>
+      <span class="stage-status">⚑ EDT Fires Here</span>
+    </summary>
+    <div class="stage-body">
+      <p>This is the moment the Epistemic Drift Threshold detects. Adaptation stops updating your internal model. You try things, some work, but you can't build cumulative understanding from the results. The system has stopped being a learnable environment.</p>
+      <p>This is earlier than any financial signal. Earlier than any policy document. It shows up in human experience first.</p>
+    </div>
+  </details>
+
+  <details class="stage-card stage-opaque">
+    <summary>
+      <span class="stage-num">Stage 4</span>
+      <span class="stage-title">Opaque Continuity</span>
+      <span class="stage-status">Pre-Capture</span>
+    </summary>
+    <div class="stage-body">
+      <p>The origin of value technically exists somewhere in the system—but it's no longer operationally visible. Redistribution happens through layers you can't access. Consent has become assumed rather than revisited. The system is no longer contestable even if data still exists.</p>
+      <p class="example">Example: Gig platforms, ad tech ecosystems. You can see outputs. You cannot see the logic producing them.</p>
+    </div>
+  </details>
+
+  <details class="stage-card stage-severed">
+    <summary>
+      <span class="stage-num">Stage 5</span>
+      <span class="stage-title">Signal Severance</span>
+      <span class="stage-status">Extraction</span>
+    </summary>
+    <div class="stage-body">
+      <p>Origin has been functionally detached from outcome. Value flows without readable lineage. You cannot reconstruct how reward connected to contribution. Extraction has become structurally normalized—not a bug, but the operating logic.</p>
+      <p class="example">Example: Black-box ranking systems, opaque financial derivatives, hidden fee structures where the logic of value movement cannot be recovered.</p>
+    </div>
+  </details>
+
+</div>
+
+<div class="threshold-box">
+  <div class="threshold-label">Why this matters</div>
+  <p>Most ways of detecting capture look for evidence after the damage is done—a rule changed, money moved, someone got hurt. This detects it earlier: at the moment when the system stops being something you can understand through honest engagement with it. That's when the structure has already shifted, even if nothing looks different yet.</p>
+</div>
+
+<div class="section-label">The diagnostic question</div>
+<h2>Ask Yourself</h2>
+
+<div class="prompt-box">
+  <div class="prompt-label">Practitioner Prompt</div>
+  <blockquote>Is my effort still teaching me something—or am I just running strategies that sometimes work for reasons I can't track?</blockquote>
+  <p class="follow">If it's the second one, the system has already moved past the point where it can be navigated honestly. That's not a personal failure. That's a structural signal.</p>
+</div>
+
+<div class="related">
+  <div class="section-label">Connected instruments</div>
+  <h2>Go Further</h2>
+  <div class="related-grid">
+
+    <a href="https://nogameariel.github.io/field-signal-system/tools/verification-capture/" class="related-card">
+      <div class="card-type">Live Tool</div>
+      <div class="card-title">Verification Capture Tool — Four-Question Diagnostic</div>
+    </a>
+
+    <a href="#" class="related-card coming-soon">
+      <div class="card-type">Reference</div>
+      <div class="card-title">Loop Logic Atlas — False Resonance → Distortion Transition</div>
+    </a>
+
+    <a href="#" class="related-card coming-soon">
+      <div class="card-type">Theory · CPT</div>
+      <div class="card-title">The Drift Principle</div>
+    </a>
+
+    <a href="#" class="related-card coming-soon">
+      <div class="card-type">Theory · CPT</div>
+      <div class="card-title">The Truth Anchor Principle</div>
+    </a>
+
+  </div>
+</div>
+```
+
+  </div>
+
+  <footer class="page-footer">
+    <p>Field & Signal · <a href="https://nogameariel.github.io/field-signal-system/">field-signal-system</a> · <a href="https://arielwillingham.substack.com">Substack</a></p>
+    <p style="margin-top:0.5rem;">Instrument EDT-01 · Epistemic Integrity Layer · A. Willingham</p>
+  </footer>
+
+</body>
+</html>
