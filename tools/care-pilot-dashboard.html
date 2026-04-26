@@ -1,589 +1,611 @@
-import { useState, useRef } from “react”;
+<!DOCTYPE html>
 
-// ─── LENSES ──────────────────────────────────────────────────────────────────
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CARE — Immigration Legal State · Field & Signal</title>
+  <meta name="description" content="A conflict-aware reconciliation engine for immigration legal state. Demonstration prototype by Field & Signal." />
+
+  <!-- Fonts -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- React + Babel -->
+
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { background: #07070D; color: #D0D0C8; font-family: 'DM Mono', 'Courier New', monospace; min-height: 100vh; }
+    #root { min-height: 100vh; }
+    input, button { font-family: inherit; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: #1A1A24; }
+
+    @keyframes fadeIn  { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes blink   { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @keyframes spin    { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .fade-in   { animation: fadeIn 0.3s ease both; }
+    .layer-card, .conflict-card { transition: border-color 0.15s; }
+  </style>
+
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useRef } = React;
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
 const LENSES = [
-{ id: “immigrant”, label: “I am navigating this system”, short: “My Case”, color: “#4A90D9” },
-{ id: “citizen”,   label: “I want to understand what’s happening”, short: “Understand”, color: “#27AE60” },
-{ id: “caseworker”,label: “I am working this case”, short: “Case File”, color: “#E67E22” },
+  { id: "immigrant",  label: "I am navigating this system",        color: "#4A90D9" },
+  { id: "citizen",    label: "I want to understand what's happening", color: "#27AE60" },
+  { id: "caseworker", label: "I am working this case",              color: "#E67E22" },
 ];
 
-// ─── CASE DATA ────────────────────────────────────────────────────────────────
-const PERSON = {
-name: “María Elena Vásquez”,
-id: “A-219-847-331”,
-since: “September 2, 2024”,
-origin: “Guatemala”,
+const DEMO_PERSON = {
+  name: "María Elena Vásquez",
+  id: "A-219-847-331",
+  since: "September 2, 2024",
+  origin: "Guatemala",
 };
 
-const LAYERS = [
-{
-id: “L1”, code: “L1”, agency: “CBP One”, color: “#4A90D9”,
-statusCode: “complete”,
-immigrant: {
-what: “You checked in at the border”,
-status: “Done”,
-detail: “You made your appointment on September 2, 2024 at El Paso. Your fingerprints and photo were taken. You told them you were seeking asylum. This part is complete.”,
-next: “This layer has finished its job. Your case is now moving through the system.”,
-},
-citizen: {
-what: “Border appointment and intake”,
-status: “Complete”,
-detail: “The CBP One system recorded her arrival, captured biometrics, and issued a Notice to Appear. This is the entry point — it records intent but has no decision-making authority.”,
-next: “Intake is complete. The case should have propagated to enforcement and asylum layers. It did not fully do so — this is a known gap.”,
-},
-caseworker: {
-what: “L1 — Intake Layer (CBP One/CBP)”,
-status: “COMPLETE”,
-detail: “NTA issued Sept 2 2024. Biometrics captured. A-number not linked to existing 2019 record — new record created. Intake event not propagated to L2.”,
-authority: “INTAKE ONLY — no decisional authority”,
-staleness: “135 days”,
-propagation: “L3: propagated · L2: NOT PROPAGATED”,
-},
-},
-{
-id: “L2”, code: “L2”, agency: “ICE / Enforcement”, color: “#C0392B”,
-statusCode: “critical”,
-immigrant: {
-what: “There is an old removal order with your name on it”,
-status: “⚠ Active — but blocked”,
-detail: “In 2019, a judge issued a removal order when you didn’t appear in court. The enforcement agency has that order and could act on it. But right now, the system has blocked them from acting because of your appeal and your asylum claim.”,
-next: “You do not need to leave. The block is active. If anything changes, you will be notified through your attorney.”,
-},
-citizen: {
-what: “ICE holds a 2019 removal order”,
-status: “Active — blocked by higher authority”,
-detail: “An in absentia removal order was issued in 2019, meaning she wasn’t present in court. ICE has authority to enforce it. However, the system has detected that this order is being appealed in immigration court, and that she has an active asylum claim. Both of those things outrank the removal order while they’re pending.”,
-next: “This is the core conflict in her case. The enforcement layer hasn’t been informed of the newer legal events — that’s a structural failure the system is designed to catch and correct.”,
-},
-caseworker: {
-what: “L2 — Enforcement Layer (ICE/CBP Ops)”,
-status: “CRITICAL — ACTION BLOCKED”,
-detail: “In absentia removal order Nov 18 2019. Removal execution requested Jan 14 2025. BLOCKED: L4 BIA appeal active (binding), L3 credible fear established (adjudicative hold), data 1,884 days stale (integrity block).”,
-authority: “ENFORCEMENT — subject to L3, L4 override”,
-staleness: “1,884 days — CRITICAL”,
-propagation: “L3: NOT PROPAGATED · L4: PARTIAL”,
-},
-},
-{
-id: “L3”, code: “L3”, agency: “USCIS / Asylum”, color: “#27AE60”,
-statusCode: “pending”,
-immigrant: {
-what: “Your asylum application is being reviewed”,
-status: “In progress”,
-detail: “You filed for asylum on September 28, 2024. An officer reviewed your case and determined you have a credible fear of returning to Guatemala. Your full interview is scheduled for March 2025.”,
-next: “Attend your March 2025 interview. Bring all documents. Your attorney should prepare you. This is one of the most important steps.”,
-},
-citizen: {
-what: “USCIS is processing her asylum claim”,
-status: “Pending — interview March 2025”,
-detail: “She filed for asylum in September 2024. A USCIS officer found she has a credible fear of persecution — that’s the legal threshold required to move forward. Her full asylum interview is scheduled for March 2025. If granted, she stays. If denied, she can appeal.”,
-next: “The credible fear finding should have triggered a notification to ICE to pause any removal. It didn’t — the layers aren’t talking to each other. The system is designed to fix this.”,
-},
-caseworker: {
-what: “L3 — Adjudication Layer (USCIS)”,
-status: “PENDING — interview Mar 2025”,
-detail: “I-589 filed Sept 28 2024. Credible fear positive Oct 3 2024. Interview scheduled March 2025. Attorney of record. L2 unaware of credible fear finding — automatic stay not triggered.”,
-authority: “ADJUDICATIVE — can pause L2 pending outcome”,
-staleness: “104 days”,
-propagation: “L4: propagated · L2: NOT PROPAGATED”,
-},
-},
-{
-id: “L4”, code: “L4”, agency: “Immigration Court / BIA”, color: “#8E44AD”,
-statusCode: “pending”,
-immigrant: {
-what: “You are appealing the old removal order in court”,
-status: “In progress”,
-detail: “Your attorney filed a motion to reopen your 2019 case on October 15, 2024. The immigration appeals court (BIA) is reviewing it. This process takes time — possibly 14 to 22 months. While it is pending, it legally blocks the removal order from being executed.”,
-next: “You do not need to do anything right now. Your attorney is managing this. Keep all your check-in appointments with ICE. Do not miss them.”,
-},
-citizen: {
-what: “A court is reviewing the 2019 removal order”,
-status: “Appeal pending — 14–22 months”,
-detail: “Her attorney filed a motion to reopen her 2019 deportation case, arguing she wasn’t properly notified. The Board of Immigration Appeals is reviewing this. A court ruling has the highest authority in the system — it can override the enforcement layer entirely. The appeal is pending but no stay of removal has been formally granted, which is a risk.”,
-next: “This is the highest-authority layer in the case. The enforcement layer has not been notified of the appeal — another structural failure. The system emits a hold request to fix this.”,
-},
-caseworker: {
-what: “L4 — Judicial Layer (EOIR/BIA)”,
-status: “APPEAL IN PROCESS”,
-detail: “Motion to reopen filed Oct 15 2024. BIA docket A219-847-331-BIA. Stay of removal NOT granted. Hearing not scheduled. Est. 14–22 months. Enforcement NOT notified of appeal.”,
-authority: “BINDING — supersedes all layers”,
-staleness: “92 days”,
-propagation: “L3: propagated · L2: NOT PROPAGATED”,
-},
-},
+const DEMO_LAYERS = [
+  {
+    id: "L1", code: "L1", agency: "CBP One", color: "#4A90D9", statusCode: "complete",
+    immigrant: {
+      what: "You checked in at the border", status: "Done",
+      detail: "You made your appointment on September 2, 2024 at El Paso. Your fingerprints and photo were taken. You told them you were seeking asylum. This part is complete.",
+      next: "This layer has finished its job. Your case is now moving through the system.",
+    },
+    citizen: {
+      what: "Border appointment and intake", status: "Complete",
+      detail: "The CBP One system recorded her arrival, captured biometrics, and issued a Notice to Appear. This is the entry point — it records intent but has no decision-making authority.",
+      next: "Intake is complete. The case should have propagated to enforcement and asylum layers. It did not fully do so — this is a known gap.",
+    },
+    caseworker: {
+      what: "L1 — Intake Layer (CBP One/CBP)", status: "COMPLETE",
+      detail: "NTA issued Sept 2 2024. Biometrics captured. A-number not linked to existing 2019 record — new record created. Intake event not propagated to L2.",
+      authority: "INTAKE ONLY — no decisional authority", staleness: "135 days",
+      propagation: "L3: propagated · L2: NOT PROPAGATED",
+    },
+  },
+  {
+    id: "L2", code: "L2", agency: "ICE / Enforcement", color: "#C0392B", statusCode: "critical",
+    immigrant: {
+      what: "There is an old removal order with your name on it", status: "⚠ Active — but blocked",
+      detail: "In 2019, a judge issued a removal order when you didn't appear in court. The enforcement agency has that order and could act on it. But right now, the system has blocked them from acting because of your appeal and your asylum claim.",
+      next: "You do not need to leave. The block is active. If anything changes, you will be notified through your attorney.",
+    },
+    citizen: {
+      what: "ICE holds a 2019 removal order", status: "Active — blocked by higher authority",
+      detail: "An in absentia removal order was issued in 2019. ICE has authority to enforce it. However, the system detected that this order is being appealed in immigration court, and that she has an active asylum claim. Both outrank the removal order while pending.",
+      next: "This is the core conflict in her case. The enforcement layer hasn't been informed of the newer legal events — a structural failure the system is designed to catch and correct.",
+    },
+    caseworker: {
+      what: "L2 — Enforcement Layer (ICE/CBP Ops)", status: "CRITICAL — ACTION BLOCKED",
+      detail: "In absentia removal order Nov 18 2019. Removal execution requested Jan 14 2025. BLOCKED: L4 BIA appeal active (binding), L3 credible fear established (adjudicative hold), data 1,884 days stale (integrity block).",
+      authority: "ENFORCEMENT — subject to L3, L4 override", staleness: "1,884 days — CRITICAL",
+      propagation: "L3: NOT PROPAGATED · L4: PARTIAL",
+    },
+  },
+  {
+    id: "L3", code: "L3", agency: "USCIS / Asylum", color: "#27AE60", statusCode: "pending",
+    immigrant: {
+      what: "Your asylum application is being reviewed", status: "In progress",
+      detail: "You filed for asylum on September 28, 2024. An officer reviewed your case and determined you have a credible fear of returning to Guatemala. Your full interview is scheduled for March 2025.",
+      next: "Attend your March 2025 interview. Bring all documents. Your attorney should prepare you. This is one of the most important steps.",
+    },
+    citizen: {
+      what: "USCIS is processing her asylum claim", status: "Pending — interview March 2025",
+      detail: "She filed for asylum in September 2024. A USCIS officer found she has a credible fear of persecution — the legal threshold required to move forward. Her full asylum interview is scheduled for March 2025.",
+      next: "The credible fear finding should have triggered a notification to ICE to pause any removal. It didn't — the layers aren't talking to each other. The system is designed to fix this.",
+    },
+    caseworker: {
+      what: "L3 — Adjudication Layer (USCIS)", status: "PENDING — interview Mar 2025",
+      detail: "I-589 filed Sept 28 2024. Credible fear positive Oct 3 2024. Interview scheduled March 2025. Attorney of record. L2 unaware of credible fear finding — automatic stay not triggered.",
+      authority: "ADJUDICATIVE — can pause L2 pending outcome", staleness: "104 days",
+      propagation: "L4: propagated · L2: NOT PROPAGATED",
+    },
+  },
+  {
+    id: "L4", code: "L4", agency: "Immigration Court / BIA", color: "#8E44AD", statusCode: "pending",
+    immigrant: {
+      what: "You are appealing the old removal order in court", status: "In progress",
+      detail: "Your attorney filed a motion to reopen your 2019 case on October 15, 2024. The immigration appeals court (BIA) is reviewing it. This process takes time — possibly 14 to 22 months. While it is pending, it legally blocks the removal order from being executed.",
+      next: "You do not need to do anything right now. Your attorney is managing this. Keep all your check-in appointments with ICE. Do not miss them.",
+    },
+    citizen: {
+      what: "A court is reviewing the 2019 removal order", status: "Appeal pending — 14–22 months",
+      detail: "Her attorney filed a motion to reopen her 2019 deportation case. The Board of Immigration Appeals is reviewing this. A court ruling has the highest authority in the system — it can override the enforcement layer entirely.",
+      next: "This is the highest-authority layer in the case. The enforcement layer has not been notified of the appeal — another structural failure. The system emits a hold request to fix this.",
+    },
+    caseworker: {
+      what: "L4 — Judicial Layer (EOIR/BIA)", status: "APPEAL IN PROCESS",
+      detail: "Motion to reopen filed Oct 15 2024. BIA docket A219-847-331-BIA. Stay of removal NOT granted. Hearing not scheduled. Est. 14–22 months. Enforcement NOT notified of appeal.",
+      authority: "BINDING — supersedes all layers", staleness: "92 days",
+      propagation: "L3: propagated · L2: NOT PROPAGATED",
+    },
+  },
 ];
 
-const CONFLICTS = [
-{
-id: “C1”, type: “AUTHORITY”, severity: 92, layers: [“L2”,“L4”], blocked: true,
-immigrant: “The court is reviewing the removal order, but the enforcement agency doesn’t know. We blocked the removal until they’re told.”,
-citizen: “The highest legal authority (immigration court) is reviewing the exact order ICE wants to enforce. ICE doesn’t know this because the layers don’t automatically communicate. The system blocks enforcement and sends a sync request.”,
-caseworker: “Active BIA appeal (L4, binding) on removal order being enforced (L2). Enforcement layer unaware. Hold emitted. Sync request: BIA docket → L2.”,
-},
-{
-id: “C2”, type: “SYNC GAP”, severity: 88, layers: [“L2”,“L3”], blocked: true,
-immigrant: “The asylum office found you have a credible fear — but they never told the enforcement agency. We blocked enforcement until they’re told.”,
-citizen: “USCIS found credible fear and is processing her asylum claim. ICE has no record of this. Under law, an active asylum claim should create a hold on removal. The hold didn’t happen because the agencies don’t share data. The system triggers the hold.”,
-caseworker: “Credible fear finding (L3, Oct 3 2024) not transmitted to L2. No automatic stay. Correction emitted: credible fear finding → L2. Stay review required.”,
-},
-{
-id: “C3”, type: “TEMPORAL”, severity: 71, layers: [“L1”,“L2”], blocked: false,
-immigrant: “The enforcement agency is working from old information — from 2019. A lot has changed since then. We flagged this for a human to review before anything happens.”,
-citizen: “ICE is operating on data that is over five years old. Her 2024 arrival and asylum filing aren’t in their record. Any action based on that stale data would be based on an incomplete picture of her legal situation. The system requires human review before action.”,
-caseworker: “L2 last updated Nov 2019 (1,884 days). L1 intake event Sept 2024 not propagated. Three superseding legal events unacknowledged. Data integrity block active. Escalation to human reviewer required before execution.”,
-},
+const DEMO_CONFLICTS = [
+  {
+    id: "C1", type: "AUTHORITY", severity: 92, layers: ["L2","L4"], blocked: true,
+    immigrant: "The court is reviewing the removal order, but the enforcement agency doesn't know. We blocked the removal until they're told.",
+    citizen: "The highest legal authority (immigration court) is reviewing the exact order ICE wants to enforce. ICE doesn't know this because the layers don't automatically communicate. The system blocks enforcement and sends a sync request.",
+    caseworker: "Active BIA appeal (L4, binding) on removal order being enforced (L2). Enforcement layer unaware. Hold emitted. Sync request: BIA docket → L2.",
+  },
+  {
+    id: "C2", type: "SYNC GAP", severity: 88, layers: ["L2","L3"], blocked: true,
+    immigrant: "The asylum office found you have a credible fear — but they never told the enforcement agency. We blocked enforcement until they're told.",
+    citizen: "USCIS found credible fear and is processing her asylum claim. ICE has no record of this. Under law, an active asylum claim should create a hold on removal. The hold didn't happen because the agencies don't share data. The system triggers the hold.",
+    caseworker: "Credible fear finding (L3, Oct 3 2024) not transmitted to L2. No automatic stay. Correction emitted: credible fear finding → L2. Stay review required.",
+  },
+  {
+    id: "C3", type: "TEMPORAL", severity: 71, layers: ["L1","L2"], blocked: false,
+    immigrant: "The enforcement agency is working from old information — from 2019. A lot has changed since then. We flagged this for a human to review before anything happens.",
+    citizen: "ICE is operating on data that is over five years old. Her 2024 arrival and asylum filing aren't in their record. Any action based on that stale data would be based on an incomplete picture of her legal situation.",
+    caseworker: "L2 last updated Nov 2019 (1,884 days). L1 intake event Sept 2024 not propagated. Three superseding legal events unacknowledged. Data integrity block active. Escalation to human reviewer required before execution.",
+  },
 ];
 
-const ACTIONS_EMITTED = [
-{ type: “HOLD”,       color: “#C0392B”, target: “L2”, immigrant: “We stopped the removal order from being carried out.”, citizen: “Enforcement action blocked pending resolution of court conflict.”, caseworker: “Hold issued: removal execution blocked, L2. Binding override from L4.” },
-{ type: “SYNC”,       color: “#4A90D9”, target: “L2”, immigrant: “We told the enforcement agency about your court appeal.”, citizen: “BIA docket transmitted to enforcement layer.”, caseworker: “Sync: BIA docket A219-847-331-BIA → L2. Acknowledgment required.” },
-{ type: “SYNC”,       color: “#4A90D9”, target: “L2”, immigrant: “We told the enforcement agency about your asylum application.”, citizen: “Credible fear finding propagated to enforcement. Automatic stay review initiated.”, caseworker: “Sync: credible fear finding (L3, Oct 3 2024) → L2. Stay review triggered.” },
-{ type: “CORRECTION”, color: “#E67E22”, target: “L3”, immigrant: “We made sure the asylum office knows about the old removal order, so they have the full picture.”, citizen: “Asylum adjudicator flagged: active removal order exists.”, caseworker: “Correction: removal order status → L3 adjudicator. Case flagged for dual-track awareness.” },
-{ type: “ESCALATE”,   color: “#8E44AD”, target: “HUMAN”, immigrant: “A human reviewer has been assigned to your case to make sure everything is handled correctly.”, citizen: “Human review assigned due to data age exceeding threshold.”, caseworker: “Escalation: data age (1,884d) exceeds threshold. Human reviewer assigned before any enforcement action.” },
+const DEMO_ACTIONS = [
+  { type: "HOLD",       color: "#C0392B", target: "L2",    immigrant: "We stopped the removal order from being carried out.", citizen: "Enforcement action blocked pending resolution of court conflict.", caseworker: "Hold issued: removal execution blocked, L2. Binding override from L4." },
+  { type: "SYNC",       color: "#4A90D9", target: "L2",    immigrant: "We told the enforcement agency about your court appeal.", citizen: "BIA docket transmitted to enforcement layer.", caseworker: "Sync: BIA docket A219-847-331-BIA → L2. Acknowledgment required." },
+  { type: "SYNC",       color: "#4A90D9", target: "L2",    immigrant: "We told the enforcement agency about your asylum application.", citizen: "Credible fear finding propagated to enforcement. Automatic stay review initiated.", caseworker: "Sync: credible fear finding (L3, Oct 3 2024) → L2. Stay review triggered." },
+  { type: "CORRECTION", color: "#E67E22", target: "L3",    immigrant: "We made sure the asylum office knows about the old removal order, so they have the full picture.", citizen: "Asylum adjudicator flagged: active removal order exists.", caseworker: "Correction: removal order status → L3 adjudicator. Case flagged for dual-track awareness." },
+  { type: "ESCALATE",   color: "#8E44AD", target: "HUMAN", immigrant: "A human reviewer has been assigned to your case to make sure everything is handled correctly.", citizen: "Human review assigned due to data age exceeding threshold.", caseworker: "Escalation: data age (1,884d) exceeds threshold. Human reviewer assigned before any enforcement action." },
 ];
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────────
-
-const STATUS_COLOR = { complete: “#27AE60”, pending: “#E67E22”, critical: “#C0392B” };
-
-function Pill({ label, color }) {
-return (
-<span style={{
-fontSize: “9px”, letterSpacing: “0.12em”, fontWeight: 700,
-padding: “3px 8px”, borderRadius: “20px”,
-color, background: color + “18”, border: `1px solid ${color}44`,
-whiteSpace: “nowrap”, display: “inline-block”,
-}}>{label}</span>
-);
-}
-
-function Card({ children, accent, style }) {
-return (
-<div style={{
-background: “#0E0E18”, borderRadius: “6px”,
-border: `1px solid ${accent ? accent + "33" : "#1A1A26"}`,
-borderLeft: accent ? `3px solid ${accent}` : “3px solid #1A1A26”,
-overflow: “hidden”, …style,
-}}>
-{children}
-</div>
-);
-}
-
-function Section({ title, children, defaultOpen = false }) {
-const [open, setOpen] = useState(defaultOpen);
-return (
-<div style={{ background: “#0A0A14”, borderRadius: “6px”, border: “1px solid #141420”, overflow: “hidden”, marginBottom: “8px” }}>
-<div onClick={() => setOpen(!open)} style={{ padding: “14px 16px”, display: “flex”, justifyContent: “space-between”, alignItems: “center”, cursor: “pointer”, userSelect: “none” }}>
-<div style={{ fontSize: “10px”, letterSpacing: “0.16em”, color: open ? “#C0C0B8” : “#444”, fontWeight: 600 }}>{title}</div>
-<div style={{ color: “#333”, fontSize: “12px”, transition: “transform 0.2s”, transform: open ? “rotate(180deg)” : “none” }}>▾</div>
-</div>
-{open && <div style={{ padding: “0 16px 16px”, animation: “fadeIn 0.2s ease” }}>{children}</div>}
-</div>
-);
-}
-
-// ─── LAYER CARD ───────────────────────────────────────────────────────────────
-
-function LayerCard({ layer, lens }) {
-const [open, setOpen] = useState(false);
-const data = layer[lens];
-const statusColor = STATUS_COLOR[layer.statusCode];
-
-return (
-<Card accent={layer.color} style={{ marginBottom: “8px” }}>
-<div onClick={() => setOpen(!open)} style={{ padding: “14px 16px”, cursor: “pointer”, userSelect: “none” }}>
-<div style={{ display: “flex”, justifyContent: “space-between”, alignItems: “flex-start”, gap: “10px” }}>
-<div style={{ flex: 1, minWidth: 0 }}>
-<div style={{ fontSize: “10px”, color: layer.color, letterSpacing: “0.14em”, fontWeight: 700, marginBottom: “4px” }}>
-{lens === “caseworker” ? layer.code : layer.agency}
-</div>
-<div style={{ fontSize: “13px”, color: “#D0D0C8”, fontFamily: “‘DM Sans’,sans-serif”, fontWeight: 500, lineHeight: “1.4” }}>
-{data.what}
-</div>
-</div>
-<div style={{ display: “flex”, flexDirection: “column”, alignItems: “flex-end”, gap: “6px”, flexShrink: 0 }}>
-<Pill label={data.status} color={statusColor} />
-<div style={{ color: “#2A2A3A”, fontSize: “11px” }}>{open ? “▲” : “▼”}</div>
-</div>
-</div>
-</div>
-{open && (
-<div style={{ padding: “0 16px 16px”, borderTop: “1px solid #141420”, animation: “fadeIn 0.2s ease” }}>
-<div style={{ fontSize: “13px”, color: “#888”, fontFamily: “‘DM Sans’,sans-serif”, lineHeight: “1.7”, marginTop: “14px”, marginBottom: “12px” }}>
-{data.detail}
-</div>
-{lens === “caseworker” && (
-<div style={{ display: “grid”, gap: “6px”, marginBottom: “12px” }}>
-{[[“Authority”, data.authority], [“Data age”, data.staleness], [“Propagation”, data.propagation]].map(([k,v]) => (
-<div key={k} style={{ display: “flex”, gap: “10px”, justifyContent: “space-between” }}>
-<span style={{ fontSize: “10px”, color: “#444” }}>{k}</span>
-<span style={{ fontSize: “10px”, color: v?.includes(“NOT”) ? “#C0392B” : “#888”, textAlign: “right”, fontFamily: “‘DM Mono’,monospace” }}>{v}</span>
-</div>
-))}
-</div>
-)}
-<div style={{ padding: “10px 12px”, background: “#07070D”, borderRadius: “4px”, border: “1px solid #141420” }}>
-<div style={{ fontSize: “9px”, color: “#333”, letterSpacing: “0.14em”, marginBottom: “4px” }}>
-{lens === “immigrant” ? “WHAT THIS MEANS FOR YOU” : lens === “citizen” ? “WHY THIS MATTERS” : “NEXT ACTION”}
-</div>
-<div style={{ fontSize: “12px”, color: “#C0C0B8”, fontFamily: “‘DM Sans’,sans-serif”, lineHeight: “1.6” }}>{data.next}</div>
-</div>
-</div>
-)}
-</Card>
-);
-}
-
-// ─── CONFLICT CARD ────────────────────────────────────────────────────────────
-
-function ConflictCard({ conflict, lens }) {
-const [open, setOpen] = useState(false);
-const typeColor = conflict.type === “AUTHORITY” ? “#C0392B” : conflict.type === “SYNC GAP” ? “#E67E22” : “#8E44AD”;
-const LAYER_COLOR = { L1:”#4A90D9”, L2:”#C0392B”, L3:”#27AE60”, L4:”#8E44AD” };
-
-return (
-<Card accent={typeColor} style={{ marginBottom: “8px” }}>
-<div onClick={() => setOpen(!open)} style={{ padding: “14px 16px”, cursor: “pointer”, userSelect: “none” }}>
-<div style={{ display: “flex”, justifyContent: “space-between”, alignItems: “center”, gap: “10px” }}>
-<div style={{ flex: 1 }}>
-<div style={{ display: “flex”, gap: “6px”, alignItems: “center”, marginBottom: “6px”, flexWrap: “wrap” }}>
-<Pill label={conflict.type} color={typeColor} />
-{conflict.layers.map(l => <Pill key={l} label={l} color={LAYER_COLOR[l]} />)}
-{conflict.blocked && <Pill label="🚫 BLOCKED" color="#C0392B" />}
-</div>
-<div style={{ fontSize: “13px”, color: “#D0D0C8”, fontFamily: “‘DM Sans’,sans-serif”, lineHeight: “1.4” }}>
-{conflict[lens]}
-</div>
-</div>
-<div style={{ color: “#2A2A3A”, fontSize: “11px”, flexShrink: 0 }}>{open ? “▲” : “▼”}</div>
-</div>
-</div>
-{open && (
-<div style={{ padding: “0 16px 16px”, borderTop: “1px solid #141420”, animation: “fadeIn 0.2s ease” }}>
-<div style={{ marginTop: “12px”, display: “flex”, justifyContent: “space-between”, alignItems: “center” }}>
-<div style={{ fontSize: “9px”, color: “#333”, letterSpacing: “0.14em” }}>SEVERITY SCORE</div>
-<div style={{ display: “flex”, alignItems: “center”, gap: “8px” }}>
-<div style={{ width: “80px”, height: “3px”, background: “#141420”, borderRadius: “2px” }}>
-<div style={{ width: `${conflict.severity}%`, height: “100%”, background: typeColor, borderRadius: “2px” }} />
-</div>
-<span style={{ fontSize: “11px”, color: typeColor, fontWeight: 700 }}>{conflict.severity}</span>
-</div>
-</div>
-</div>
-)}
-</Card>
-);
-}
-
-// ─── ACTION ROW ───────────────────────────────────────────────────────────────
-
-function ActionRow({ action, lens, i }) {
-return (
-<div style={{
-display: “flex”, gap: “10px”, alignItems: “flex-start”,
-padding: “10px 12px”,
-background: “#0A0A12”,
-border: “1px solid #141420”,
-borderLeft: `3px solid ${action.color}`,
-borderRadius: “4px”,
-marginBottom: “6px”,
-animation: `fadeIn 0.3s ease ${i * 0.06}s both`,
-}}>
-<div style={{ minWidth: “76px” }}>
-<div style={{ fontSize: “9px”, color: action.color, letterSpacing: “0.12em”, fontWeight: 700 }}>{action.type}</div>
-<div style={{ fontSize: “9px”, color: “#333”, marginTop: “2px” }}>→ {action.target}</div>
-</div>
-<div style={{ fontSize: “12px”, color: “#888”, fontFamily: “‘DM Sans’,sans-serif”, lineHeight: “1.5” }}>
-{action[lens]}
-</div>
-</div>
-);
-}
-
-// ─── CASE REGISTRY (demo) ─────────────────────────────────────────────────────
-// In production this resolves against a real identity graph.
-// A-numbers are normalized: strip spaces, dashes, case-insensitive.
 
 const CASE_REGISTRY = {
-“A219847331”: { person: PERSON, layers: LAYERS, conflicts: CONFLICTS, actions: ACTIONS_EMITTED },
+  "A219847331": { person: DEMO_PERSON, layers: DEMO_LAYERS, conflicts: DEMO_CONFLICTS, actions: DEMO_ACTIONS },
 };
 
 function normalizeANumber(raw) {
-return raw.replace(/[^0-9a-zA-Z]/g, “”).toUpperCase();
+  return raw.replace(/[^0-9]/g, "").padStart(9, "0");
 }
 
-// ─── SEARCH SCREEN ────────────────────────────────────────────────────────────
+// ─── UI ATOMS ─────────────────────────────────────────────────────────────────
+
+function Pill({ label, color }) {
+  return (
+    <span style={{
+      fontSize: "9px", letterSpacing: "0.12em", fontWeight: 700,
+      padding: "3px 8px", borderRadius: "20px", display: "inline-block",
+      color, background: color + "18", border: `1px solid ${color}44`, whiteSpace: "nowrap",
+    }}>{label}</span>
+  );
+}
+
+function Accordion({ title, children, defaultOpen }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div style={{ background: "#0A0A14", borderRadius: "6px", border: "1px solid #141420", overflow: "hidden", marginBottom: "8px" }}>
+      <div onClick={() => setOpen(!open)} style={{ padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", userSelect: "none" }}>
+        <div style={{ fontSize: "10px", letterSpacing: "0.16em", color: open ? "#C0C0B8" : "#444", fontWeight: 600 }}>{title}</div>
+        <div style={{ color: "#333", fontSize: "12px", transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }}>▾</div>
+      </div>
+      {open && <div className="fade-in" style={{ padding: "0 16px 16px" }}>{children}</div>}
+    </div>
+  );
+}
+
+const STATUS_COLOR = { complete: "#27AE60", pending: "#E67E22", critical: "#C0392B" };
+
+function LayerCard({ layer, lens }) {
+  const [open, setOpen] = useState(false);
+  const d = layer[lens];
+  return (
+    <div className="layer-card" onClick={() => setOpen(!open)} style={{
+      background: "#0E0E18", borderRadius: "6px", marginBottom: "8px", cursor: "pointer",
+      border: `1px solid ${open ? layer.color + "44" : "#1A1A26"}`,
+      borderLeft: `3px solid ${layer.color}`, overflow: "hidden",
+    }}>
+      <div style={{ padding: "14px 16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: "9px", color: layer.color, letterSpacing: "0.14em", fontWeight: 700, marginBottom: "4px" }}>
+              {lens === "caseworker" ? layer.code : layer.agency}
+            </div>
+            <div style={{ fontSize: "13px", color: "#D0D0C8", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, lineHeight: "1.4" }}>{d.what}</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px", flexShrink: 0 }}>
+            <Pill label={d.status} color={STATUS_COLOR[layer.statusCode]} />
+            <span style={{ color: "#222", fontSize: "11px" }}>{open ? "▲" : "▼"}</span>
+          </div>
+        </div>
+      </div>
+      {open && (
+        <div className="fade-in" style={{ padding: "0 16px 16px", borderTop: "1px solid #141420" }}>
+          <div style={{ fontSize: "13px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", margin: "14px 0 12px" }}>{d.detail}</div>
+          {lens === "caseworker" && (
+            <div style={{ display: "grid", gap: "6px", marginBottom: "12px" }}>
+              {[["Authority", d.authority], ["Data age", d.staleness], ["Propagation", d.propagation]].map(([k,v]) => (
+                <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                  <span style={{ fontSize: "10px", color: "#444" }}>{k}</span>
+                  <span style={{ fontSize: "10px", color: v && v.includes("NOT") ? "#C0392B" : "#888", textAlign: "right", fontFamily: "'DM Mono',monospace" }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ padding: "10px 12px", background: "#07070D", borderRadius: "4px", border: "1px solid #141420" }}>
+            <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.14em", marginBottom: "4px" }}>
+              {lens === "immigrant" ? "WHAT THIS MEANS FOR YOU" : lens === "citizen" ? "WHY THIS MATTERS" : "NEXT ACTION"}
+            </div>
+            <div style={{ fontSize: "12px", color: "#C0C0B8", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.6" }}>{d.next}</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConflictCard({ conflict, lens }) {
+  const [open, setOpen] = useState(false);
+  const LC = { L1:"#4A90D9", L2:"#C0392B", L3:"#27AE60", L4:"#8E44AD" };
+  const tc = conflict.type === "AUTHORITY" ? "#C0392B" : conflict.type === "SYNC GAP" ? "#E67E22" : "#8E44AD";
+  return (
+    <div className="conflict-card" onClick={() => setOpen(!open)} style={{
+      background: "#0E0E18", borderRadius: "6px", marginBottom: "8px", cursor: "pointer",
+      border: `1px solid ${open ? tc + "44" : "#1A1A26"}`, borderLeft: `3px solid ${tc}`, overflow: "hidden",
+    }}>
+      <div style={{ padding: "14px 16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginBottom: "7px", alignItems: "center" }}>
+              <Pill label={conflict.type} color={tc} />
+              {conflict.layers.map(l => <Pill key={l} label={l} color={LC[l]} />)}
+              {conflict.blocked && <Pill label="🚫 BLOCKED" color="#C0392B" />}
+            </div>
+            <div style={{ fontSize: "13px", color: "#D0D0C8", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.4" }}>{conflict[lens]}</div>
+          </div>
+          <span style={{ color: "#222", fontSize: "11px", flexShrink: 0 }}>{open ? "▲" : "▼"}</span>
+        </div>
+      </div>
+      {open && (
+        <div className="fade-in" style={{ padding: "0 16px 14px", borderTop: "1px solid #141420" }}>
+          <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: "9px", color: "#333", letterSpacing: "0.14em" }}>SEVERITY</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ width: "80px", height: "3px", background: "#141420", borderRadius: "2px" }}>
+                <div style={{ width: conflict.severity + "%", height: "100%", background: tc, borderRadius: "2px" }} />
+              </div>
+              <span style={{ fontSize: "11px", color: tc, fontWeight: 700 }}>{conflict.severity}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ActionRow({ action, lens, idx }) {
+  return (
+    <div style={{
+      display: "flex", gap: "10px", alignItems: "flex-start",
+      padding: "10px 12px", marginBottom: "6px",
+      background: "#0A0A12", border: "1px solid #141420",
+      borderLeft: `3px solid ${action.color}`, borderRadius: "4px",
+      animation: `fadeIn 0.3s ease ${idx * 0.06}s both`,
+    }}>
+      <div style={{ minWidth: "76px" }}>
+        <div style={{ fontSize: "9px", color: action.color, letterSpacing: "0.12em", fontWeight: 700 }}>{action.type}</div>
+        <div style={{ fontSize: "9px", color: "#333", marginTop: "2px" }}>→ {action.target}</div>
+      </div>
+      <div style={{ fontSize: "12px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.5" }}>{action[lens]}</div>
+    </div>
+  );
+}
+
+// ─── DISCLAIMER ───────────────────────────────────────────────────────────────
+
+function Disclaimer({ onAck }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "#07070D", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ maxWidth: "400px", width: "100%", animation: "fadeIn 0.4s ease" }}>
+        <div style={{ fontSize: "8px", letterSpacing: "0.24em", color: "#2A2A3A", marginBottom: "16px", textAlign: "center" }}>FIELD & SIGNAL · CARE</div>
+        <div style={{ padding: "20px", background: "#140808", border: "1px solid #2A1010", borderRadius: "6px", marginBottom: "16px" }}>
+          <div style={{ fontSize: "11px", color: "#C0392B", letterSpacing: "0.14em", fontWeight: 700, marginBottom: "10px" }}>DEMONSTRATION PROTOTYPE</div>
+          <div style={{ fontSize: "13px", color: "#C8956A", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7" }}>
+            This tool does not connect to any government database. No real records are stored, retrieved, or processed. A-numbers entered here are not transmitted anywhere.
+          </div>
+          <div style={{ fontSize: "13px", color: "#C8956A", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", marginTop: "10px" }}>
+            This is a design prototype built to show what a unified immigration legal state system could look like.
+          </div>
+        </div>
+        <button onClick={onAck} style={{
+          width: "100%", padding: "14px", background: "#1A2A4A", color: "#4A90D9",
+          border: "1px solid #1A3A6A", borderRadius: "6px", cursor: "pointer",
+          fontFamily: "'DM Mono',monospace", fontSize: "11px", letterSpacing: "0.14em", fontWeight: 600,
+        }}>
+          I UNDERSTAND — CONTINUE
+        </button>
+        <div style={{ marginTop: "12px", fontSize: "10px", color: "#1A1A28", textAlign: "center", lineHeight: "1.7" }}>
+          Field & Signal · Diagnostic infrastructure for systems under stress
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
 
 function SearchScreen({ onFound, onDemo }) {
-const [query, setQuery] = useState(””);
-const [status, setStatus] = useState(“idle”); // idle | searching | notfound
-const inputRef = useRef(null);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("idle");
 
-function handleSearch(e) {
-e.preventDefault();
-const normalized = normalizeANumber(query);
-if (!normalized) return;
-setStatus(“searching”);
-setTimeout(() => {
-const record = CASE_REGISTRY[normalized];
-if (record) {
-onFound(record);
-} else {
-setStatus(“notfound”);
-}
-}, 700);
-}
+  function handleSearch(e) {
+    e.preventDefault();
+    const key = "A" + normalizeANumber(query);
+    if (key === "A") return;
+    setStatus("searching");
+    setTimeout(() => {
+      const rec = CASE_REGISTRY[key] || CASE_REGISTRY["A219847331".replace("A","")];
+      // Only match exact registry entries
+      const exact = Object.keys(CASE_REGISTRY).find(k => k === "A" + normalizeANumber(query) || k === normalizeANumber(query));
+      if (exact) {
+        onFound(CASE_REGISTRY[exact]);
+      } else {
+        setStatus("notfound");
+      }
+    }, 600);
+  }
 
-return (
-<div style={{ minHeight: “100vh”, background: “#07070D”, display: “flex”, flexDirection: “column”, alignItems: “center”, justifyContent: “center”, padding: “32px 20px” }}>
-<div style={{ width: “100%”, maxWidth: “400px”, animation: “fadeIn 0.4s ease” }}>
-<div style={{ textAlign: “center”, marginBottom: “32px” }}>
-<div style={{ fontSize: “8px”, letterSpacing: “0.26em”, color: “#2A2A3A”, marginBottom: “8px” }}>FIELD & SIGNAL · CARE</div>
-<div style={{ fontSize: “22px”, fontWeight: 600, fontFamily: “‘DM Sans’,sans-serif”, color: “#E0E0D8”, marginBottom: “8px” }}>Immigration Legal State</div>
-<div style={{ fontSize: “12px”, color: “#3A3A4A”, fontFamily: “‘DM Sans’,sans-serif”, lineHeight: “1.7” }}>
-Enter an A-Number to view a unified legal record across all four institutional layers.
-</div>
-</div>
-
-```
-    <form onSubmit={handleSearch}>
-      <div style={{ marginBottom: "10px" }}>
-        <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "8px" }}>A-NUMBER</div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={e => { setQuery(e.target.value); setStatus("idle"); }}
-            placeholder="A-219-847-331"
-            autoComplete="off"
-            style={{
-              flex: 1, padding: "12px 14px",
-              background: "#0E0E18", border: `1px solid ${status === "notfound" ? "#C0392B44" : "#1A1A26"}`,
-              borderRadius: "4px", color: "#E0E0D8",
-              fontFamily: "'DM Mono',monospace", fontSize: "14px",
-              outline: "none", letterSpacing: "0.08em",
-            }}
-          />
-          <button type="submit" style={{
-            padding: "12px 18px", background: "#1A2A4A", color: "#4A90D9",
-            border: "1px solid #1A3A6A", borderRadius: "4px",
-            fontFamily: "'DM Mono',monospace", fontSize: "10px",
-            letterSpacing: "0.12em", cursor: "pointer", fontWeight: 600,
-            minWidth: "64px",
-          }}>
-            {status === "searching" ? "..." : "FIND"}
-          </button>
-        </div>
-      </div>
-
-      {status === "notfound" && (
-        <div style={{ padding: "10px 14px", background: "#140808", border: "1px solid #2A1010", borderRadius: "4px", marginBottom: "10px", fontSize: "12px", color: "#C0392B", fontFamily: "'DM Sans',sans-serif" }}>
-          No record found for that A-Number. Check the format and try again.
-        </div>
-      )}
-    </form>
-
-    <div style={{ marginTop: "24px", padding: "14px", background: "#0A0A12", border: "1px solid #141420", borderRadius: "6px" }}>
-      <div style={{ fontSize: "9px", color: "#2A2A3A", letterSpacing: "0.16em", marginBottom: "10px" }}>DEMO RECORD</div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
-        <div>
-          <div style={{ fontSize: "13px", color: "#888", fontFamily: "'DM Sans',sans-serif" }}>María Elena Vásquez</div>
-          <div style={{ fontSize: "11px", color: "#333", fontFamily: "'DM Mono',monospace", marginTop: "2px" }}>A-219-847-331</div>
-        </div>
-        <button onClick={onDemo} style={{
-          padding: "8px 16px", background: "transparent", color: "#4A90D9",
-          border: "1px solid #1A3A6A", borderRadius: "4px",
-          fontFamily: "'DM Mono',monospace", fontSize: "9px",
-          letterSpacing: "0.12em", cursor: "pointer",
-        }}>LOAD DEMO</button>
-      </div>
-    </div>
-
-    <div style={{ marginTop: "20px", textAlign: "center", fontSize: "10px", color: "#1A1A24", lineHeight: "1.8" }}>
-      Demonstration prototype · No real records stored<br />Field & Signal
-    </div>
-  </div>
-</div>
-```
-
-);
-}
-
-// ─── MAIN ─────────────────────────────────────────────────────────────────────
-
-export default function App() {
-const [lens, setLens] = useState(“immigrant”);
-const [activeRecord, setActiveRecord] = useState(null);
-
-if (!activeRecord) {
-return (
-<SearchScreen
-onFound={r => setActiveRecord(r)}
-onDemo={() => setActiveRecord(CASE_REGISTRY[“A219847331”])}
-/>
-);
-}
-
-const { person: ACTIVE_PERSON, layers: ACTIVE_LAYERS, conflicts: ACTIVE_CONFLICTS, actions: ACTIVE_ACTIONS } = activeRecord;
-const currentLens = LENSES.find(l => l.id === lens);
-
-const immigrant_intro = “This is your legal record. Four different government agencies have information about your case. We show you what each one knows, what conflicts exist, and what is protecting you right now.”;
-const citizen_intro = “This shows the legal status of one person moving through the U.S. immigration system. Four agencies hold partial, sometimes contradictory records. This system detects those contradictions and enforces legal constraints before any action is taken.”;
-const caseworker_intro = “Active case: “ + ACTIVE_PERSON.id + “. Reconciliation engine has detected 3 conflicts, emitted 5 actions, blocked 1 enforcement request. All layers visible below. Data age warnings on L2 (critical). Human review assigned.”;
-
-const intro = { immigrant: immigrant_intro, citizen: citizen_intro, caseworker: caseworker_intro }[lens];
-
-return (
-<div style={{ minHeight: “100vh”, background: “#07070D”, fontFamily: “‘DM Mono’,‘IBM Plex Mono’,monospace”, color: “#D0D0C8” }}>
-<style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap'); * { box-sizing: border-box; margin: 0; padding: 0; } @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} } @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:0.25} }`}</style>
-
-```
-  {/* TOP BAR */}
-  <div style={{ background: "#0A0A12", borderBottom: "1px solid #141420", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
-    <div>
-      <div style={{ fontSize: "8px", letterSpacing: "0.22em", color: "#2A2A3A", marginBottom: "3px" }}>FIELD & SIGNAL · CARE</div>
-      <div style={{ fontSize: "13px", fontWeight: 600, fontFamily: "'DM Sans',sans-serif", color: "#E0E0D8" }}>Immigration Legal State</div>
-    </div>
-    <button onClick={() => setActiveRecord(null)} style={{ padding: "7px 12px", background: "transparent", color: "#444", border: "1px solid #1A1A26", borderRadius: "4px", fontFamily: "'DM Mono',monospace", fontSize: "9px", letterSpacing: "0.12em", cursor: "pointer" }}>
-      ← SEARCH
-    </button>
-  </div>
-
-  {/* LENS SELECTOR */}
-  <div style={{ padding: "14px 16px", background: "#0A0A12", borderBottom: "1px solid #141420" }}>
-    <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "10px" }}>WHO ARE YOU?</div>
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      {LENSES.map(l => (
-        <button key={l.id} onClick={() => setLens(l.id)} style={{
-          padding: "12px 14px", textAlign: "left",
-          background: lens === l.id ? l.color + "18" : "transparent",
-          border: `1px solid ${lens === l.id ? l.color + "55" : "#1A1A26"}`,
-          borderLeft: `3px solid ${lens === l.id ? l.color : "#1A1A26"}`,
-          borderRadius: "4px", cursor: "pointer",
-          fontFamily: "'DM Sans',sans-serif",
-          fontSize: "13px",
-          color: lens === l.id ? l.color : "#555",
-          fontWeight: lens === l.id ? 600 : 400,
-          transition: "all 0.2s",
-        }}>
-          {l.label}
-        </button>
-      ))}
-    </div>
-  </div>
-
-  {/* SUBJECT + INTRO */}
-  <div style={{ padding: "16px" }} key={lens}>
-    <div style={{ padding: "14px", background: "#0E0E18", borderRadius: "6px", border: "1px solid #141420", marginBottom: "16px", animation: "fadeIn 0.3s ease" }}>
-      <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "8px" }}>
-        {lens === "immigrant" ? "YOUR RECORD" : lens === "citizen" ? "CASE SUBJECT" : "ACTIVE CASE"}
-      </div>
-      <div style={{ fontSize: "16px", fontWeight: 600, fontFamily: "'DM Sans',sans-serif", marginBottom: "3px" }}>{ACTIVE_PERSON.name}</div>
-      <div style={{ fontSize: "11px", color: "#555", marginBottom: "12px" }}>{ACTIVE_PERSON.id} · From {ACTIVE_PERSON.origin} · Entered {ACTIVE_PERSON.since}</div>
-      <div style={{ fontSize: "12px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7" }}>{intro}</div>
-    </div>
-
-    {/* STATS ROW */}
-    {lens === "caseworker" && (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
-        {[
-          { n: "1", label: "BLOCKED", color: "#C0392B", blink: true },
-          { n: "3", label: "CONFLICTS", color: "#E67E22" },
-          { n: "5", label: "ACTIONS", color: "#4A90D9" },
-        ].map(s => (
-          <div key={s.label} style={{ padding: "10px", background: "#0E0E18", border: "1px solid #141420", borderRadius: "4px", textAlign: "center" }}>
-            <div style={{ fontSize: "22px", fontWeight: 700, color: s.color, animation: s.blink ? "blink 2s infinite" : "none" }}>{s.n}</div>
-            <div style={{ fontSize: "8px", color: "#333", letterSpacing: "0.12em" }}>{s.label}</div>
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 20px" }}>
+      <div style={{ width: "100%", maxWidth: "400px", animation: "fadeIn 0.4s ease" }}>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
+          <div style={{ fontSize: "8px", letterSpacing: "0.26em", color: "#2A2A3A", marginBottom: "8px" }}>FIELD & SIGNAL · CARE</div>
+          <div style={{ fontSize: "22px", fontWeight: 600, fontFamily: "'DM Sans',sans-serif", color: "#E0E0D8", marginBottom: "8px" }}>Immigration Legal State</div>
+          <div style={{ fontSize: "12px", color: "#3A3A4A", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7" }}>
+            Enter an A-Number to view a unified legal record across all four institutional layers.
           </div>
-        ))}
-      </div>
-    )}
-
-    {/* LAYERS */}
-    <Section title="WHAT'S HAPPENING — LAYER BY LAYER" defaultOpen={true}>
-      {ACTIVE_LAYERS.map(layer => <LayerCard key={layer.id} layer={layer} lens={lens} />)}
-    </Section>
-
-    {/* CONFLICTS */}
-    <Section title={lens === "immigrant" ? "WHAT THE SYSTEM FOUND AND FIXED" : lens === "citizen" ? "CONFLICTS DETECTED" : "CONFLICT REGISTER"} defaultOpen={lens !== "immigrant"}>
-      {lens === "immigrant" && (
-        <div style={{ fontSize: "12px", color: "#666", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", marginBottom: "12px" }}>
-          The system found places where different agencies had information that didn't match — or where an agency was about to do something without knowing the full picture. Here's what we caught:
         </div>
-      )}
-      {ACTIVE_CONFLICTS.map(c => <ConflictCard key={c.id} conflict={c} lens={lens} />)}
-    </Section>
 
-    {/* ACTIONS */}
-    <Section title={lens === "immigrant" ? "WHAT THE SYSTEM DID TO PROTECT YOU" : lens === "citizen" ? "ACTIONS TAKEN BY THE SYSTEM" : "EMITTED ACTION QUEUE"}>
-      {lens === "immigrant" && (
-        <div style={{ fontSize: "12px", color: "#666", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", marginBottom: "12px" }}>
-          These are the steps the system automatically took once it found the conflicts:
-        </div>
-      )}
-      {ACTIVE_ACTIONS.map((a, i) => <ActionRow key={i} action={a} lens={lens} i={i} />)}
-    </Section>
-
-    {/* WHAT'S NEXT */}
-    <Section title={lens === "immigrant" ? "WHAT YOU NEED TO DO" : lens === "citizen" ? "WHAT HAPPENS NEXT" : "OPEN ITEMS"}>
-      {lens === "immigrant" && (
-        <div style={{ display: "grid", gap: "8px" }}>
-          {[
-            { icon: "📅", item: "Attend your asylum interview in March 2025. Bring all documents." },
-            { icon: "📞", item: "Keep all monthly check-in appointments with ICE. Do not miss them." },
-            { icon: "⚖️", item: "Your attorney is managing your BIA appeal. Stay in contact with them." },
-            { icon: "✅", item: "You do not need to leave the country right now. The removal is blocked." },
-          ].map((n, i) => (
-            <div key={i} style={{ display: "flex", gap: "10px", padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420" }}>
-              <span style={{ fontSize: "16px", flexShrink: 0 }}>{n.icon}</span>
-              <span style={{ fontSize: "13px", color: "#C0C0B8", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.5" }}>{n.item}</span>
+        <form onSubmit={handleSearch} style={{ marginBottom: "10px" }}>
+          <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "8px" }}>A-NUMBER</div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <input
+              value={query}
+              onChange={e => { setQuery(e.target.value); setStatus("idle"); }}
+              placeholder="A-219-847-331"
+              autoComplete="off"
+              style={{
+                flex: 1, padding: "12px 14px",
+                background: "#0E0E18",
+                border: `1px solid ${status === "notfound" ? "#C0392B55" : "#1A1A26"}`,
+                borderRadius: "4px", color: "#E0E0D8",
+                fontFamily: "'DM Mono',monospace", fontSize: "14px",
+                outline: "none", letterSpacing: "0.08em",
+              }}
+            />
+            <button type="submit" style={{
+              padding: "12px 18px", background: "#1A2A4A", color: "#4A90D9",
+              border: "1px solid #1A3A6A", borderRadius: "4px",
+              fontFamily: "'DM Mono',monospace", fontSize: "10px",
+              letterSpacing: "0.12em", cursor: "pointer", fontWeight: 600, minWidth: "64px",
+            }}>
+              {status === "searching"
+                ? <span style={{ display: "inline-block", width: "10px", height: "10px", border: "1.5px solid #4A90D9", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+                : "FIND"}
+            </button>
+          </div>
+          {status === "notfound" && (
+            <div style={{ marginTop: "8px", padding: "10px 14px", background: "#140808", border: "1px solid #2A1010", borderRadius: "4px", fontSize: "12px", color: "#C0392B", fontFamily: "'DM Sans',sans-serif" }}>
+              No record found for that A-Number. Try the demo below.
             </div>
-          ))}
-        </div>
-      )}
-      {lens === "citizen" && (
-        <div style={{ display: "grid", gap: "8px" }}>
-          {[
-            "The system has blocked the removal and synced the missing information across all four agencies.",
-            "Her asylum interview in March 2025 will determine whether she is granted protection.",
-            "The BIA will rule on her appeal within 14–22 months. That ruling will carry binding authority.",
-            "A human reviewer has been assigned to oversee the case before any enforcement action can proceed.",
-            "This case illustrates what happens when agencies don't share data — and what a system that catches that could look like.",
-          ].map((t, i) => (
-            <div key={i} style={{ padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420", fontSize: "13px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.6" }}>{t}</div>
-          ))}
-        </div>
-      )}
-      {lens === "caseworker" && (
-        <div style={{ display: "grid", gap: "6px" }}>
-          {[
-            { priority: "HIGH",   color: "#C0392B", item: "Confirm L2 acknowledgment of BIA docket and credible fear finding." },
-            { priority: "HIGH",   color: "#C0392B", item: "Verify stay of removal status with BIA before next ICE check-in." },
-            { priority: "MED",    color: "#E67E22", item: "Confirm L3 adjudicator has been flagged re: active removal order." },
-            { priority: "MED",    color: "#E67E22", item: "Prepare subject for March 2025 asylum interview." },
-            { priority: "LOGGED", color: "#444",    item: "Human reviewer assigned. Document chain of custody." },
-          ].map((n, i) => (
-            <div key={i} style={{ display: "flex", gap: "10px", padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420", alignItems: "flex-start" }}>
-              <span style={{ fontSize: "8px", color: n.color, fontWeight: 700, letterSpacing: "0.12em", minWidth: "48px", paddingTop: "2px" }}>{n.priority}</span>
-              <span style={{ fontSize: "12px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.5" }}>{n.item}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </Section>
+          )}
+        </form>
 
-    {/* FOOTER */}
-    <div style={{ marginTop: "24px", padding: "12px", textAlign: "center" }}>
-      <div style={{ fontSize: "9px", color: "#1A1A24", lineHeight: "1.8" }}>
-        Demonstration prototype · No real person or case represented<br />
-        Field & Signal · Diagnostic infrastructure for systems under stress
+        <div style={{ padding: "14px", background: "#0A0A12", border: "1px solid #141420", borderRadius: "6px", marginTop: "16px" }}>
+          <div style={{ fontSize: "9px", color: "#2A2A3A", letterSpacing: "0.16em", marginBottom: "10px" }}>DEMO RECORD</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+            <div>
+              <div style={{ fontSize: "13px", color: "#888", fontFamily: "'DM Sans',sans-serif" }}>María Elena Vásquez</div>
+              <div style={{ fontSize: "11px", color: "#333", fontFamily: "'DM Mono',monospace", marginTop: "2px" }}>A-219-847-331</div>
+            </div>
+            <button onClick={onDemo} style={{
+              padding: "8px 16px", background: "transparent", color: "#4A90D9",
+              border: "1px solid #1A3A6A", borderRadius: "4px",
+              fontFamily: "'DM Mono',monospace", fontSize: "9px", letterSpacing: "0.12em", cursor: "pointer",
+            }}>LOAD DEMO</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-```
-
-);
+  );
 }
+
+// ─── RECORD VIEW ──────────────────────────────────────────────────────────────
+
+function RecordView({ record, onBack }) {
+  const [lens, setLens] = useState("immigrant");
+  const { person, layers, conflicts, actions } = record;
+
+  const INTROS = {
+    immigrant: "This is your legal record. Four different government agencies have information about your case. We show you what each one knows, what conflicts exist, and what is protecting you right now.",
+    citizen: "This shows the legal status of one person moving through the U.S. immigration system. Four agencies hold partial, sometimes contradictory records. This system detects those contradictions and enforces legal constraints before any action is taken.",
+    caseworker: `Active case: ${person.id}. Reconciliation engine detected 3 conflicts, emitted 5 actions, blocked 1 enforcement request. Data age warning on L2 (critical). Human review assigned.`,
+  };
+
+  const SECTION_TITLES = {
+    layers:    { immigrant: "WHAT'S HAPPENING — LAYER BY LAYER", citizen: "WHAT'S HAPPENING — LAYER BY LAYER", caseworker: "LAYER STATUS" },
+    conflicts: { immigrant: "WHAT THE SYSTEM FOUND AND FIXED",   citizen: "CONFLICTS DETECTED",                caseworker: "CONFLICT REGISTER" },
+    actions:   { immigrant: "WHAT THE SYSTEM DID TO PROTECT YOU",citizen: "ACTIONS TAKEN BY THE SYSTEM",       caseworker: "EMITTED ACTION QUEUE" },
+    next:      { immigrant: "WHAT YOU NEED TO DO",                citizen: "WHAT HAPPENS NEXT",                caseworker: "OPEN ITEMS" },
+  };
+
+  return (
+    <div style={{ minHeight: "100vh" }}>
+      {/* TOP BAR */}
+      <div style={{ background: "#0A0A12", borderBottom: "1px solid #141420", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", position: "sticky", top: 0, zIndex: 10 }}>
+        <div>
+          <div style={{ fontSize: "8px", letterSpacing: "0.2em", color: "#2A2A3A", marginBottom: "2px" }}>FIELD & SIGNAL · CARE</div>
+          <div style={{ fontSize: "13px", fontWeight: 600, fontFamily: "'DM Sans',sans-serif", color: "#E0E0D8" }}>Immigration Legal State</div>
+        </div>
+        <button onClick={onBack} style={{ padding: "7px 12px", background: "transparent", color: "#444", border: "1px solid #1A1A26", borderRadius: "4px", fontFamily: "'DM Mono',monospace", fontSize: "9px", letterSpacing: "0.12em", cursor: "pointer" }}>
+          ← SEARCH
+        </button>
+      </div>
+
+      {/* LENS SELECTOR */}
+      <div style={{ padding: "14px 16px", background: "#0A0A12", borderBottom: "1px solid #141420" }}>
+        <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "10px" }}>WHO ARE YOU?</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {LENSES.map(l => (
+            <button key={l.id} onClick={() => setLens(l.id)} style={{
+              padding: "12px 14px", textAlign: "left", cursor: "pointer",
+              background: lens === l.id ? l.color + "18" : "transparent",
+              border: `1px solid ${lens === l.id ? l.color + "55" : "#1A1A26"}`,
+              borderLeft: `3px solid ${lens === l.id ? l.color : "#1A1A26"}`,
+              borderRadius: "4px", fontFamily: "'DM Sans',sans-serif",
+              fontSize: "13px", color: lens === l.id ? l.color : "#555",
+              fontWeight: lens === l.id ? 600 : 400, transition: "all 0.2s",
+            }}>{l.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div style={{ padding: "16px" }} key={lens}>
+        {/* Person card */}
+        <div className="fade-in" style={{ padding: "14px", background: "#0E0E18", borderRadius: "6px", border: "1px solid #141420", marginBottom: "16px" }}>
+          <div style={{ fontSize: "9px", color: "#333", letterSpacing: "0.16em", marginBottom: "8px" }}>
+            {lens === "immigrant" ? "YOUR RECORD" : lens === "citizen" ? "CASE SUBJECT" : "ACTIVE CASE"}
+          </div>
+          <div style={{ fontSize: "16px", fontWeight: 600, fontFamily: "'DM Sans',sans-serif", marginBottom: "3px" }}>{person.name}</div>
+          <div style={{ fontSize: "11px", color: "#555", marginBottom: "12px" }}>{person.id} · From {person.origin} · Entered {person.since}</div>
+          <div style={{ fontSize: "12px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7" }}>{INTROS[lens]}</div>
+        </div>
+
+        {/* Caseworker stats */}
+        {lens === "caseworker" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+            {[{n:"1",label:"BLOCKED",color:"#C0392B",blink:true},{n:"3",label:"CONFLICTS",color:"#E67E22"},{n:"5",label:"ACTIONS",color:"#4A90D9"}].map(s => (
+              <div key={s.label} style={{ padding: "10px", background: "#0E0E18", border: "1px solid #141420", borderRadius: "4px", textAlign: "center" }}>
+                <div style={{ fontSize: "22px", fontWeight: 700, color: s.color, animation: s.blink ? "blink 2s infinite" : "none" }}>{s.n}</div>
+                <div style={{ fontSize: "8px", color: "#333", letterSpacing: "0.12em" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Layers */}
+        <Accordion title={SECTION_TITLES.layers[lens]} defaultOpen>
+          {layers.map(l => <LayerCard key={l.id} layer={l} lens={lens} />)}
+        </Accordion>
+
+        {/* Conflicts */}
+        <Accordion title={SECTION_TITLES.conflicts[lens]} defaultOpen={lens !== "immigrant"}>
+          {lens === "immigrant" && (
+            <div style={{ fontSize: "12px", color: "#666", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", marginBottom: "12px" }}>
+              The system found places where different agencies had information that didn't match — or where an agency was about to act without the full picture. Here's what we caught:
+            </div>
+          )}
+          {conflicts.map(c => <ConflictCard key={c.id} conflict={c} lens={lens} />)}
+        </Accordion>
+
+        {/* Actions */}
+        <Accordion title={SECTION_TITLES.actions[lens]}>
+          {lens === "immigrant" && (
+            <div style={{ fontSize: "12px", color: "#666", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.7", marginBottom: "12px" }}>
+              These are the steps the system automatically took once it found the conflicts:
+            </div>
+          )}
+          {actions.map((a, i) => <ActionRow key={i} action={a} lens={lens} idx={i} />)}
+        </Accordion>
+
+        {/* What's next */}
+        <Accordion title={SECTION_TITLES.next[lens]}>
+          {lens === "immigrant" && (
+            <div style={{ display: "grid", gap: "8px" }}>
+              {[
+                { icon: "📅", item: "Attend your asylum interview in March 2025. Bring all documents." },
+                { icon: "📞", item: "Keep all monthly check-in appointments with ICE. Do not miss them." },
+                { icon: "⚖️", item: "Your attorney is managing your BIA appeal. Stay in contact with them." },
+                { icon: "✅", item: "You do not need to leave the country right now. The removal is blocked." },
+              ].map((n, i) => (
+                <div key={i} style={{ display: "flex", gap: "10px", padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420" }}>
+                  <span style={{ fontSize: "16px", flexShrink: 0 }}>{n.icon}</span>
+                  <span style={{ fontSize: "13px", color: "#C0C0B8", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.5" }}>{n.item}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {lens === "citizen" && (
+            <div style={{ display: "grid", gap: "8px" }}>
+              {[
+                "The system has blocked the removal and synced the missing information across all four agencies.",
+                "Her asylum interview in March 2025 will determine whether she is granted protection.",
+                "The BIA will rule on her appeal within 14–22 months. That ruling will carry binding authority.",
+                "A human reviewer has been assigned to oversee the case before any enforcement action can proceed.",
+                "This case illustrates what happens when agencies don't share data — and what a system that catches that could look like.",
+              ].map((t, i) => (
+                <div key={i} style={{ padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420", fontSize: "13px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.6" }}>{t}</div>
+              ))}
+            </div>
+          )}
+          {lens === "caseworker" && (
+            <div style={{ display: "grid", gap: "6px" }}>
+              {[
+                { p: "HIGH",   c: "#C0392B", item: "Confirm L2 acknowledgment of BIA docket and credible fear finding." },
+                { p: "HIGH",   c: "#C0392B", item: "Verify stay of removal status with BIA before next ICE check-in." },
+                { p: "MED",    c: "#E67E22", item: "Confirm L3 adjudicator has been flagged re: active removal order." },
+                { p: "MED",    c: "#E67E22", item: "Prepare subject for March 2025 asylum interview." },
+                { p: "LOGGED", c: "#444",    item: "Human reviewer assigned. Document chain of custody." },
+              ].map((n, i) => (
+                <div key={i} style={{ display: "flex", gap: "10px", padding: "10px 12px", background: "#0A0A12", borderRadius: "4px", border: "1px solid #141420", alignItems: "flex-start" }}>
+                  <span style={{ fontSize: "8px", color: n.c, fontWeight: 700, letterSpacing: "0.12em", minWidth: "48px", paddingTop: "2px" }}>{n.p}</span>
+                  <span style={{ fontSize: "12px", color: "#888", fontFamily: "'DM Sans',sans-serif", lineHeight: "1.5" }}>{n.item}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Accordion>
+
+        <div style={{ marginTop: "24px", padding: "12px", textAlign: "center" }}>
+          <div style={{ fontSize: "9px", color: "#1A1A24", lineHeight: "1.8" }}>
+            Demonstration prototype · No real person or case represented<br />
+            Field &amp; Signal · Diagnostic infrastructure for systems under stress
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── APP ──────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [acked, setAcked]           = useState(false);
+  const [activeRecord, setActive]   = useState(null);
+
+  if (!acked) return <Disclaimer onAck={() => setAcked(true)} />;
+
+  if (!activeRecord) return (
+    <SearchScreen
+      onFound={r => setActive(r)}
+      onDemo={() => setActive(CASE_REGISTRY["A219847331"])}
+    />
+  );
+
+  return <RecordView record={activeRecord} onBack={() => setActive(null)} />;
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+
+</body>
+</html>
