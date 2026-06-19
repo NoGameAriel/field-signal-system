@@ -15,7 +15,11 @@
   --ink-faint: #A09880;
   --rule: #E0DBD0;
   --moss: #3D5C35;
-  --moss-light: #EBF2E8;
+  --moss-bg: #EBF2E8;
+  --moss-border: #C0D9BA;
+  --amber: #8A6A1A;
+  --amber-bg: #FDF6E3;
+  --amber-border: #DFC98A;
 }
 
 html, body {
@@ -41,7 +45,7 @@ html, body {
 body.level-open #screen-tree  { transform: translateX(-25%); opacity: 0; pointer-events: none; }
 body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
 
-/* ── TREE SCREEN ── */
+/* ── TREE HEADER ── */
 .tree-header {
   padding: 2rem 1.5rem 1.5rem;
   border-bottom: 2px solid var(--ink);
@@ -56,28 +60,72 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--ink);
-  letter-spacing: 0.01em;
-  margin-bottom: 1rem;
+  margin-bottom: 0.9rem;
 }
 
 .thesis {
   font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--ink-mid);
-  line-height: 1.6;
-  margin-bottom: 1rem;
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
 }
 
 .thesis-sub {
-  font-size: 0.65rem;
+  font-size: 0.63rem;
   color: var(--ink-faint);
-  line-height: 1.6;
-  letter-spacing: 0.03em;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
 }
 
-/* ── LEVEL ROWS ── */
+/* ── RECONNECTION BANNER ── */
+.reconnection-banner {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  background: var(--amber-bg);
+  border-bottom: 1px solid var(--amber-border);
+  cursor: pointer;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reconnection-banner:hover { background: #FAF0CC; }
+
+.reconnection-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 0.3rem;
+}
+
+.reconnection-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.15rem;
+}
+
+.reconnection-sub {
+  font-size: 0.65rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+
+/* ── LEVEL LIST ── */
 .level-list { padding-bottom: 4rem; }
+
+.section-divider {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+}
 
 .level-row {
   display: flex;
@@ -99,7 +147,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   justify-content: center;
   padding-top: 1.2rem;
   border-right: 1px solid var(--rule);
-  font-size: 0.58rem;
+  font-size: 0.55rem;
   letter-spacing: 0.08em;
   color: var(--ink-faint);
 }
@@ -107,6 +155,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
 .row-body {
   flex: 1;
   padding: 1.1rem 1rem 1.1rem 1.1rem;
+  min-width: 0;
 }
 
 .row-name {
@@ -120,16 +169,15 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
 .row-opens {
   font-family: 'Libre Baskerville', serif;
   font-style: italic;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--ink-mid);
   line-height: 1.4;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
-.row-participation {
-  font-size: 0.62rem;
+.row-count {
+  font-size: 0.58rem;
   color: var(--ink-faint);
-  line-height: 1.5;
   letter-spacing: 0.02em;
 }
 
@@ -179,7 +227,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
 /* Hero */
 .level-hero {
   padding: 1.75rem 1.5rem 1.5rem;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
 }
 
 .level-eyebrow {
@@ -187,7 +235,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
 }
 
 .level-name-large {
@@ -196,7 +244,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   font-weight: 700;
   line-height: 1.1;
   color: var(--ink);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.6rem;
 }
 
 .level-opens-large {
@@ -211,17 +259,16 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
 .level-participation {
   font-size: 0.7rem;
   color: var(--ink-mid);
-  line-height: 1.65;
+  line-height: 1.7;
   margin-bottom: 1.25rem;
-  letter-spacing: 0.01em;
 }
 
 /* Unlocks */
 .unlocks-wrap {
-  background: var(--moss-light);
-  border: 1px solid #C8DEC4;
+  background: var(--moss-bg);
+  border: 1px solid var(--moss-border);
   border-radius: 6px;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
 }
 
 .unlocks-label {
@@ -229,7 +276,7 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--moss);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
 
 .unlocks-text {
@@ -240,10 +287,48 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   line-height: 1.5;
 }
 
+/* Disruption block */
+.disruption-block {
+  margin: 1.25rem 1.5rem 0;
+  padding: 1rem;
+  border-left: 3px solid var(--ink-faint);
+  background: #F0EDE6;
+}
+
+.disruption-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.4rem;
+}
+
+.disruption-text {
+  font-size: 0.7rem;
+  color: var(--ink-mid);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.rebuild-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: 0.4rem;
+}
+
+.rebuild-text {
+  font-size: 0.7rem;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+
 /* Suggestions */
 .suggestions-header {
-  padding: 1.1rem 1.5rem 0.5rem;
-  border-bottom: 1px solid var(--rule);
+  padding: 1rem 1.5rem 0.5rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--rule);
 }
 
 .suggestions-label {
@@ -317,6 +402,45 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   line-height: 1.55;
 }
 
+/* Function tests */
+.function-block {
+  margin: 0 1.5rem 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+}
+
+.function-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+}
+
+.function-intro {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+  font-style: italic;
+}
+
+.function-test {
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  padding: 0.3rem 0;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.function-test::before {
+  content: '→';
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
 .level-spacer { height: 5rem; }
 </style>
 </head>
@@ -327,7 +451,13 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
   <div class="tree-header">
     <div class="wordmark">Groundwork</div>
     <p class="thesis">The purpose of a social system is to increase the capacity of its members to participate meaningfully in collective life.</p>
-    <p class="thesis-sub">These ten capacities are what that looks like in practice. Each one opens up a new kind of participation. Tap any to see what we can build.</p>
+    <p class="thesis-sub">These twelve capacities are what that looks like in practice. Each one opens up a new kind of participation. Tap any to see what we can build together.</p>
+  </div>
+
+  <div class="reconnection-banner" onclick="openReconnection()">
+    <div class="reconnection-label">Meta-layer · Always active</div>
+    <div class="reconnection-title">Reconnection</div>
+    <div class="reconnection-sub">The mechanism that keeps every capacity alive over time.</div>
   </div>
 
   <div class="level-list" id="level-list"></div>
@@ -351,24 +481,63 @@ body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
     </div>
   </div>
 
+  <div class="disruption-block">
+    <div class="disruption-label">What was disrupted</div>
+    <div class="disruption-text" id="lh-disruption"></div>
+    <div class="rebuild-label">What rebuilding looks like</div>
+    <div class="rebuild-text" id="lh-rebuild"></div>
+  </div>
+
   <div class="suggestions-header">
     <div class="suggestions-label">Things we can do</div>
     <div class="suggestions-context" id="lh-context"></div>
   </div>
 
   <div id="lh-suggestions"></div>
+
+  <div class="function-block" id="lh-function-block">
+    <div class="function-label">How we know capacity is growing</div>
+    <div class="function-intro">A community possesses a capacity when it can reliably perform the functions associated with it.</div>
+    <div id="lh-functions"></div>
+  </div>
+
   <div class="level-spacer"></div>
 </div>
 
 <script>
+const RECONNECTION = {
+  name: "Reconnection",
+  full: "Reconnection",
+  eyebrow: "Meta-layer · Always active",
+  opens: "Are we maintaining what we've built?",
+  participation: "Every capacity decays without reconnection. Presence fades when people stop crossing paths. Trust erodes when gatherings stop. Knowledge disappears when generations stop meeting. Reconnection is not a capacity you build once — it is the metabolism of everything else. Without it, what we build slowly fades. With it, what we build can last.",
+  unlocks: "The continuity that keeps every other capacity alive — and the awareness to notice when something is starting to slip.",
+  disruption: "Ceremony, seasonal gathering, and ritual were dismissed as superstition or replaced by consumption. The regular moments that reminded communities who they were — and kept capacity from decaying — were the first things to go when collective life was disrupted.",
+  rebuild: "Reconnection is not a nice-to-have. It is the metabolism of everything else. Without it, every capacity we build will slowly fade. With it, what we build can last.",
+  context: "These are the questions reconnection answers. They need to be asked on a rhythm — not just when something feels wrong.",
+  suggestions: [
+    { action: "Ask who we haven't seen lately", why: "Absence is the first sign of decay. Notice it early." },
+    { action: "Hold regular whole-community gatherings", why: "Subgroup contact keeps people connected to their corner. Whole-community contact keeps them connected to each other." },
+    { action: "Mark the year together — every year", why: "Annual rhythm is how communities remember themselves across time." },
+    { action: "Review what's still working and what isn't", why: "Reconnection without reflection is just socializing. Both matter." },
+    { action: "Name what we've built together", why: "Communities that can describe what they've made are more likely to protect it." },
+    { action: "Protect gathering time from being scheduled away", why: "If it isn't on the calendar and defended, it disappears." },
+  ],
+  functions: [
+    "Do we have regular moments of whole-community contact, not just subgroup contact?",
+    "When capacity starts to decay, do we notice before it's gone?",
+    "Is reconnection scheduled and protected, or does it only happen when someone remembers?",
+  ]
+};
+
 const LEVELS = [
   {
-    num: 0,
-    name: "Presence",
-    full: "Presence Capacity",
+    num: 0, name: "Presence", full: "Presence Capacity",
     opens: "Can we see each other?",
     participation: "Before we can act together, we have to know each other exists. Presence capacity is the ground floor of collective life — it's what makes every other kind of participation possible. Without it, a group of people in the same place is just a crowd.",
     unlocks: "The ability to reach each other, ask for help, and begin to act as a community rather than a collection of strangers.",
+    disruption: "Communities get scattered. People are priced out, pushed out, or pulled away by systems that work better when neighbors don't know each other. Fragmentation isn't always accidental.",
+    rebuild: "Knowing who's here is where everything starts. Before trust, before cooperation — we have to be able to find each other.",
     context: "These are starting points. Any one of them begins to close the gap between neighbors who share space and neighbors who share something more.",
     suggestions: [
       { action: "Introduce ourselves to our neighbors", why: "You can't belong to something you're invisible inside." },
@@ -379,15 +548,46 @@ const LEVELS = [
       { action: "Find and name our common gathering places", why: "Community organizes itself around places. Know them and use them." },
       { action: "Discover what organizations already exist here", why: "We don't have to start from scratch. Others have already begun." },
       { action: "Record our stories and local histories", why: "A community without memory has to reintroduce itself to itself. Preserve what we know." },
+    ],
+    functions: [
+      "When someone new arrives, do others notice?",
+      "When someone disappears, do others notice?",
+      "Can we reach most members without going through one person?",
     ]
   },
   {
-    num: 1,
-    name: "Social",
-    full: "Social Capacity",
-    opens: "Do we have reasons to come back to each other?",
+    num: 1, name: "Signal", full: "Signal Capacity",
+    opens: "Can we notice what matters together?",
+    participation: "Before trust can deepen, people need shared awareness of reality. When outside voices define what's happening in a community, the community stops trusting its own perception. Signal capacity is how we see ourselves clearly — and act on what we actually know rather than what we've been told.",
+    unlocks: "Shared awareness, collective responsiveness, and the intelligence to act on what we know before problems become crises.",
+    disruption: "When outside voices define what's happening in a community, the community stops trusting its own perception. Local knowledge gets dismissed. Problems get named by people who don't live with them.",
+    rebuild: "A community that can see itself clearly can act on what it actually knows. Signal capacity is how we stop being described and start describing ourselves.",
+    context: "These are ways to build shared awareness. The goal is a community that sees itself — not one that waits to be told what's happening.",
+    suggestions: [
+      { action: "Run community surveys", why: "Asking is the first step to knowing. Don't assume." },
+      { action: "Hold listening sessions", why: "Some things only emerge when there's space to say them." },
+      { action: "Map what resources exist and where", why: "You can't share what you can't see." },
+      { action: "Map what needs exist and where", why: "Unmet needs that aren't visible can't be addressed." },
+      { action: "Support local journalism", why: "Communities that tell their own stories know what's actually happening." },
+      { action: "Collect and share community stories", why: "Stories carry information that data doesn't. Both matter." },
+      { action: "Build public dashboards of what we know", why: "Shared information creates shared reality." },
+      { action: "Create feedback channels that actually get read", why: "A feedback channel no one monitors is just a suggestion box." },
+      { action: "Build early warning systems for community stress", why: "The time to notice a problem is before it becomes a crisis." },
+      { action: "Create a community observatory — regular collective sense-making", why: "Seeing clearly together is a practice, not an event." },
+    ],
+    functions: [
+      "When a need emerges, does the community become aware of it without someone having to shout?",
+      "When something goes wrong, does information reach the people who can act on it?",
+      "Do we have a shared picture of what's happening, or competing private ones?",
+    ]
+  },
+  {
+    num: 2, name: "Social", full: "Social Capacity",
+    opens: "Do we have reasons to return to each other?",
     participation: "Knowing someone exists isn't the same as having a relationship with them. Social capacity is what turns visibility into connection — it creates the recurring contact and shared experience that makes trust possible. Without it, people remain friendly strangers.",
     unlocks: "The trust, belonging, and friendship that allow us to ask more of each other — and to give more in return.",
+    disruption: "Poverty, overwork, and precarity don't leave much room for gathering. When people are exhausted and afraid, community becomes a luxury. That's not an accident either.",
+    rebuild: "Reasons to come back to each other are the fabric of collective life. We're not building programs. We're building the conditions for relationship to persist.",
     context: "These are ways to give people reasons to keep showing up. Rhythm matters more than any single event.",
     suggestions: [
       { action: "Host a meal together", why: "Eating together is one of the oldest trust-building acts humans have. It still works." },
@@ -396,19 +596,46 @@ const LEVELS = [
       { action: "Organize game nights", why: "Play lowers defenses and creates common ground faster than almost anything else." },
       { action: "Create welcoming rituals for newcomers", why: "New people need a signal that they were expected and are wanted." },
       { action: "Connect people who don't know each other yet", why: "Isolation is the default. Someone has to actively break it." },
-      { action: "Build processes for repairing conflict", why: "Unresolved tension quietly ends communities. Repair is infrastructure." },
-      { action: "Build relationships across generations", why: "Most communities are accidentally age-segregated. Fix it deliberately." },
       { action: "Form groups around shared interests", why: "Shared purpose creates friendship faster than shared proximity." },
       { action: "Mark milestones and celebrate together", why: "Recognizing what matters tells people their lives belong to this community." },
+    ],
+    functions: [
+      "Do gatherings continue without the original organizer?",
+      "Do relationships form across the groups that already knew each other?",
+      "When someone is absent, do others notice and reach out?",
     ]
   },
   {
-    num: 2,
-    name: "Knowledge",
-    full: "Knowledge Capacity",
+    num: 3, name: "Repair", full: "Repair Capacity",
+    opens: "Can we recover from conflict and failure?",
+    participation: "Trust breaks. Communities that can't repair it fragment quietly — people stop showing up, stop contributing, stop belonging. Repair capacity is what keeps rupture from becoming permanent. Most communities know how to grow. Very few know how to recover.",
+    unlocks: "The adaptability, trust restoration, and institutional learning that let us survive conflict and emerge from it stronger.",
+    disruption: "Most communities once had ways to address conflict from within — circles, mediation, communal accountability. Those practices were replaced by systems that remove people rather than restore relationships. We inherited those systems. We didn't choose them.",
+    rebuild: "Repair capacity is older than what replaced it. When we can address conflict without losing people to it, we've recovered something that was taken.",
+    context: "These are ways to build the capacity to recover. The goal is a community that can face hard things without fracturing.",
+    suggestions: [
+      { action: "Build conflict mediation into how we operate", why: "Conflict without a process defaults to whoever is loudest or most powerful." },
+      { action: "Hold restorative circles when harm happens", why: "Restoration keeps people in community. Punishment removes them from it." },
+      { action: "Create regular community reflection spaces", why: "Problems addressed early don't become ruptures." },
+      { action: "Practice real accountability together", why: "Accountability without relationship is just punishment. Build both." },
+      { action: "Make reconciliation a named practice", why: "If there's no path back, people don't try to find one." },
+      { action: "Build trust repair processes after rupture", why: "Trust can be rebuilt. But only if there's a way to do it." },
+      { action: "Run learning reviews after things go wrong", why: "Failure that produces learning is not wasted." },
+      { action: "Create harm repair protocols before we need them", why: "Improvising repair in the middle of crisis doesn't work." },
+    ],
+    functions: [
+      "When conflict occurs, does the community have a way to address it that doesn't require one person to manage it?",
+      "After a rupture, do people return to collaboration?",
+      "Do failures produce learning, or just silence?",
+    ]
+  },
+  {
+    num: 4, name: "Knowledge", full: "Knowledge Capacity",
     opens: "Can we learn from each other?",
     participation: "Every person in a community holds knowledge that others need. Knowledge capacity is what turns that distributed expertise into shared capability — it's the difference between a community that has to hire out every problem and one that can solve things from within.",
     unlocks: "The collective intelligence, skill transfer, and retained wisdom that let us grow without depending on outside expertise.",
+    disruption: "Communities that taught themselves were made dependent on outside credentials. Local expertise was devalued. Oral traditions were interrupted. What people knew about their own places stopped being passed on.",
+    rebuild: "Knowledge that stays in the community serves the community. We're not just sharing skills — we're refusing the idea that expertise has to come from somewhere else.",
     context: "These are ways to make what we know available to each other. The goal is a community that teaches itself.",
     suggestions: [
       { action: "Run skill-sharing workshops", why: "Every person here knows something others need. Create the space to share it." },
@@ -421,20 +648,25 @@ const LEVELS = [
       { action: "Host language exchanges", why: "Language barriers are community barriers. Exchange dissolves both at once." },
       { action: "Organize career coaching circles", why: "People will help each other if we build a structure for it." },
       { action: "Teach practical life skills together", why: "Fixing things, growing food, managing money — these shouldn't be rare knowledge." },
+    ],
+    functions: [
+      "When an expert leaves, does their knowledge remain?",
+      "Can someone new access what the community knows without finding the right person first?",
+      "Are skills being learned by people who will still be here in five years?",
     ]
   },
   {
-    num: 3,
-    name: "Resource",
-    full: "Resource Capacity",
+    num: 5, name: "Resource", full: "Resource Capacity",
     opens: "Can we share what we already have?",
     participation: "Individual ownership is expensive and isolating. Resource capacity is what lets a community act as a shared economy — reducing what each person needs to own alone, and increasing what everyone can access together.",
     unlocks: "Reduced individual burden, greater access across the community, and the material foundation for more ambitious collective action.",
+    disruption: "Enclosure — the privatization of what was once shared — is one of the oldest tools of economic control. Commons were fenced. Shared land became individual property. Communities that managed resources together were forced into individual dependency.",
+    rebuild: "Sharing what we have is not a workaround. It's a recovery of how most human communities have always functioned.",
     context: "These are ways to pool what we have. The most important resources are the ones sitting idle in someone's garage.",
     suggestions: [
       { action: "Start a tool library", why: "Most tools sit unused 95% of the time. We can share the other 5%." },
       { action: "Build a book library", why: "Knowledge shouldn't require individual ownership to access." },
-      { action: "Create a seed library", why: "Food sovereignty starts with seeds that belong to the community, not to corporations." },
+      { action: "Create a seed library", why: "Food sovereignty starts with seeds that belong to the community." },
       { action: "Organize ride-sharing", why: "Transportation gaps isolate people from everything that requires getting somewhere." },
       { action: "Form a bulk purchasing group", why: "Buying together makes quality affordable for people who couldn't afford it alone." },
       { action: "Run equipment exchanges", why: "One community's idle gear is another household's solution." },
@@ -442,16 +674,21 @@ const LEVELS = [
       { action: "Create shared storage", why: "Space is a resource too. Not everyone needs their own." },
       { action: "Try housing exchanges", why: "Flexibility on housing reduces pressure on the people with the least margin." },
       { action: "Start community lending circles", why: "Community credit reaches people that banks won't, faster and with less cost." },
+    ],
+    functions: [
+      "When someone needs a tool, space, or material, is there a reliable path to it?",
+      "Do resources circulate, or sit idle while others go without?",
+      "Can someone with less money access what someone with more money takes for granted?",
     ]
   },
   {
-    num: 4,
-    name: "Production",
-    full: "Production Capacity",
+    num: 6, name: "Production", full: "Production Capacity",
     opens: "Can we create value together?",
     participation: "A community that only consumes remains dependent on systems outside itself. Production capacity is what lets us generate things — food, goods, services, media, knowledge — and keep the value of that production inside the community.",
     unlocks: "Local production, shared ownership of what we make, and an economic resilience that doesn't rely on external systems to function.",
-    context: "These are ways to build together. The goal is a community that makes things, not just a community that buys them.",
+    disruption: "Local economies were absorbed into larger ones that extracted value outward. What communities made stopped belonging to them. The ability to produce for ourselves — and keep what we produced — quietly disappeared.",
+    rebuild: "When we make things together and own them together, value stays where it was created. That's not idealism. That's what economic resilience actually looks like.",
+    context: "These are ways to build together. The goal is a community that makes things, not just one that buys them.",
     suggestions: [
       { action: "Start a community garden", why: "Growing food together builds both food security and daily relationship." },
       { action: "Open a repair cafe", why: "Fixing instead of replacing keeps money and skills inside the community." },
@@ -463,15 +700,20 @@ const LEVELS = [
       { action: "Start an arts collective", why: "Creative production builds identity and attracts the investment that follows it." },
       { action: "Form a software development group", why: "Technical capacity built locally serves local needs instead of outside ones." },
       { action: "Organize cooperative purchasing", why: "Collective buying power shifts the economic relationship with every supplier." },
+    ],
+    functions: [
+      "Does the community generate assets it collectively owns?",
+      "Can we produce something together that none of us could produce alone?",
+      "Does local production reduce dependence on systems outside our control?",
     ]
   },
   {
-    num: 5,
-    name: "Care",
-    full: "Care Capacity",
+    num: 7, name: "Care", full: "Care Capacity",
     opens: "Can we support each other through life?",
     participation: "People can't participate in collective life when they're in crisis alone. Care capacity is what ensures that illness, loss, disability, new parenthood, and hardship don't pull people out of the community permanently — it's what makes belonging feel real when it's tested.",
     unlocks: "The human dignity, reduced isolation, and mutual safety nets that let people stay present in community life through the hardest seasons.",
+    disruption: "Care was privatized too. What families and communities once held together was either commodified or left to individuals to manage alone. The village was replaced by the market and the state, neither of which does it as well.",
+    rebuild: "Care capacity is how we take back the function that was outsourced. Some things work better when the people doing them are the people who will also receive them.",
     context: "These are ways to hold each other. The goal is a community where no one has to manage their hardest moments alone.",
     suggestions: [
       { action: "Organize meal trains", why: "When someone is overwhelmed, food is the most concrete help we can give." },
@@ -484,15 +726,20 @@ const LEVELS = [
       { action: "Build recovery communities", why: "Recovery requires ongoing relationship. Isolation is the condition that makes relapse likely." },
       { action: "Support new parents", why: "Early parenthood is a crisis without a village. We can be that village." },
       { action: "Create caregiver relief systems", why: "Caregivers burn out. Backup systems prevent the collapse of the people holding others up." },
+    ],
+    functions: [
+      "When someone is struggling, do others know before they have to ask?",
+      "Does care distribute across the community, or concentrate on a few caregivers?",
+      "Can someone who can't reciprocate still receive support?",
     ]
   },
   {
-    num: 6,
-    name: "Resilience",
-    full: "Resilience Capacity",
+    num: 8, name: "Resilience", full: "Resilience Capacity",
     opens: "Can we absorb shocks together?",
     participation: "Disruption is inevitable. Resilience capacity is what determines whether a community survives a crisis intact or fragments under pressure. Communities that have built this capacity don't just recover — they recover together.",
     unlocks: "The adaptability, preparedness, and continuity that let us face hard events without losing what we've built.",
+    disruption: "Disaster response has historically reached some communities last. The people with the least margin absorb the most damage. Communities that could have prepared together were not given the resources or the warning to do so.",
+    rebuild: "Resilience built from within reaches everyone. It doesn't wait for a system that has historically arrived late, or not at all.",
     context: "These are ways to prepare before we need to. The infrastructure that matters most in a crisis is the kind built before one arrives.",
     suggestions: [
       { action: "Set up emergency communication systems", why: "When infrastructure goes down, knowing who to reach is what saves people." },
@@ -505,36 +752,20 @@ const LEVELS = [
       { action: "Create a mutual aid fund", why: "Cash held in community hands reaches crises faster than any institution can." },
       { action: "Plan evacuation support together", why: "People without cars need neighbors who have them and will use them." },
       { action: "Build crisis coordination networks", why: "Chaos is the default in emergencies. Structure must be built before it's needed." },
+    ],
+    functions: [
+      "When a shock hits, does coordination happen without needing to be organized from scratch?",
+      "Do the most vulnerable members receive support first, not last?",
+      "After a crisis, do we emerge with more capacity than before, or less?",
     ]
   },
   {
-    num: 7,
-    name: "Stewardship",
-    full: "Stewardship Capacity",
-    opens: "Can we improve the places we inhabit together?",
-    participation: "The places we share are part of the community. Stewardship capacity is what connects participation in collective life to care for the physical and ecological world those lives are embedded in — it's how a community acts on behalf of what it will pass on.",
-    unlocks: "Deeper attachment to place, ecological health that sustains us, and the long-term care that keeps what we've built worth inheriting.",
-    context: "These are ways to tend what we share. Some of what we plant now, others will benefit from later.",
-    suggestions: [
-      { action: "Restore local habitat together", why: "The land we live on is part of the community too." },
-      { action: "Plant trees", why: "Trees take decades. Planting them is an act of participation that extends past our own tenure here." },
-      { action: "Conserve water as a community", why: "Water scarcity is coming. Habits built now will matter to people we haven't met yet." },
-      { action: "Maintain our public spaces", why: "Cared-for spaces signal that people here pay attention — and that it's worth paying attention to." },
-      { action: "Beautify shared areas", why: "Beauty signals belonging and investment. It tells people this place is worth being in." },
-      { action: "Preserve local history", why: "Places with stories are harder to erase and easier to defend." },
-      { action: "Improve accessibility everywhere", why: "A community is only as accessible as its least accessible path." },
-      { action: "Build shared waste reduction systems", why: "Shared systems outperform individual effort by orders of magnitude." },
-      { action: "Plant pollinator gardens", why: "Local food webs depend on creatures most people never think about. We can think about them." },
-      { action: "Maintain our trails and paths", why: "The routes people walk together are the routes community forms along." },
-    ]
-  },
-  {
-    num: 8,
-    name: "Governance",
-    full: "Governance Capacity",
+    num: 9, name: "Governance", full: "Governance Capacity",
     opens: "Can we make decisions together?",
     participation: "The capacity to decide together is one of the most demanding forms of collective participation — and one of the most powerful. Governance capacity is what makes self-determination real. Without it, communities are acted upon rather than acting.",
     unlocks: "The self-determination, legitimacy, and collective agency to shape our own conditions rather than having them shaped for us.",
+    disruption: "Self-governing communities were brought under external control because self-determination is power. Decisions that communities once made for themselves were moved to institutions that didn't answer to them. That transfer of authority was rarely consensual.",
+    rebuild: "Governing ourselves is not a radical idea. It's what most human communities did before that capacity was removed. We're practicing something old, not inventing something new.",
     context: "These are ways to practice deciding together. Governance isn't a structure you install — it's a capacity you build through repeated use.",
     suggestions: [
       { action: "Hold community assemblies", why: "Decisions made together are decisions people will actually follow and defend." },
@@ -547,15 +778,46 @@ const LEVELS = [
       { action: "Form decision councils with clear mandates", why: "Smaller groups with clear scope move faster and more legitimately than full assemblies alone." },
       { action: "Build feedback systems", why: "Without feedback loops, decisions disconnect from their effects and stop serving us." },
       { action: "Practice real accountability", why: "Commitments without consequences are suggestions. Make ours mean something." },
+    ],
+    functions: [
+      "When disagreement occurs, is there a reliable process — not a reliable person?",
+      "Do the people most affected by a decision have meaningful input into it?",
+      "Are commitments tracked and followed up, or do they dissolve after the meeting?",
     ]
   },
   {
-    num: 9,
-    name: "Generational",
-    full: "Generational Capacity",
+    num: 10, name: "Stewardship", full: "Stewardship Capacity",
+    opens: "Can we improve what we've inherited?",
+    participation: "The places we share are part of the community. Stewardship capacity is what connects participation in collective life to care for the physical and ecological world those lives are embedded in — it's how a community acts on behalf of what it will pass on.",
+    unlocks: "Deeper attachment to place, ecological health that sustains us, and the long-term care that keeps what we've built worth inheriting.",
+    disruption: "Land that communities tended for generations was taken, sold, and degraded. The relationship between people and the places they inhabited — built over centuries — was severed in a generation. What replaced it treated land as property rather than as something we belong to.",
+    rebuild: "Stewardship is how we re-enter a relationship with place rather than just occupying it. The land remembers what we've forgotten. We're catching up.",
+    context: "These are ways to tend what we share. Some of what we plant now, others will benefit from later.",
+    suggestions: [
+      { action: "Restore local habitat together", why: "The land we live on is part of the community too." },
+      { action: "Plant trees", why: "Trees take decades. Planting them is an act of participation that extends past our own tenure here." },
+      { action: "Conserve water as a community", why: "Water scarcity is coming. Habits built now will matter to people we haven't met yet." },
+      { action: "Maintain our public spaces", why: "Cared-for spaces signal that people here pay attention." },
+      { action: "Beautify shared areas", why: "Beauty signals belonging and investment. It tells people this place is worth being in." },
+      { action: "Preserve local history", why: "Places with stories are harder to erase and easier to defend." },
+      { action: "Improve accessibility everywhere", why: "A community is only as accessible as its least accessible path." },
+      { action: "Build shared waste reduction systems", why: "Shared systems outperform individual effort by orders of magnitude." },
+      { action: "Plant pollinator gardens", why: "Local food webs depend on creatures most people never think about. We can think about them." },
+      { action: "Maintain our trails and paths", why: "The routes people walk together are the routes community forms along." },
+    ],
+    functions: [
+      "Is the physical and ecological condition of shared spaces improving over time?",
+      "Does care for place distribute across members, or depend on a few?",
+      "Are we making decisions that account for people who aren't here yet?",
+    ]
+  },
+  {
+    num: 11, name: "Generational", full: "Generational Capacity",
     opens: "Will what we've built outlast us?",
     participation: "The deepest form of collective participation is acting on behalf of people who aren't here yet. Generational capacity is what transforms a community from a project of its current members into something that belongs to the place — and to everyone who will ever live in it.",
     unlocks: "Continuity, legacy, and the kind of civilization that doesn't have to be rebuilt from scratch by every generation.",
+    disruption: "Languages were suppressed. Traditions were interrupted. Children were removed from the communities that would have taught them who they were. The transmission of knowledge, identity, and practice across generations was deliberately broken in communities all over the world.",
+    rebuild: "What we build now is only as durable as what we pass on. Generational capacity is the commitment to people we haven't met yet — to make sure they inherit something worth inheriting.",
     context: "These are ways to make what we've built last. The goal is a community that doesn't depend on any particular person to survive.",
     suggestions: [
       { action: "Mentor young people deliberately", why: "Capacity transferred to the next generation is the only kind that truly lasts." },
@@ -565,9 +827,14 @@ const LEVELS = [
       { action: "Develop future leaders now", why: "Leadership is a skill. Treat it like one and teach it to people who aren't leading yet." },
       { action: "Keep cultural traditions alive", why: "Traditions are identity made repeatable. They hold communities together across time and change." },
       { action: "Hold annual gatherings", why: "Rhythm creates continuity. Marking the year together, every year, is how communities remember themselves." },
-      { action: "Build our shared narrative", why: "A community that knows its own story can tell others why it matters — and why it should continue." },
+      { action: "Build our shared narrative", why: "A community that knows its own story can tell others why it matters." },
       { action: "Protect institutional memory", why: "When founding members leave, what they knew shouldn't leave with them." },
       { action: "Create long-term stewardship trusts", why: "Legal structures outlast goodwill. Protect what we've built with something that will hold." },
+    ],
+    functions: [
+      "When a founding member leaves, does the community lose capacity or absorb the loss?",
+      "Are there people in their first two years of membership who could lead in five?",
+      "Does institutional memory live in documents and structures, not just people?",
     ]
   }
 ];
@@ -579,22 +846,22 @@ function buildRow(level) {
       <div class="row-body">
         <div class="row-name">${level.full}</div>
         <div class="row-opens">${level.opens}</div>
-        <div class="row-participation">${level.suggestions.length} ways to build this</div>
+        <div class="row-count">${level.suggestions.length} ways to build this</div>
       </div>
       <div class="row-arrow">›</div>
     </div>
   `;
 }
 
-function openLevel(num) {
-  const L = LEVELS[num];
-
+function populateLevel(L, eyebrow) {
   document.getElementById('lh-name').textContent = L.name;
-  document.getElementById('lh-eyebrow').textContent = `Capacity ${L.num} of 9`;
+  document.getElementById('lh-eyebrow').textContent = eyebrow;
   document.getElementById('lh-name-large').textContent = L.full;
   document.getElementById('lh-opens').textContent = L.opens;
   document.getElementById('lh-participation').textContent = L.participation;
   document.getElementById('lh-unlocks').textContent = L.unlocks;
+  document.getElementById('lh-disruption').textContent = L.disruption;
+  document.getElementById('lh-rebuild').textContent = L.rebuild;
   document.getElementById('lh-context').textContent = L.context;
 
   document.getElementById('lh-suggestions').innerHTML = L.suggestions.map(s => `
@@ -607,6 +874,20 @@ function openLevel(num) {
     </div>
   `).join('');
 
+  document.getElementById('lh-functions').innerHTML = L.functions.map(f => `
+    <div class="function-test">${f}</div>
+  `).join('');
+}
+
+function openLevel(num) {
+  const L = LEVELS[num];
+  populateLevel(L, `Capacity ${L.num} of 11`);
+  document.getElementById('screen-level').scrollTop = 0;
+  document.body.classList.add('level-open');
+}
+
+function openReconnection() {
+  populateLevel(RECONNECTION, RECONNECTION.eyebrow);
   document.getElementById('screen-level').scrollTop = 0;
   document.body.classList.add('level-open');
 }
