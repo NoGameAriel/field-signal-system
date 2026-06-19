@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groundwork</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F4EF;
+  --ink: #1A1710;
+  --ink-mid: #5A5548;
+  --ink-faint: #A09880;
+  --rule: #E0DBD0;
+  --moss: #3D5C35;
+  --moss-light: #EBF2E8;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  overflow: hidden;
+}
+
+/* ── SCREENS ── */
+#screen-tree, #screen-level {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.32s;
+}
+
+#screen-tree  { transform: translateX(0);    opacity: 1; background: var(--bg); }
+#screen-level { transform: translateX(100%); opacity: 0; background: var(--bg); }
+
+body.level-open #screen-tree  { transform: translateX(-25%); opacity: 0; pointer-events: none; }
+body.level-open #screen-level { transform: translateX(0);    opacity: 1; }
+
+/* ── TREE SCREEN ── */
+.tree-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 2px solid var(--ink);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.wordmark {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  margin-bottom: 1rem;
+}
+
+.thesis {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.thesis-sub {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* ── LEVEL ROWS ── */
+.level-list { padding-bottom: 4rem; }
+
+.level-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s;
+}
+
+.level-row:active,
+.level-row:hover { background: #EDEAE3; }
+
+.row-num-col {
+  width: 3rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1.2rem;
+  border-right: 1px solid var(--rule);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.row-body {
+  flex: 1;
+  padding: 1.1rem 1rem 1.1rem 1.1rem;
+}
+
+.row-name {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+
+.row-opens {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--ink-mid);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.row-participation {
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.row-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+  color: var(--ink-faint);
+  font-size: 1rem;
+}
+
+/* ── LEVEL SCREEN ── */
+.level-header {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-btn:hover { color: var(--ink); }
+
+.lh-name {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-left: auto;
+}
+
+/* Hero */
+.level-hero {
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.level-eyebrow {
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+}
+
+.level-name-large {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+}
+
+.level-opens-large {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.level-participation {
+  font-size: 0.7rem;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+/* Unlocks */
+.unlocks-wrap {
+  background: var(--moss-light);
+  border: 1px solid #C8DEC4;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+.unlocks-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: 0.4rem;
+}
+
+.unlocks-text {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--moss);
+  line-height: 1.5;
+}
+
+/* Suggestions */
+.suggestions-header {
+  padding: 1.1rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.suggestions-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.2rem;
+}
+
+.suggestions-context {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.suggestion-item {
+  display: flex;
+  gap: 0.9rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  align-items: flex-start;
+  transition: background 0.1s;
+}
+
+.suggestion-item:hover { background: #EDEAE3; }
+
+.suggestion-check {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.suggestion-check.checked {
+  background: var(--moss);
+  border-color: var(--moss);
+}
+
+.suggestion-check.checked::after {
+  content: '';
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg) translateY(-1px);
+  display: block;
+}
+
+.suggestion-body { flex: 1; }
+
+.suggestion-action {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.suggestion-why {
+  font-size: 0.68rem;
+  color: var(--ink-mid);
+  line-height: 1.55;
+}
+
+.level-spacer { height: 5rem; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ TREE SCREEN ══════════ -->
+<div id="screen-tree">
+  <div class="tree-header">
+    <div class="wordmark">Groundwork</div>
+    <p class="thesis">The purpose of a social system is to increase the capacity of its members to participate meaningfully in collective life.</p>
+    <p class="thesis-sub">These ten capacities are what that looks like in practice. Each one opens up a new kind of participation. Tap any to see what we can build.</p>
+  </div>
+
+  <div class="level-list" id="level-list"></div>
+</div>
+
+<!-- ══════════ LEVEL SCREEN ══════════ -->
+<div id="screen-level">
+  <div class="level-header">
+    <button class="back-btn" onclick="closeLevel()">← All capacities</button>
+    <div class="lh-name" id="lh-name"></div>
+  </div>
+
+  <div class="level-hero">
+    <div class="level-eyebrow" id="lh-eyebrow"></div>
+    <div class="level-name-large" id="lh-name-large"></div>
+    <div class="level-opens-large" id="lh-opens"></div>
+    <div class="level-participation" id="lh-participation"></div>
+    <div class="unlocks-wrap">
+      <div class="unlocks-label">When we build this, we gain</div>
+      <div class="unlocks-text" id="lh-unlocks"></div>
+    </div>
+  </div>
+
+  <div class="suggestions-header">
+    <div class="suggestions-label">Things we can do</div>
+    <div class="suggestions-context" id="lh-context"></div>
+  </div>
+
+  <div id="lh-suggestions"></div>
+  <div class="level-spacer"></div>
+</div>
+
+<script>
+const LEVELS = [
+  {
+    num: 0,
+    name: "Presence",
+    full: "Presence Capacity",
+    opens: "Can we see each other?",
+    participation: "Before we can act together, we have to know each other exists. Presence capacity is the ground floor of collective life — it's what makes every other kind of participation possible. Without it, a group of people in the same place is just a crowd.",
+    unlocks: "The ability to reach each other, ask for help, and begin to act as a community rather than a collection of strangers.",
+    context: "These are starting points. Any one of them begins to close the gap between neighbors who share space and neighbors who share something more.",
+    suggestions: [
+      { action: "Introduce ourselves to our neighbors", why: "You can't belong to something you're invisible inside." },
+      { action: "Learn each other's names", why: "Names are the first unit of recognition. They make people real to each other." },
+      { action: "Show up to local events", why: "Presence is a signal. It says: I'm here and this place matters to me." },
+      { action: "Build a community directory", why: "Knowing who's around makes it possible to reach each other when it counts." },
+      { action: "Map the skills and interests in our community", why: "Every neighborhood has more capacity than it knows. Mapping it makes it usable." },
+      { action: "Find and name our common gathering places", why: "Community organizes itself around places. Know them and use them." },
+      { action: "Discover what organizations already exist here", why: "We don't have to start from scratch. Others have already begun." },
+      { action: "Record our stories and local histories", why: "A community without memory has to reintroduce itself to itself. Preserve what we know." },
+    ]
+  },
+  {
+    num: 1,
+    name: "Social",
+    full: "Social Capacity",
+    opens: "Do we have reasons to come back to each other?",
+    participation: "Knowing someone exists isn't the same as having a relationship with them. Social capacity is what turns visibility into connection — it creates the recurring contact and shared experience that makes trust possible. Without it, people remain friendly strangers.",
+    unlocks: "The trust, belonging, and friendship that allow us to ask more of each other — and to give more in return.",
+    context: "These are ways to give people reasons to keep showing up. Rhythm matters more than any single event.",
+    suggestions: [
+      { action: "Host a meal together", why: "Eating together is one of the oldest trust-building acts humans have. It still works." },
+      { action: "Start a recurring gathering", why: "One-time events fade. Rhythm builds the relationship that makes communities real." },
+      { action: "Build a shared calendar", why: "Coordination is friction. Reduce it and more people can participate." },
+      { action: "Organize game nights", why: "Play lowers defenses and creates common ground faster than almost anything else." },
+      { action: "Create welcoming rituals for newcomers", why: "New people need a signal that they were expected and are wanted." },
+      { action: "Connect people who don't know each other yet", why: "Isolation is the default. Someone has to actively break it." },
+      { action: "Build processes for repairing conflict", why: "Unresolved tension quietly ends communities. Repair is infrastructure." },
+      { action: "Build relationships across generations", why: "Most communities are accidentally age-segregated. Fix it deliberately." },
+      { action: "Form groups around shared interests", why: "Shared purpose creates friendship faster than shared proximity." },
+      { action: "Mark milestones and celebrate together", why: "Recognizing what matters tells people their lives belong to this community." },
+    ]
+  },
+  {
+    num: 2,
+    name: "Knowledge",
+    full: "Knowledge Capacity",
+    opens: "Can we learn from each other?",
+    participation: "Every person in a community holds knowledge that others need. Knowledge capacity is what turns that distributed expertise into shared capability — it's the difference between a community that has to hire out every problem and one that can solve things from within.",
+    unlocks: "The collective intelligence, skill transfer, and retained wisdom that let us grow without depending on outside expertise.",
+    context: "These are ways to make what we know available to each other. The goal is a community that teaches itself.",
+    suggestions: [
+      { action: "Run skill-sharing workshops", why: "Every person here knows something others need. Create the space to share it." },
+      { action: "Build a mentorship network", why: "Experience shouldn't retire when people do." },
+      { action: "Create apprenticeships", why: "Hands-on learning transfers what classrooms and workshops can't." },
+      { action: "Build a local knowledge archive", why: "If it's only in someone's head, it leaves when they do." },
+      { action: "Offer community classes", why: "Learning together builds more than competence — it builds cohesion." },
+      { action: "Start an oral history project", why: "The people who remember what this place was are aging. Start now." },
+      { action: "Form study groups", why: "Accountability and company make hard things achievable." },
+      { action: "Host language exchanges", why: "Language barriers are community barriers. Exchange dissolves both at once." },
+      { action: "Organize career coaching circles", why: "People will help each other if we build a structure for it." },
+      { action: "Teach practical life skills together", why: "Fixing things, growing food, managing money — these shouldn't be rare knowledge." },
+    ]
+  },
+  {
+    num: 3,
+    name: "Resource",
+    full: "Resource Capacity",
+    opens: "Can we share what we already have?",
+    participation: "Individual ownership is expensive and isolating. Resource capacity is what lets a community act as a shared economy — reducing what each person needs to own alone, and increasing what everyone can access together.",
+    unlocks: "Reduced individual burden, greater access across the community, and the material foundation for more ambitious collective action.",
+    context: "These are ways to pool what we have. The most important resources are the ones sitting idle in someone's garage.",
+    suggestions: [
+      { action: "Start a tool library", why: "Most tools sit unused 95% of the time. We can share the other 5%." },
+      { action: "Build a book library", why: "Knowledge shouldn't require individual ownership to access." },
+      { action: "Create a seed library", why: "Food sovereignty starts with seeds that belong to the community, not to corporations." },
+      { action: "Organize ride-sharing", why: "Transportation gaps isolate people from everything that requires getting somewhere." },
+      { action: "Form a bulk purchasing group", why: "Buying together makes quality affordable for people who couldn't afford it alone." },
+      { action: "Run equipment exchanges", why: "One community's idle gear is another household's solution." },
+      { action: "Organize childcare swaps", why: "Childcare costs collapse when trust allows trading hours instead of money." },
+      { action: "Create shared storage", why: "Space is a resource too. Not everyone needs their own." },
+      { action: "Try housing exchanges", why: "Flexibility on housing reduces pressure on the people with the least margin." },
+      { action: "Start community lending circles", why: "Community credit reaches people that banks won't, faster and with less cost." },
+    ]
+  },
+  {
+    num: 4,
+    name: "Production",
+    full: "Production Capacity",
+    opens: "Can we create value together?",
+    participation: "A community that only consumes remains dependent on systems outside itself. Production capacity is what lets us generate things — food, goods, services, media, knowledge — and keep the value of that production inside the community.",
+    unlocks: "Local production, shared ownership of what we make, and an economic resilience that doesn't rely on external systems to function.",
+    context: "These are ways to build together. The goal is a community that makes things, not just a community that buys them.",
+    suggestions: [
+      { action: "Start a community garden", why: "Growing food together builds both food security and daily relationship." },
+      { action: "Open a repair cafe", why: "Fixing instead of replacing keeps money and skills inside the community." },
+      { action: "Build a makerspace", why: "Shared tools and shared knowledge produce things neither could create alone." },
+      { action: "Create a shared workshop", why: "Access to tools changes what people can build and do." },
+      { action: "Form a cooperative business", why: "Worker ownership means profit stays with the people who created it." },
+      { action: "Run a community kitchen", why: "Shared cooking infrastructure lets small food producers start without starting from nothing." },
+      { action: "Launch a local media project", why: "Communities that tell their own stories shape their own futures." },
+      { action: "Start an arts collective", why: "Creative production builds identity and attracts the investment that follows it." },
+      { action: "Form a software development group", why: "Technical capacity built locally serves local needs instead of outside ones." },
+      { action: "Organize cooperative purchasing", why: "Collective buying power shifts the economic relationship with every supplier." },
+    ]
+  },
+  {
+    num: 5,
+    name: "Care",
+    full: "Care Capacity",
+    opens: "Can we support each other through life?",
+    participation: "People can't participate in collective life when they're in crisis alone. Care capacity is what ensures that illness, loss, disability, new parenthood, and hardship don't pull people out of the community permanently — it's what makes belonging feel real when it's tested.",
+    unlocks: "The human dignity, reduced isolation, and mutual safety nets that let people stay present in community life through the hardest seasons.",
+    context: "These are ways to hold each other. The goal is a community where no one has to manage their hardest moments alone.",
+    suggestions: [
+      { action: "Organize meal trains", why: "When someone is overwhelmed, food is the most concrete help we can give." },
+      { action: "Start a childcare cooperative", why: "Shared childcare makes work, rest, and participation possible for more people." },
+      { action: "Visit elders regularly", why: "Isolation is a health crisis. Showing up is a form of treatment." },
+      { action: "Build peer mental health support", why: "Professional care is scarce. Community care can reach people it can't." },
+      { action: "Create disability support networks", why: "Access and dignity shouldn't depend on what someone can afford." },
+      { action: "Offer transportation assistance", why: "If you can't get there, the support doesn't exist for you." },
+      { action: "Provide bereavement support", why: "Grief lasts longer than sympathy. Communities can hold it when individuals can't." },
+      { action: "Build recovery communities", why: "Recovery requires ongoing relationship. Isolation is the condition that makes relapse likely." },
+      { action: "Support new parents", why: "Early parenthood is a crisis without a village. We can be that village." },
+      { action: "Create caregiver relief systems", why: "Caregivers burn out. Backup systems prevent the collapse of the people holding others up." },
+    ]
+  },
+  {
+    num: 6,
+    name: "Resilience",
+    full: "Resilience Capacity",
+    opens: "Can we absorb shocks together?",
+    participation: "Disruption is inevitable. Resilience capacity is what determines whether a community survives a crisis intact or fragments under pressure. Communities that have built this capacity don't just recover — they recover together.",
+    unlocks: "The adaptability, preparedness, and continuity that let us face hard events without losing what we've built.",
+    context: "These are ways to prepare before we need to. The infrastructure that matters most in a crisis is the kind built before one arrives.",
+    suggestions: [
+      { action: "Set up emergency communication systems", why: "When infrastructure goes down, knowing who to reach is what saves people." },
+      { action: "Form disaster response teams", why: "Trained neighbors are on the scene before any emergency service can be." },
+      { action: "Run community first-aid training", why: "The first minutes after an emergency happen before help can arrive." },
+      { action: "Plan backup power together", why: "Power outages hit the most vulnerable hardest and longest." },
+      { action: "Build food reserves", why: "Three days of disruption exposes how thin most households' margins really are." },
+      { action: "Map water access points", why: "Knowing where water is before it stops flowing from the tap." },
+      { action: "Establish cooling and warming centers", why: "Extreme heat and cold are survivable when somewhere to go exists." },
+      { action: "Create a mutual aid fund", why: "Cash held in community hands reaches crises faster than any institution can." },
+      { action: "Plan evacuation support together", why: "People without cars need neighbors who have them and will use them." },
+      { action: "Build crisis coordination networks", why: "Chaos is the default in emergencies. Structure must be built before it's needed." },
+    ]
+  },
+  {
+    num: 7,
+    name: "Stewardship",
+    full: "Stewardship Capacity",
+    opens: "Can we improve the places we inhabit together?",
+    participation: "The places we share are part of the community. Stewardship capacity is what connects participation in collective life to care for the physical and ecological world those lives are embedded in — it's how a community acts on behalf of what it will pass on.",
+    unlocks: "Deeper attachment to place, ecological health that sustains us, and the long-term care that keeps what we've built worth inheriting.",
+    context: "These are ways to tend what we share. Some of what we plant now, others will benefit from later.",
+    suggestions: [
+      { action: "Restore local habitat together", why: "The land we live on is part of the community too." },
+      { action: "Plant trees", why: "Trees take decades. Planting them is an act of participation that extends past our own tenure here." },
+      { action: "Conserve water as a community", why: "Water scarcity is coming. Habits built now will matter to people we haven't met yet." },
+      { action: "Maintain our public spaces", why: "Cared-for spaces signal that people here pay attention — and that it's worth paying attention to." },
+      { action: "Beautify shared areas", why: "Beauty signals belonging and investment. It tells people this place is worth being in." },
+      { action: "Preserve local history", why: "Places with stories are harder to erase and easier to defend." },
+      { action: "Improve accessibility everywhere", why: "A community is only as accessible as its least accessible path." },
+      { action: "Build shared waste reduction systems", why: "Shared systems outperform individual effort by orders of magnitude." },
+      { action: "Plant pollinator gardens", why: "Local food webs depend on creatures most people never think about. We can think about them." },
+      { action: "Maintain our trails and paths", why: "The routes people walk together are the routes community forms along." },
+    ]
+  },
+  {
+    num: 8,
+    name: "Governance",
+    full: "Governance Capacity",
+    opens: "Can we make decisions together?",
+    participation: "The capacity to decide together is one of the most demanding forms of collective participation — and one of the most powerful. Governance capacity is what makes self-determination real. Without it, communities are acted upon rather than acting.",
+    unlocks: "The self-determination, legitimacy, and collective agency to shape our own conditions rather than having them shaped for us.",
+    context: "These are ways to practice deciding together. Governance isn't a structure you install — it's a capacity you build through repeated use.",
+    suggestions: [
+      { action: "Hold community assemblies", why: "Decisions made together are decisions people will actually follow and defend." },
+      { action: "Try participatory budgeting", why: "Money going where we decide it should go builds trust in the process of deciding." },
+      { action: "Build consensus processes", why: "Majority rule leaves minorities behind. Consensus doesn't have to." },
+      { action: "Practice conflict mediation", why: "Unresolved disputes rot the structures built around them." },
+      { action: "Keep transparent records", why: "Accountability requires documentation. Memory is not enough." },
+      { action: "Rotate leadership", why: "Concentrated power is a single point of failure. Distribute it." },
+      { action: "Write a community charter", why: "Shared values written down survive disagreements that spoken ones don't." },
+      { action: "Form decision councils with clear mandates", why: "Smaller groups with clear scope move faster and more legitimately than full assemblies alone." },
+      { action: "Build feedback systems", why: "Without feedback loops, decisions disconnect from their effects and stop serving us." },
+      { action: "Practice real accountability", why: "Commitments without consequences are suggestions. Make ours mean something." },
+    ]
+  },
+  {
+    num: 9,
+    name: "Generational",
+    full: "Generational Capacity",
+    opens: "Will what we've built outlast us?",
+    participation: "The deepest form of collective participation is acting on behalf of people who aren't here yet. Generational capacity is what transforms a community from a project of its current members into something that belongs to the place — and to everyone who will ever live in it.",
+    unlocks: "Continuity, legacy, and the kind of civilization that doesn't have to be rebuilt from scratch by every generation.",
+    context: "These are ways to make what we've built last. The goal is a community that doesn't depend on any particular person to survive.",
+    suggestions: [
+      { action: "Mentor young people deliberately", why: "Capacity transferred to the next generation is the only kind that truly lasts." },
+      { action: "Plan for succession in every role", why: "Every role held by only one person is a fragility. Build the handoff before it's needed." },
+      { action: "Preserve knowledge systematically", why: "What isn't written down isn't passed on. It just disappears." },
+      { action: "Maintain community archives", why: "Archives are memory with durability. Build them before we need them to save us." },
+      { action: "Develop future leaders now", why: "Leadership is a skill. Treat it like one and teach it to people who aren't leading yet." },
+      { action: "Keep cultural traditions alive", why: "Traditions are identity made repeatable. They hold communities together across time and change." },
+      { action: "Hold annual gatherings", why: "Rhythm creates continuity. Marking the year together, every year, is how communities remember themselves." },
+      { action: "Build our shared narrative", why: "A community that knows its own story can tell others why it matters — and why it should continue." },
+      { action: "Protect institutional memory", why: "When founding members leave, what they knew shouldn't leave with them." },
+      { action: "Create long-term stewardship trusts", why: "Legal structures outlast goodwill. Protect what we've built with something that will hold." },
+    ]
+  }
+];
+
+function buildRow(level) {
+  return `
+    <div class="level-row" onclick="openLevel(${level.num})">
+      <div class="row-num-col">L${level.num}</div>
+      <div class="row-body">
+        <div class="row-name">${level.full}</div>
+        <div class="row-opens">${level.opens}</div>
+        <div class="row-participation">${level.suggestions.length} ways to build this</div>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+  `;
+}
+
+function openLevel(num) {
+  const L = LEVELS[num];
+
+  document.getElementById('lh-name').textContent = L.name;
+  document.getElementById('lh-eyebrow').textContent = `Capacity ${L.num} of 9`;
+  document.getElementById('lh-name-large').textContent = L.full;
+  document.getElementById('lh-opens').textContent = L.opens;
+  document.getElementById('lh-participation').textContent = L.participation;
+  document.getElementById('lh-unlocks').textContent = L.unlocks;
+  document.getElementById('lh-context').textContent = L.context;
+
+  document.getElementById('lh-suggestions').innerHTML = L.suggestions.map(s => `
+    <div class="suggestion-item">
+      <div class="suggestion-check" onclick="this.classList.toggle('checked')"></div>
+      <div class="suggestion-body">
+        <div class="suggestion-action">${s.action}</div>
+        <div class="suggestion-why">${s.why}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('screen-level').scrollTop = 0;
+  document.body.classList.add('level-open');
+}
+
+function closeLevel() {
+  document.body.classList.remove('level-open');
+}
+
+document.getElementById('level-list').innerHTML = LEVELS.map(buildRow).join('');
+</script>
+</body>
+</html>
