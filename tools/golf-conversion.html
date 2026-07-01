@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversion Likelihood</title>
+<style>
+  :root {
+    --paper: #EDF3F5;
+    --ink: #16262E;
+    --accent: #2C7A8C;
+    --teal: #5E96A3;
+    --sage: #8FB5A2;
+    --gold: #D9A441;
+    --grey: #6B7A82;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+  }
+  .frame { max-width: 460px; margin: 0 auto; min-height: 100vh; background: var(--paper); padding-bottom: 110px; }
+
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--paper);
+    padding: 18px 18px 0;
+    border-bottom: 1px solid rgba(35,48,43,0.1);
+  }
+  header h1 {
+    font-family: Georgia, 'Iowan Old Style', serif;
+    font-size: 22px; margin: 0 0 2px;
+  }
+  header .sub {
+    font-size: 12px; color: var(--grey); margin: 0 0 14px;
+    font-family: 'Courier New', monospace; letter-spacing: 0.3px;
+  }
+
+  .result-card {
+    margin-bottom: -1px;
+    border-radius: 14px 14px 0 0;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.3s ease;
+  }
+  .result-card .score { font-size: 30px; font-weight: 700; font-family: 'Courier New', monospace; line-height: 1; }
+  .result-card .score span { font-size: 14px; font-weight: 400; opacity: 0.6; }
+  .result-card .status-wrap { text-align: right; }
+  .result-card .status { font-size: 13.5px; font-weight: 700; letter-spacing: 0.3px; }
+  .result-card .match { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+  .result-card.band-stable { background: var(--teal); }
+  .result-card.band-stalled { background: #2F6579; }
+  .result-card.band-high { background: #163C4C; }
+
+  main { padding: 16px; }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 14px 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(35,48,43,0.06);
+    border: 1px solid rgba(35,48,43,0.08);
+  }
+  .card .num { font-family: 'Courier New', monospace; font-size: 11px; color: var(--grey); }
+  .card .q { font-size: 15px; font-weight: 700; margin: 3px 0 10px; }
+  .choices button {
+    display: block; width: 100%;
+    text-align: left;
+    padding: 11px 12px;
+    margin-bottom: 7px;
+    border-radius: 10px;
+    border: 1.4px solid #E4DFD2;
+    background: #FBF9F3;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.35;
+    cursor: pointer;
+  }
+  .choices button:last-child { margin-bottom: 0; }
+  .choices button.active {
+    border-color: var(--accent);
+    background: #E1EEF0;
+    font-weight: 600;
+  }
+  .choices button .n {
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    color: var(--grey);
+    margin-right: 6px;
+  }
+
+  details.explain {
+    background: #EAF0EC;
+    border-left: 4px solid var(--teal);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  details.explain summary { font-weight: 700; cursor: pointer; font-size: 13px; }
+  details.explain p { margin: 8px 0 2px; line-height: 1.45; }
+
+  .compare-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--paper);
+    border-top: 1px solid rgba(35,48,43,0.15);
+    padding: 10px 14px 14px;
+    z-index: 20;
+  }
+  .compare-bar .label { font-size: 10.5px; color: var(--grey); font-family: 'Courier New', monospace; margin-bottom: 6px; }
+  .chips { display: flex; gap: 7px; overflow-x: auto; max-width: 460px; margin: 0 auto; }
+  .chip {
+    flex: none;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1.3px solid var(--ink);
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .chip.reset { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <header>
+    <h1>Conversion Likelihood</h1>
+    <div class="sub">GOLF COURSE → HOUSING / PARK TRANSITION MODEL</div>
+    <div class="result-card band-stable" id="resultCard">
+      <div>
+        <div class="score" id="scoreVal">0<span>/12</span></div>
+      </div>
+      <div class="status-wrap">
+        <div class="status" id="statusLabel">NOT SCORED YET</div>
+        <div class="match" id="matchLabel">Answer to see closest real-world match</div>
+      </div>
+    </div>
+  </header>
+
+  <main id="cardStack"></main>
+
+  <details class="explain" id="explainBox" style="margin: 0 16px 100px;">
+    <summary>What this means</summary>
+    <p id="explainText">Conversion becomes likely when housing pressure is high and decision authority is simple. Answer the cards above to see where this site lands.</p>
+  </details>
+
+  <div class="compare-bar">
+    <div class="label">COMPARE TO A REAL CASE</div>
+    <div class="chips">
+      <div class="chip" data-case="oakcreek">Oak Creek</div>
+      <div class="chip" data-case="newport">Newport Beach</div>
+      <div class="chip" data-case="rancho">Rancho Park</div>
+      <div class="chip" data-case="shalimar">Shalimar</div>
+      <div class="chip reset" data-case="reset">Reset</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { q: "Who controls decisions about the land?",
+    choices: [
+      "Fragmented — multiple public agencies",
+      "Mixed — shared ownership or split path",
+      "Unified — single owner / one authority"
+    ]},
+  { q: "How strong is nearby housing demand?",
+    choices: [
+      "Low demand, slow-growth area",
+      "Moderate demand",
+      "High demand, state mandate, transit-adjacent"
+    ]},
+  { q: "How valuable is the surrounding land?",
+    choices: [
+      "Low-value, fringe",
+      "Suburban, mixed value",
+      "High-value — job center, coastal, transit hub"
+    ]},
+  { q: "How many groups can block redevelopment?",
+    choices: [
+      "Many — boards, agencies, referendum-ready groups",
+      "Some organized opposition, workable friction",
+      "Few — streamlined approval path"
+    ]},
+  { q: "How protected is the course itself?",
+    choices: [
+      "Iconic, heavily used, politically sensitive",
+      "Moderately valued, mixed usage",
+      "Declining, financially distressed"
+    ]},
+  { q: "How easy is the layout to replan?",
+    choices: [
+      "Fragmented, constrained access",
+      "Moderately flexible",
+      "Large, flat, contiguous, clean perimeter"
+    ]},
+];
+
+// [authority, housing, land value, veto(inverted-friendly), lock-in(inverted-friendly), fit]
+const cases = {
+  oakcreek:  { name: "Oak Creek (Irvine)",     scores: [2,2,2,1,1,2] },
+  newport:   { name: "Newport Beach",          scores: [1,2,2,0,1,1] },
+  rancho:    { name: "Rancho Park (LA)",       scores: [0,2,2,0,0,2] },
+  shalimar:  { name: "Shalimar (Tempe)",       scores: [1,1,1,0,1,0] },
+};
+
+const stack = document.getElementById('cardStack');
+const answers = new Array(6).fill(null);
+
+questions.forEach((item, qi) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="num">0${qi+1} / 06</div>
+    <div class="q">${item.q}</div>
+    <div class="choices">
+      ${item.choices.map((c,ci) => `<button data-q="${qi}" data-score="${ci}"><span class="n">${ci}</span>${c}</button>`).join('')}
+    </div>`;
+  stack.appendChild(card);
+});
+
+stack.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-q]');
+  if (!btn) return;
+  const qi = +btn.dataset.q;
+  const val = +btn.dataset.score;
+  answers[qi] = val;
+  const siblings = btn.parentElement.querySelectorAll('button');
+  siblings.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+});
+
+document.querySelector('.chips').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  const key = chip.dataset.case;
+  if (key === 'reset') {
+    for (let i=0;i<6;i++) answers[i] = null;
+  } else {
+    cases[key].scores.forEach((s,i) => answers[i] = s);
+  }
+  // re-render active states
+  document.querySelectorAll('.card').forEach((card, qi) => {
+    card.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('active', answers[qi] !== null && +b.dataset.score === answers[qi]);
+    });
+  });
+  update();
+});
+
+function bandFor(total) {
+  if (total <= 4) return { key: 'stable', label: 'STABLE GOLF' };
+  if (total <= 8) return { key: 'stalled', label: 'STALLED / CONTESTED' };
+  return { key: 'high', label: 'HIGH LIKELIHOOD' };
+}
+
+function closestCase(current) {
+  const answered = current.map(v => v === null ? 1 : v); // neutral fill for unanswered
+  let best = null, bestDist = Infinity;
+  for (const [key, c] of Object.entries(cases)) {
+    let dist = 0;
+    for (let i=0;i<6;i++) dist += Math.abs(answered[i]-c.scores[i]);
+    if (dist < bestDist) { bestDist = dist; best = { key, ...c }; }
+  }
+  const pct = Math.round(100 - (bestDist/12)*100);
+  return { ...best, pct };
+}
+
+function update() {
+  const answeredCount = answers.filter(a => a !== null).length;
+  const total = answers.reduce((s,a) => s + (a||0), 0);
+  document.getElementById('scoreVal').innerHTML = `${total}<span>/12</span>`;
+
+  const card = document.getElementById('resultCard');
+  const statusEl = document.getElementById('statusLabel');
+  const matchEl = document.getElementById('matchLabel');
+  const explainEl = document.getElementById('explainText');
+
+  card.classList.remove('band-stable','band-stalled','band-high');
+
+  if (answeredCount === 0) {
+    card.classList.add('band-stable');
+    statusEl.textContent = 'NOT SCORED YET';
+    matchEl.textContent = 'Answer to see closest real-world match';
+    explainEl.textContent = 'Conversion becomes likely when housing pressure is high and decision authority is simple. Answer the cards above to see where this site lands.';
+    return;
+  }
+
+  const band = bandFor(total);
+  card.classList.add('band-' + band.key);
+  statusEl.textContent = band.label;
+
+  const match = closestCase(answers);
+  matchEl.textContent = `Closest match: ${match.name} — ${match.pct}% similar`;
+
+  const explainMap = {
+    stable: "Low likelihood. The course persists mostly unchanged — decision authority is too fragmented, or the site is too locked in, for a conversion push to gain traction.",
+    stalled: "Expect proposals, studies, and reversals with no durable outcome. This is the zone real fights live in — Newport Beach is here right now.",
+    high: "Conversion is probable. This is where an edge-density / center-ecology design matters most — push early for a functional ecological core, not a scenic one."
+  };
+  explainEl.textContent = explainMap[band.key];
+}
+
+update();
+</script>
+</body>
+</html>
